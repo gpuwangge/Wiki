@@ -1,5 +1,4 @@
 # WIKI
-This is Wangge's Chinese Wikipedia.  
 
 ## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMakeTutorial.md)
 

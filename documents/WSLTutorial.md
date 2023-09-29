@@ -35,7 +35,7 @@ WSL本质上是个虚拟机
 实际存储位置可能在
 > C:\Users\Xiaojun\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc
 
-``在这里建议进入\\wsl$后，右键点击Ubuntu后，选择"Map network drive.."添加快捷方式``
+**`在这里建议进入\\wsl$后，右键点击Ubuntu后，选择"Map network drive.."添加快捷方式`**
 
 
 

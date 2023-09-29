@@ -99,7 +99,7 @@ WSL Ubuntu自带gcc，但没有g++，使用如下指令安装g++:
 然后make指令可以生成没有任何后缀的可执行文件  
 该可执行文件就是Linux可执行文件，可以在wsl shell里面运行。  
 
-### gcc和安装的g++是啥架构？
+### gcc和安装的g++是啥架构
 x86_64是什么：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
 AArch64是什么: ARM的64位指令集。不支持32bit。常常简称为ARM64 
 
@@ -112,13 +112,13 @@ wsl和SWRD上获得的信息：
 windows上获得的信息：  
 **`Target: x86_64-w64-mingw32`**  
 
-### 如何查看一个binary是什么架构？
+### 如何查看一个binary是什么架构
 (在Ubuntu系统下)  
 > file filename
 
 (会打印出elf信息)  
 
-### 如何编译出AArch64架构的binary?
+### 如何编译出AArch64架构的binary
 需要用Cross Compile技术:  
 **`1、安装aarch64版gcc(g++)`**  
 > sudo apt install gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
@@ -131,11 +131,35 @@ windows上获得的信息：
 set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc)  
 set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)  
 
+## 如何把代码从Windows上移植到WSL
+以OpenCL为例
+**`1.把整个项目拷贝到\home\wangge\coding\底下`**
+**`2.如上所述，把CMakeLists.txt里面SET编译器那两行去掉`**
+**`3.把\\改成/`**
+**`4.解决找不到CL/opencl.hpp的问题`**
+> sudo apt install opencl-headers ocl-icd-opencl-dev -y
 
-## Credits
+源文件中加入如下代码：  
+> #include <CL/opencl.hpp>
+
+**`5.解决找不到OpenCL lib的问题`**
+cmake里面加上如下代码：  
+> find_package(OpenCL REQUIRED)  
+> link_libraries(OpenCL::OpenCL)  
+
+### 如何得知当前系统是否支持OpenGL gpu platform
+在Ubuntu系统下
+> sudo apt install clinfo  
+> clinfo  
+
+显示如下则表示找不到platform(在WSL和WSL 2中测试结果一样)
+**`Number of platforms`**      
+(As far as I know OpenCL is not currently supported on WSL2)  
+
+## References
 https://learn.microsoft.com/en-us/windows/wsl/install  
 https://jensd.be/1126/linux/cross-compiling-for-arm-or-aarch64-on-debian-or-ubuntu  
-
+https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/getting_started_linux.md
 
 
 

@@ -16,8 +16,8 @@ WSL本质上是个虚拟机
 (The requested operation is successful. Changes will not be effective until the system is rebooted.)  
 3.重新启动后，继续自动安装Ubuntu  
 4.按要求创建具有管理员权限（sudo）的账号和密码  
-> <username>  
-> <password>  
+> [username]  
+> [password]  
 5.更新package：  
 sudo apt update && sudo apt upgrade  
 (到这一步安装就完成了)  

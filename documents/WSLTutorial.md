@@ -99,8 +99,12 @@ WSL Ubuntu自带gcc，但没有g++，使用如下指令安装g++:
 然后make指令可以生成没有任何后缀的可执行文件  
 该可执行文件就是Linux可执行文件，可以在wsl shell里面运行。  
 
+### 如何运行Linux binary
+打开Windows PowerShell后运行
+> wsl.exe
+
 ### 如何通过VS Code编辑器运行Linux binary
-将希望运行的binary拷贝到WSL系统文件夹内，比如:
+将希望运行的binary拷贝到WSL系统文件夹内，比如:  
 > Z:\home\wangge\projects  
 
 在windows下打开VS Code, 点击左下角链接WSL  
@@ -115,8 +119,8 @@ w gives write permissions
 x gives execute permissions  
 
 ### gcc和安装的g++是啥架构
-x86_64是什么：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
-AArch64是什么: ARM的64位指令集。不支持32bit。常常简称为ARM64 
+x86_64：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
+AArch64: ARM的64位指令集。不支持32bit。常常简称为ARM64 
 
 使用如下指令：  
 > g++ -v
@@ -146,12 +150,12 @@ windows上获得的信息：
 set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc)  
 set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)  
 
-## 如何把代码从Windows上移植到WSL
-以OpenCL为例
-**`1.把整个项目拷贝到\home\wangge\coding\底下`**
-**`2.如上所述，把CMakeLists.txt里面SET编译器那两行去掉`**
-**`3.把\\改成/`**
-**`4.解决找不到CL/opencl.hpp的问题`**
+## 如何把代码从Windows上移植到WSL  
+以OpenCL为例  
+**`1.把整个项目拷贝到\home\wangge\coding\底下`**  
+**`2.如上所述，把CMakeLists.txt里面SET编译器那两行去掉`**  
+**`3.把\\改成/`**  
+**`4.解决找不到CL/opencl.hpp的问题`**  
 > sudo apt install opencl-headers ocl-icd-opencl-dev -y
 
 源文件中加入如下代码：  

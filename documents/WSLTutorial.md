@@ -47,6 +47,29 @@ windows也可以修改/home/wangge下面的文件
 
 **`如果删除了这个wsl2 Linux子系统,它里面的文件也就没了`**   
 
+### 如何查看自己使用的wsl version是1还是2
+在Windows PowerShell里面使用命令  
+> wsl --list --verbose  
+
+或  
+> wsl --status  
+
+### 如何查看Ubuntu版本
+wsl或ubuntu内  
+> lsb_release -a
+
+举例：
+```
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 22.04.3 LTS
+Release:        22.04
+Codename:       jammy
+```
+或
+> cat /etc/os-release
+
+
 ## 如何在WSL里编译Linux binary
 以下指令可以在shell里打开vs code  
 > code .  
@@ -84,10 +107,10 @@ AArch64是什么: ARM的64位指令集。不支持32bit。常常简称为ARM64
 > g++ -v
 
 wsl和SWRD上获得的信息：  
-> Target: x86_64-linux-gnu
+**`Target: x86_64-linux-gnu`**  
 
 windows上获得的信息：  
-> Target: x86_64-w64-mingw32
+**`Target: x86_64-w64-mingw32`**  
 
 ### 如何查看一个binary是什么架构？
 (在Ubuntu系统下)  
@@ -100,6 +123,13 @@ windows上获得的信息：
 **`1、安装aarch64版gcc(g++)`**  
 > sudo apt install gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 
+或
+> sudo apt-get install gcc-aarch64-linux-gnu  
+> sudo apt-get install g++-aarch64-linux-gnu  
+
+**`2、把以下增加到CMakeLists.txt里面`**  
+set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc)  
+set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)  
 
 
 ## Credits

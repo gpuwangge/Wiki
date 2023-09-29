@@ -20,9 +20,22 @@ WSL本质上是个虚拟机
 > [password]  
 
 5.更新package：  
-sudo apt update && sudo apt upgrade  
+> sudo apt update && sudo apt upgrade  
+
 (到这一步安装就完成了)  
 (这时候pwd: /home/wangge)  
+
+## Windows如何向WSL传输文件
+如何用文件管理器打开/home/wangge：
+> \\wsl$
+
+或者
+> \\wsl.localhost\Ubuntu\home\wangge
+
+实际存储位置可能在
+> C:\Users\Xiaojun\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc
+
+``在这里建议进入\\wsl$后，右键点击Ubuntu后，选择"Map network drive.."添加快捷方式``
 
 
 

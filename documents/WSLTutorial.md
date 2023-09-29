@@ -99,6 +99,21 @@ WSL Ubuntu自带gcc，但没有g++，使用如下指令安装g++:
 然后make指令可以生成没有任何后缀的可执行文件  
 该可执行文件就是Linux可执行文件，可以在wsl shell里面运行。  
 
+### 如何通过VS Code编辑器运行Linux binary
+将希望运行的binary拷贝到WSL系统文件夹内，比如:
+> Z:\home\wangge\projects  
+
+在windows下打开VS Code, 点击左下角链接WSL  
+打开Terminal，运行binary  
+
+如果遇到Permission denied问题,使用如下方法改变文件权限
+> chmod u=rwx,g=r,o=r filename  
+
+Here, each letter has a meaning:  
+r gives read permissions  
+w gives write permissions  
+x gives execute permissions  
+
 ### gcc和安装的g++是啥架构
 x86_64是什么：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
 AArch64是什么: ARM的64位指令集。不支持32bit。常常简称为ARM64 
@@ -148,18 +163,20 @@ cmake里面加上如下代码：
 > link_libraries(OpenCL::OpenCL)  
 
 ### 如何得知当前系统是否支持OpenGL gpu platform
-在Ubuntu系统下
+在Ubuntu系统下  
 > sudo apt install clinfo  
 > clinfo  
 
-显示如下则表示找不到platform(在WSL和WSL 2中测试结果一样)
+显示如下则表示找不到platform(在WSL和WSL 2中测试结果一样)  
 **`Number of platforms`**      
 (As far as I know OpenCL is not currently supported on WSL2)  
 
 ## References
 https://learn.microsoft.com/en-us/windows/wsl/install  
 https://jensd.be/1126/linux/cross-compiling-for-arm-or-aarch64-on-debian-or-ubuntu  
-https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/getting_started_linux.md
+https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/getting_started_linux.md  
+https://www.educative.io/answers/how-to-resolve-the-permission-denied-error-in-linux  
+
 
 
 

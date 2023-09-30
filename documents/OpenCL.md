@@ -21,7 +21,7 @@
 - NDRange Size: Global Size (global_id)  
 - Work Group Size: Local Size (local_id) (In GPU, divide evenly; In CPU, always=1)  
 
-|<---NDRange Size Gx--->|  
-[][][][][][][][][][][][][][][][][][][][][]  
+|<---NDRange Size Gx---->|  
+[][][][][][][][][][][][][][][][][][][][]  
 |<--WG Sx--><--WG Sx-->|  
 

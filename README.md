@@ -12,7 +12,7 @@
 
 ## [WSL](https://github.com/gpuwangge/Wiki/blob/main/documents/WSL.md)
 
-
+## [Vulkan Compute Shader](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanComputeShader.md)
 
 
 

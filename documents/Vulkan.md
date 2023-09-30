@@ -1,4 +1,4 @@
-# Vulkan Tutorial
+# Vulkan
 
 ## Compute Shader
 Workgroup: it is a 3d array matrix. one element in this matrix is called workitem  

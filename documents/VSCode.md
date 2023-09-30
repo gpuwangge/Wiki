@@ -1,4 +1,4 @@
-# VS Code Tutorial
+# VS Code
 
 ## VS Code介绍
 VS Code是文本编辑器，所以是不带编译器的，需要下载一个C++编译器，比如MinGW(x86_64-win32-seh)  

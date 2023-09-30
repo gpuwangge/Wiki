@@ -1,10 +1,14 @@
 # Vulkan Compute Shader
 
 ## 基础知识
-Workgroup的定义: 三维数组  
-比如：3x4x6=72个work item，都可以并行执行  
-但能并行多少个，要看硬件情况(通过硬件查询指令)  
-可以往gpu传入不同的workgroup,比如w1,w2,w3。它们是不能并行的。有可能先执行w1,也可能w2或w3。  
+workitem: 基本单元  
+workgroup: 三维数组(一个工作组就是一个方块)，能并行多少个跟硬件有关，可以query找数字  
+比如：3x4x6=72个work item，都可以并行执行(但能并行多少个，要看硬件情况(通过硬件查询指令) )
+workgroup的size就是三个数，叫做workGroupSize，也叫local_size
+
+可以有很多workgroup，叫做工作组集(可以看作由很多方块搭起来的三维方块矩阵，类似魔方)，但workgroup之间不能并行，执行顺序是乱序。  
+可以往gpu传入不同的workgroup,比如w1,w2,w3。它们是不能并行的。有可能先执行w1,也可能w2或w3。 
+这几个数叫numWorkGroups, 也叫groupCount  
 
 ## Device端代码
 以下是Device(GPU)代码里面workgroup维度(size)的接口(这是compute shader专有写法，省略了变量名字)  

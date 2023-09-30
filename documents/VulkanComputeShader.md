@@ -84,11 +84,11 @@ GPU和CPU都有缓存系统，叫做GPUCache和CPUCache。
 3、分配带GPUCache的local memory，并由硬件管理GPUCache。（实现较复杂，目前可能没有厂商实现）  
 ### Vulkan规定的几种内存类型
 在Vulkan里创建内存的时候，需要从以下类型里选择（复选）  
-**`VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT " DeviceLocal"`**  
-**`VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT " HostVisible"`**  
-**`VK_MEMORY_PROPERTY_HOST_COHERENT_BIT " HostCoherent"`**  
-**`VK_MEMORY_PROPERTY_HOST_CACHED_BIT " HostCached")`**  
-**`VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT" LazilyAllocated"`**  
+**`VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT "DeviceLocal"`**  
+**`VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT "HostVisible"`**  
+**`VK_MEMORY_PROPERTY_HOST_COHERENT_BIT "HostCoherent"`**  
+**`VK_MEMORY_PROPERTY_HOST_CACHED_BIT "HostCached"`**  
+**`VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT "LazilyAllocated"`**  
 如果只需要gpu访问，就DeviceLocal。  
 如果需要cpu访问，就HostVisible。  
 如果需要cpu/gpu协同，就用HostCoherent。  

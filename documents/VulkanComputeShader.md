@@ -8,7 +8,19 @@ Workgroup的定义: 三维数组
 
 ## Device端代码
 以下是Device(GPU)代码里面workgroup维度(size)的接口(这是compute shader专有写法，省略了变量名字)  
-> layout (local_size_x = 4, local_size_y = 1, local_size_z = 1) in; 
+> layout (local_size_x = 4, local_size_y = 1, local_size_z = 1) in;
+
+### Computer Shader内建变量
+Compute Shader定义了如下五个常用变量：  
+```glsl
+in uvec3 gl_NumWorkGroups;
+in uvec3 gl_WorkGroupID;
+in uvec3 gl_LocalInvocationID;
+in uvec3 gl_GlobalInvocationID;
+in unit  gl_LocalInvocationIndex;
+```
+
+
 
 ## Host端代码
 以下Host代码定义可读写buffer(storage buffer)  
@@ -81,7 +93,8 @@ GPU和CPU都有缓存系统，叫做GPUCache和CPUCache。
 ### 内存类型的性能
 一般来讲，GPU访问DeviceLocal会比其他类型更快一些。  
 然而，如果使用DeviceLocal内存，CPU无法直接向其写入数据。  
-解决办法是：先建立一块Host可见内存，CPU把数据写入；然后使用command buffer命令GPU自己把数据从Host可见区拷贝到DeviceLocal区。  
+解决办法是：先建立一块Host可见内存，CPU把数据写入；然后使用command buffer命令GPU自己把数据从Host可见区拷贝到DeviceLocal区。(copyBuffer)    
+(使用了command buffer，就要考虑同步问题。如果不用同步的话就要用waitIdle)
 
 ## Host和Device的数据交换
 Host和Device的数据交换的介质是Storage Buffer。这是GPU可读写的一块内存空间。  
@@ -104,6 +117,9 @@ Host和Device的数据交换的介质是Storage Buffer。这是GPU可读写的�
 
 
 ## Reference
-https://www.khronos.org/opengl/wiki/Compute_Shader
-https://www.bilibili.com/video/BV1PD4y1N7N2/?spm_id_from=333.788&vd_source=e9d9bc8892014008f20c4e4027b98036  
+https://www.khronos.org/opengl/wiki/Compute_Shader  
+https://zhuanlan.zhihu.com/p/124251944  
+https://www.bilibili.com/video/BV1yG4y1E7ot/?spm_id_from=333.788&vd_source=e9d9bc8892014008f20c4e4027b98036  
+
+
 

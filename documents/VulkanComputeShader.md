@@ -18,11 +18,11 @@ workgroup的size就是三个数，叫做workGroupSize，也叫local_size
 ### Computer Shader内建变量
 Compute Shader定义了如下五个常用变量：  
 ```glsl
-in uvec3 gl_NumWorkGroups;               //工作组的数量
-in uvec3 gl_WorkGroupID;                 //每个工作组的维度
+in uvec3 gl_NumWorkGroups;               //workgroup的数量，这个值可以在Host Dispatch的时候指定
+in uvec3 gl_WorkGroupID;                 //每个workgroup的维度(workgroup size)，这个值一般在shader的一开始的layout处设定
 in uvec3 gl_LocalInvocationID;           //每个workitem在一个workgroup里的局部ID
 in uvec3 gl_GlobalInvocationID;          //每个workitem的全局ID, 相当于局部ID加上一个Offset
-in unit  gl_LocalInvocationIndex;
+in unit  gl_LocalInvocationIndex;        //其实就是展开成一维的workitem index
 ```
 **`Compute Shder的本质，就是靠workitem的全局ID和局部ID来访问数据`**
 

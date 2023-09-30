@@ -24,7 +24,7 @@ layout (set = 0, binding = 0) buffer Buffer{
 另外，storage buffer是一个uniform，需要创建descripter  
 注意的是，storage buffer跟sampler一样，poolsize type里面都不含uniform关键字， descriptor layout里面也不含uniform关键字  
 
-### Host渲染阶段   
+### Host计算阶段   
 **`1.首先创建command buffer`**  
 **`2.gpu-cpu 同步(Fence)`**  
 **`3.录制命令及Dispach`**  
@@ -47,6 +47,41 @@ dispatch
 
 ## Device内存类型
 在解释Host和Device之间数据交换之前，首先需要了解Device内存类型。
+### 什么是Local Memory
+GPU端显存，位于芯片内部，叫Local memory。Local memory可以导出一部分供CPU访问，叫做Host Visible Local Memory，对于其他部分的Local Memory则不能被CPU访问。  
+### 什么是Host Memory
+CPU端系统内存，这块存储即平常所说内存，叫Host Memory，通常来说Host Memory是能够映射到GPU的虚拟地址空间供GPU访问。
+### 什么是Cache Coherency
+GPU和CPU都有缓存系统，叫做GPUCache和CPUCache。
+有Cache就存在Cache不一致问题（Cache Coherency）。  
+### 解决CPU Cache Coherency的方法
+1、分配不带CPUCache的Uncache host memory，CPU直接操作内存，CPU写后能保证GPU读到最新值；GPU写到Host Memory能保证CPU读到最新值。  
+2、分配带CPUCache的host memory，并由软件管理CPUCache。当CPU写GPU读的时候，GPU需要flush CPUCache的API，保证Cache被刷到内存里；当GPU写CPU读的时候，GPU需要调用Invalidate CPUCache的API，保证CPU读到最新值。  
+3、分配带CPUCache的host memory，并由硬件管理CPUCache。  
+### 解决GPU Cache Coherency的方法
+1、分配不带GPUCache的Uncache local memory, 保证CPU读到最新值。  
+2、分配带GPUCache的local memory，CPU读之前flush GPUCache，CPU写完后Invalidate GPUCache。  
+(所以flush(读之前)和Invalidate(写之后)是对对方cash进行的操作)  
+3、分配带GPUCache的local memory，并由硬件管理GPUCache。（实现较复杂，目前可能没有厂商实现）  
+### Vulkan规定的几种内存类型
+在Vulkan里创建内存的时候，需要从以下类型里选择（复选）  
+**`VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT " DeviceLocal"`**  
+**`VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT " HostVisible"`**  
+**`VK_MEMORY_PROPERTY_HOST_COHERENT_BIT " HostCoherent"`**  
+**`VK_MEMORY_PROPERTY_HOST_CACHED_BIT " HostCached")`**  
+**`VK_MEMORY_PROPERTY_LAZILY_ALLOCATED_BIT" LazilyAllocated"`**  
+如果只需要gpu访问，就DeviceLocal。  
+如果需要cpu访问，就HostVisible。  
+如果需要cpu/gpu协同，就用HostCoherent。  
+总而言之，对于Uniform Buffer或动态Vertex/Index Buffer使用如下组合  
+**`VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT`**  
+对于仅GPU访问，CPU不会读取和写入的情况，比如Color/Depth Attachment，使用如下类型  
+**`VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT`**   
+需要注意的是如果只有 Host Visible 而不指定 Coherent，当 CPU 更改数据时则需要手动调用 vkFlushMappedMemoryRanges 函数将写入的数据 Flush 到设备使设备可见，当 GPU完成后需要手动调用 vkInvalidateMappedMemoryRanges 使设备写入的数据使主机可见。这个标志对数据同步的可见性和可用性没有关系，即使指定了此标志，依然需要在同步时管理数据的可用性和可见性。另外，启用 Coherent 标志也就意味着数据是写合并的，这时指定 VK_MEMORY_PROPERTY_HOST_CACHED_BIT 可能会降低性能。  
+### 内存类型的性能
+一般来讲，GPU访问DeviceLocal会比其他类型更快一些。  
+然而，如果使用DeviceLocal内存，CPU无法直接向其写入数据。  
+解决办法是：先建立一块Host可见内存，CPU把数据写入；然后使用command buffer命令GPU自己把数据从Host可见区拷贝到DeviceLocal区。  
 
 ## Host和Device的数据交换
 Host和Device的数据交换的介质是Storage Buffer。这是GPU可读写的一块内存空间。  

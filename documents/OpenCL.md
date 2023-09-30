@@ -53,3 +53,22 @@
 **`4 Execution`**  
 **`5 Tear down(release memory)`**  
 
+
+## 对比OpenCL和CUDA
+- 从很多方面来看，CUDA和OpenCL的关系都和DirectX与OpenGL的关系很相像。如同DirectX和OpenGL一样，CUDA和OpenCL中，前者是配备完整工具包、针对单一供应商(NVIDIA)的成熟的开发平台，后者是一个开放的标准。
+- 虽然两者抱着相同的目标：通用并行计算。但是CUDA仅仅能够在NVIDIA的GPU硬件上运行，而OpenCL的目标是面向任何一种Massively Parallel Processor，期望能够对不同种类的硬件给出一个相同的编程模型。
+
+## 对比OpenCL和Computer Shader
+- OpenGL Compute Shader和OpenCL都是用于GPGPU计算（通用GPU计算）的API。它们都允许开发者利用GPU进行高性能计算。
+- Compute Shader提供了在OpenGL/Vulkan中使用的通用计算方法。
+- OpenCL本身就是直接用，不需要其他图形API。
+- 总体来说，如果您需要在GPU上进行相对简单的计算，而且需要将计算结果直接渲染到屏幕上，那么使用OpenGL Compute Shader是不错的选择。如果您需要处理更加通用的计算任务，且需要在多个异构计算设备上运行，那么使用OpenCL会更加适合。但是，具体选择哪个API还需要根据具体应用场景来决定。
+
+## 结论
+- 桌面GPU计算：CUDA （仅N卡可用）
+- 桌面或移动GPU计算: OpenCL
+- 桌面或移动GPU计算、图形: OpenGL/Vulkan (Compute Shader)
+
+
+
+

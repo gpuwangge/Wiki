@@ -1,4 +1,4 @@
-# WSL Tutorial
+# WSL
 Windows从Windows 10开始引入了Windows Subsystem for Linux(WSL)  
 WSL本质上是个虚拟机  
 

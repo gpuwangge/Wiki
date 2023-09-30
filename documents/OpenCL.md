@@ -14,3 +14,14 @@
 - Compute devices: CPU, GPU; Device Group  
 - Memory objects: Arrays(same as in C, has pointer, r/w on CPU are cached, r/w on GPU are usually not), Images(2D and 3D, elements are not accessed via pointers, data read use texture cache)  
 - Executable objects: Compute kernel (a data-parallel function that is executed by the compute object, CPU or GPU), Compute program(A group of compute kernels and functions)  
+
+## OpenGL基本概念
+- work-item: a unit of work (等价于CUDA thread)  
+- work-group: a grouped work items (等价于CUDA thread block)  
+- NDRange Size: Global Size (global_id)  
+- Work Group Size: Local Size (local_id) (In GPU, divide evenly; In CPU, always=1)  
+
+|<---NDRange Size Gx--->|  
+[][][][][][][][][][][][][][][][][][][][][]  
+|<--WG Sx--><--WG Sx-->|  
+

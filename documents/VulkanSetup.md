@@ -1,4 +1,4 @@
-# Vulkan Setup Tutorial
+# Vulkan Setup
 
 ## Vulkan SDK 安装
 Vulkan SDK下载地址：  

@@ -1,16 +1,16 @@
 # WIKI
 
-## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMakeTutorial.md)
+## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMake.md)
 
-## [GitHub](https://github.com/gpuwangge/Wiki/blob/main/documents/GitHubTutorial.md)
+## [GitHub](https://github.com/gpuwangge/Wiki/blob/main/documents/GitHub.md)
 
-## [VS Code](https://github.com/gpuwangge/Wiki/blob/main/documents/VSCodeTutorial.md)
+## [VS Code](https://github.com/gpuwangge/Wiki/blob/main/documents/VSCode.md)
 
-## [Vulkan Setup](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanSetupTutorial.md)
+## [Vulkan Setup](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanSetup.md)
 
-## [Vulkan](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanTutorial.md)
+## [Vulkan](https://github.com/gpuwangge/Wiki/blob/main/documents/Vulkan.md)
 
-## [WSL](https://github.com/gpuwangge/Wiki/blob/main/documents/WSLTutorial.md)
+## [WSL](https://github.com/gpuwangge/Wiki/blob/main/documents/WSL.md)
 
 
 

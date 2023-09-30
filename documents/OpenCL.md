@@ -25,3 +25,17 @@
 [][][][][][][][][][][][][][][][][][][][]  
 |<--WG Sx--><--WG Sx-->|  
 
+- GPU each instance of a kernel executing(work-item) is run as its own thread
+- GPU can host thousands of threads
+- Threads on GPU are extremely lightweight and are managed in hardware
+
+
+## OpenGL Address Spaces
+- 一个Compute Unit(就是一个work-group)里面有很多Thread。
+- __private (CUDA local): Private Memory在Compute Unit里面，速度最快。每个thread有单独的private memory
+- __local (CUDA shared): Local Memory 离 Compute Unit比较近，速度较快。同一个work-group的thread共享local memory。
+- __constant (CUDA constant): 是个global cache, texture cache等，速度稍快
+- __global (CUDA global): Compute Device Memory 通常说的内存就是指这个，速度中等
+
+
+

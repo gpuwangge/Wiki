@@ -16,6 +16,7 @@
 
 ## [OpenCL](https://github.com/gpuwangge/Wiki/blob/main/documents/OpenCL.md)  
 
+## [Tensorflow Lite](https://github.com/gpuwangge/Wiki/blob/main/documents/TensorflowLite.md)  
 
 
 

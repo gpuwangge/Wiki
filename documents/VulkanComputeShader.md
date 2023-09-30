@@ -1,7 +1,7 @@
 # Vulkan Compute Shader
 
 ## 基础知识
-workitem: 基本单元  
+workitem: Compute Shader的基本并行计算单元  
 workgroup: 三维数组(一个工作组就是一个方块)，能并行多少个跟硬件有关，可以query找数字  
 比如：3x4x6=72个work item，都可以并行执行(但能并行多少个，要看硬件情况(通过硬件查询指令) )
 workgroup的size就是三个数，叫做workGroupSize，也叫local_size
@@ -9,6 +9,7 @@ workgroup的size就是三个数，叫做workGroupSize，也叫local_size
 可以有很多workgroup，叫做工作组集(可以看作由很多方块搭起来的三维方块矩阵，类似魔方)，但workgroup之间不能并行，执行顺序是乱序。  
 可以往gpu传入不同的workgroup,比如w1,w2,w3。它们是不能并行的。有可能先执行w1,也可能w2或w3。 
 这几个数叫numWorkGroups, 也叫groupCount  
+**`为什么要引入workgroup的概念，因为只有同一个workgroup里的workitem是保证并行的`**  
 
 ## Device端代码
 以下是Device(GPU)代码里面workgroup维度(size)的接口(这是compute shader专有写法，省略了变量名字)  
@@ -17,12 +18,14 @@ workgroup的size就是三个数，叫做workGroupSize，也叫local_size
 ### Computer Shader内建变量
 Compute Shader定义了如下五个常用变量：  
 ```glsl
-in uvec3 gl_NumWorkGroups;
-in uvec3 gl_WorkGroupID;
-in uvec3 gl_LocalInvocationID;
-in uvec3 gl_GlobalInvocationID;
+in uvec3 gl_NumWorkGroups;               //工作组的数量
+in uvec3 gl_WorkGroupID;                 //每个工作组的维度
+in uvec3 gl_LocalInvocationID;           //每个workitem在一个workgroup里的局部ID
+in uvec3 gl_GlobalInvocationID;          //每个workitem的全局ID, 相当于局部ID加上一个Offset
 in unit  gl_LocalInvocationIndex;
 ```
+**`Compute Shder的本质，就是靠workitem的全局ID和局部ID来访问数据`**
+
 
 
 

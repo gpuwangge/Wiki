@@ -32,21 +32,27 @@ When installing, add to PATH
 python -V //查看python版本  
 其他版本比如3.11.4也行  
 **`2. Follow this page to install dependencies:`**  
-https://www.tensorflow.org/install/source_windows  
-pip3 install -U six numpy wheel packaging  
+> https://www.tensorflow.org/install/source_windows  
+
+> pip3 install -U six numpy wheel packaging  
+
 有两个Warning可以忽略  
-pip3 install -U keras_preprocessing --no-deps  
+> pip3 install -U keras_preprocessing --no-deps  
+
 **`3. Install Bazel`**  
 這個tool是不用安裝的，只需要add this to PATH  
 選擇Bazel版本：5.3.0  
 **`4. Install MSYS2`**  
-https://www.msys2.org/  
+> https://www.msys2.org/  
+
 選擇了使用最新的msys2-x86_64-20230718.exe  
 這次需要點擊安裝了  
 add bin folder to PATH:   
-E:\TensorflowLiteWindowsBuildTools\msys64\usr\bin  
+> E:\TensorflowLiteWindowsBuildTools\msys64\usr\bin  
+
 then, in cmd prompt, run(在任意位置，一開始選Y):  
-pacman -S git patch unzip  
+> pacman -S git patch unzip  
+
 **`5. Install Visual C++ Build Tools 2019`**  
 需要VS2019 Compiler  
 可以安裝Visual Studio 2019 Community Edition, 注意勾選MSVC compiler  
@@ -58,7 +64,8 @@ TensorFlow 2.12.0，下面選擇Assets，Source code (zip)
 解壓縮  
 **`7. Configure`**  
 進入解壓縮後的tensorflow文件夾，打開cmd  
-python .\configure.py  
+> python .\configure.py  
+
 Set Python location(直接點擊回車，他就會顯示Found possible Python library paths)  
 ROCm support: N  
 CUDA support: N(不支持了，現在沒這個問題了。。。)  
@@ -66,7 +73,8 @@ arch:AVX: default
 Eigen strong inline: Y  
 Android: N  
 **`8. Bazel cmd`**  
-bazel build -c opt //tensorflow/lite:tensorflowlite  
+> bazel build -c opt //tensorflow/lite:tensorflowlite  
+
 result is in bazel-bin/tensorflow/lite directory  
 tensorflowlite.dll  
 tensorflowlite.dll.if.lib  

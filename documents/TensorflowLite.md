@@ -84,11 +84,14 @@ tensorflowlite.dll.if.lib
 (dbg: build with debugging enabled (-g), so that you can use gdb (or another debugger))  
 (opt: means build with optimization enabled and with assert() calls disabled (-O2 -DNDEBUG).)  
 
-
+## 如何验证编译出来的dll/lib可用
+参考这个repo:
+> https://github.com/gpuwangge/TFLiteCheck  
 
 ## Reference
 https://www.tensorflow.org/install/source_windows  
 https://www.youtube.com/watch?v=1IhMISYvZG0  
+github.com/karthickai/tflite
 
 
 

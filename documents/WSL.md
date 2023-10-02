@@ -52,7 +52,16 @@ windows也可以修改/home/wangge下面的文件
 > wsl --list --verbose  
 
 或  
+> wsl -l -v
+
+### 如何查看wsl默认安装设置
 > wsl --status  
+
+举例:
+```
+Default Distribution: Ubuntu
+Default Version: 2
+```
 
 ### 如何查看Ubuntu版本
 wsl或ubuntu内  

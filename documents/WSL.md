@@ -161,7 +161,7 @@ set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)
 源文件中加入如下代码：  
 > #include <CL/opencl.hpp>
 
-**`5.解决找不到OpenCL lib的问题`**
+**`5.解决找不到OpenCL lib的问题`**  
 cmake里面加上如下代码：  
 > find_package(OpenCL REQUIRED)  
 > link_libraries(OpenCL::OpenCL)  

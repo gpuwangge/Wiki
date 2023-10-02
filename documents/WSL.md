@@ -78,6 +78,9 @@ Codename:       jammy
 或
 > cat /etc/os-release
 
+### WSL升级
+首先要处于Admin Group
+> wsl --upgrade  
 
 ## 如何在WSL里编译Linux binary
 以下指令可以在shell里打开vs code  

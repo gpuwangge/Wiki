@@ -121,7 +121,7 @@ program这一项设定要debug的binary
 settings.json修改了之后，这个也会更新。  
 如果cpp代码是c++17之后，需要手动把这个信息添加进这个文件。    
 
-### IntelliSense
+#### IntelliSense
 其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
 但是vscode的IntelliSense可以自动发现一些错误。以下是设置IntelliSense的方法。  
 Ctrl+Shift+P 跳出设置command prompt，选择C/C++: Edit Configuration(JSON)，这时候会生成c_cpp_properties.json。

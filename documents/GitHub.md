@@ -16,6 +16,12 @@ GitHub有三个状态区
 > git add -A
 
 (這一步完成後，全部文件轉入Staged Changes區)  
+可以用如下命令查看有哪些文件被加入了Staged Changes区
+> git status
+
+如果返回了，可以用如下命令清空Staged Changes区
+> git reset
+
 **`4.Commit所有文件`**    
 > git commit -m "first commit"
 

@@ -44,6 +44,8 @@ GitHub有三个状态区
 (左侧的sync按钮，其实就是sync = pull & push)  
 (pull的时候会产生conflict)   
 (如果上傳文件大於50mb，是不推薦的。目前來看69.59 MB的文件還是能成功上傳。只是過程中有個warning)  
+(被要求github.com的Username和Password怎么办)  
+
 
 ### 从clone开始(使用已存在的Remote Repo的情況)
 登录GitHub账号，并建立一个repo，或选择一个repo。总之，准备好url。  

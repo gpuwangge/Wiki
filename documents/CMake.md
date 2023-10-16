@@ -259,7 +259,9 @@ launch.json解析：
 "request": "attach"     会提示附着在一个已经运行中的program上  
 关于VSCode的Debug/Release版本问题(尚未验证)：编译的时候的参数, -g是debug模式，-O2是release模式。所以VSCode默认是开debug模式的。  
 
-
+## CMake参数
+以下参数用于并行编译，一般用在服务器上发挥多核性能优势。该参数不需要把参数写死  
+> make -j  
 
 
 

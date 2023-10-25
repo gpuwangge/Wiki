@@ -5,7 +5,7 @@ Architecture，架构，也俗称平台。比如arm架构，也叫arm平台。
 首先，在Linux下要获得当前系统的构架信息，可以使用如下命令：  
 > uname -m
 
-结果可能是如下值
+结果可能是如下值  
 x86_64  (32 and 64 bit)  
 aarch64 (64 bit ARM)    
 armv71 (32 bit ARM的一种)   

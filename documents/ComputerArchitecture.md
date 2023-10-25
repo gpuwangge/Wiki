@@ -6,7 +6,7 @@ Architecture，架构，也俗称平台。比如arm架构，也叫arm平台。
 > uname -m
 
 结果可能是如下值
-x86_64  (64 bit)  
+x86_64  (32 and 64 bit)  
 aarch64 (64 bit ARM)    
 armv71 (32 bit ARM的一种)   
 
@@ -43,13 +43,13 @@ gcc-arm-linux-gnu
 
 
 
-## 64bit ARM(aarch64)
+## 64bit ARM(aarch64, arm64)
 若要为此系统编译，需要的编译器通常有如下命名：  
 gcc-aarch64-linux-gnu  
 
 
 ## x86_64
-x86一开始是32bit，后来扩展成x86_64就是64bit了。  
+x86一开始是32bit，后来扩展成x86_64就是64bit了。因此x86_64也是兼容32bit的。  
 若要为此系统编译，需要的编译器通常有如下命名：  
 gcc  
 

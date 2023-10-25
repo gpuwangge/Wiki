@@ -18,6 +18,8 @@
 
 ## [Tensorflow Lite](https://github.com/gpuwangge/Wiki/blob/main/documents/TensorflowLite.md)  
 
+## [Computer Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArchitecture.md)  
+
 
 
 

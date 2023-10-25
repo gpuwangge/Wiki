@@ -14,15 +14,15 @@ armv71 (32 bit ARM的一种)
 
 
 ## 架构和指令集(Instruction Set Architecture, ISA)的关系
-程序被编译成CPU可识别代码的过程中，需要按照指令集ISA规范
-ISA分为两种：
+程序被编译成CPU可识别代码的过程中，需要按照指令集ISA规范  
+ISA分为两种：  
 CISC: Complex Instruction Set Computer, x86_64架构使用CISC指令集。专利主要在Intel/AMD手上，CISC指令集需要Intel/AMD其商业授权。  
-RISC: Reduced Instruction Set Computer, arm架构使用RISC指令集。专利主要在ARM手上，RISC指令集需要ARM其商业授权。这种指令集的特点是每一条指令都足够简单，并且指令间互相没有功能重合。
+RISC: Reduced Instruction Set Computer, arm架构使用RISC指令集。专利主要在ARM手上，RISC指令集需要ARM其商业授权。这种指令集的特点是每一条指令都足够简单，并且指令间互相没有功能重合。  
 
-Intel发家史：推出x86指令集，跟微软一起拿下PC市场
-ARM发家史：退出ARM指令集，灵活授权，跟德州仪器杀入手机功能机市场，转Android市场
-苹果的选择：Intel没有答应苹果的定制要求，所以苹果选择了ARM指令集。
-因此，ARM的软件是分裂成Android和Apple两部分的
+Intel发家史：推出x86指令集，跟微软一起拿下PC市场  
+ARM发家史：退出ARM指令集，灵活授权，跟德州仪器杀入手机功能机市场，转Android市场  
+苹果的选择：Intel没有答应苹果的定制要求，所以苹果选择了ARM指令集。  
+因此，ARM的软件是分裂成Android和Apple两部分的  
 
 另外，新晋ISA：RISC-V，是开源授权指令集。不像商业授权，RISC-V是可以免费使用的。RISC-V发源于UC Berkeley。发展路线跟ARM相似，都是从低端向高端发展。RISC-V的弱点是无法维持稳定的公版，导致软件和编译器兼容性不稳固。RISC-V的标准现在由RISC-V国际基金会这个组织来管理。虽说RISC-V的RISC-V授权是免费的，但如果使用其衍生品(比如阿里平头哥的设计)，还是要付费的。  
 

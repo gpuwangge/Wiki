@@ -1,4 +1,4 @@
-# Compute Architecture
+# Computer Architecture
 
 Architecture，架构，也俗称平台。比如arm架构，也叫arm平台。  
 

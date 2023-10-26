@@ -35,20 +35,34 @@ ARM发家史：退出ARM指令集，灵活授权，跟德州仪器杀入手机�
 arm架构上也可以运行Windows或Linux操作系统  
 但从市场占有率上看，大部分Windows系统（家用电脑）都运行在x86架构上；大部分嵌入式Linux系统（移动设备，比如android）都运行在arm架构上；大部分服务器Linux都运行在x86架构上。这是历史的原因造成的。  
 
+### Andoird操作系统是不是就是Linux?Android是否使用arm架构？
+首先，linux系统(发行版)和linux内核(kernel)是不同的概念。linux发行版包含Linux内核以及一系列系统工具软件。  
+linux系统(发行版)举例：Debian, Ubuntu, Mint, RedHat...  
+通常，如果不考虑上下文，linux是指linux系统(发行版)。但是有时候也指内核，因为linux内核刚好也叫linux。具体语义要看上下文而定。  
+Android是一个基于linux内核的操作系统。广义上也算是linux系统(发行版) 。Android的特点是linux内核+ART(Android Run Time)，android的app都是运行在ART上面的。换句话讲，非android的linux发行版，只要装了ART，就可以作为Android模拟器使用，运行android app。  
+大多数android系统采用arm架构
+
+### XBox和Playstation采用的是什么系统和架构？
+XBox使用Windos NT内核   
+Playstation采用FreeBSD内核  
+以上都是采用x86_64架构的  
+任天堂的主机switch则采用FreeBSD内核和arm架构  
 
 
-## 32bit ARM(arm, armv6, armv7)
+
+## 架构和编译器
+若为不同架构编译程序，需要不同的编译器，编译器的名字通常有约定成俗的规则
+
+
+### 32bit ARM(arm, armv6, armv7)
 若要为此系统编译，需要的编译器通常有如下命名：  
 gcc-arm-linux-gnu   
 
-
-
-## 64bit ARM(aarch64, arm64)
+### 64bit ARM(aarch64, arm64)
 若要为此系统编译，需要的编译器通常有如下命名：  
 gcc-aarch64-linux-gnu  
 
-
-## x86_64
+### x86_64
 x86一开始是32bit，后来扩展成x86_64就是64bit了。因此x86_64也是兼容32bit的。  
 若要为此系统编译，需要的编译器通常有如下命名：  
 gcc  

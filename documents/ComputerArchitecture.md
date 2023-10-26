@@ -51,7 +51,12 @@ Playstation采用FreeBSD内核
 
 
 ## 架构和编译器
-若为不同架构编译程序，需要不同的编译器，编译器的名字通常有约定成俗的规则
+若为不同架构编译程序，需要不同的编译器，编译器的名字通常有约定成俗的规则，即编译器命名中应该包含如下组件：  
+arch: 架构  
+core: 使用哪个CPU Core，没有特殊指定也可以不填  
+kernel: 这里就是指才做系统，比如linux  
+system: 规范，比如gnu, gnueabi...  
+language: 编译语言，比如gcc, g++  
 
 
 ### 32bit ARM(arm, armv6, armv7)

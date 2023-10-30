@@ -150,7 +150,9 @@ windows上获得的信息：
 (会打印出elf信息)  
 
 ### 如何编译出AArch64架构的binary
-需要用Cross Compile技术:  
+需要用Cross Compile技术  
+交叉编译，可以理解为在当前编译平台下，编译出来的的程序能运行在体系结构不同的另一种目标平台上，但是编译平台本身却不能运行该程序。   
+交叉编译工具链，是为了编译跨平台体系结构的程序代码而形成的由多个子工具构成的一套完整的工具集。  
 **`1、安装aarch64版gcc(g++)`**  
 > sudo apt install gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 

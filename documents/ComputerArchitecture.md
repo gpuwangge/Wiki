@@ -56,12 +56,12 @@ Playstation采用FreeBSD内核
 A1 ~ A2: ARMv6  
 A3 ~ A5: ARMv7  
 A6: ARMv7s (2012)  
-A7 ~ A9: ARMv8.0-A (2013~2015)  
+A7 ~ A9: ARMv8.0-A (2013 ~ 2015)  
 A10: ARMv8.1-A (2016)  
 A11: ARMv8.2-A (2017)  
 A12: ARMv8.3-A (2018)  
 A13: ARMv8.4-A (2019)  
-A14 ~ A15: ARMv8.6-A (2020~2021)  
+A14 ~ A15: ARMv8.6-A (2020 ~ 2021)  
 A16: ? (2022) (iPhone 14)  
 
 ### MTK处理器架构

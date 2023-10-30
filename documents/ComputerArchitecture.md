@@ -10,7 +10,7 @@ x86_64  (32 and 64 bit)
 aarch64 (64 bit ARM)    
 armv71 (32 bit ARM的一种)   
 
-当编译完成后，在linux系统下也可以用file命令查看编译的可执行文件匹配哪一个架构  
+当编译完成后，在linux系统下也可以用file命令查看编译的可执行文件（或lib）匹配哪一个架构  
 
 
 ## 架构和指令集(Instruction Set Architecture, ISA)的关系
@@ -25,8 +25,6 @@ ARM发家史：退出ARM指令集，灵活授权，跟德州仪器杀入手机�
 因此，ARM的软件是分裂成Android和Apple两部分的  
 
 另外，新晋ISA：RISC-V，是开源授权指令集。不像商业授权，RISC-V是可以免费使用的。RISC-V发源于UC Berkeley。发展路线跟ARM相似，都是从低端向高端发展。RISC-V的弱点是无法维持稳定的公版，导致软件和编译器兼容性不稳固。RISC-V的标准现在由RISC-V国际基金会这个组织来管理。虽说RISC-V的RISC-V授权是免费的，但如果使用其衍生品(比如阿里平头哥的设计)，还是要付费的。  
-
-
 
 
 ## 架构和操作系统的关系
@@ -48,6 +46,28 @@ Playstation采用FreeBSD内核
 以上都是采用x86_64架构的  
 任天堂的主机switch则采用FreeBSD内核和arm架构  
 
+
+## ARM架构
+早期ARM架构ARMv7支持32位空间和32位运算，指令定长32位  
+2011年，ARM发布了ARMv8-A架构添加了对64位空间和64位算术运算支持。ARMv8有两种执行模式(execution mode): AArch64和AArch32。具体处理器包括Cortex-A35, Cortex-A50系列, Cortex-A72, Cortex-A73  
+2021年，ARM发布了ARMv9。  
+
+### Apple处理器架构
+A1~A2: ARMv6  
+A3~A5: ARMv7  
+A6: ARMv7s (2012)  
+A7~A9: ARMv8.0-A (2013~2015)  
+A10: ARMv8.1-A (2016)  
+A11: ARMv8.2-A (2017)  
+A12: ARMv8.3-A (2018)  
+A13: ARMv8.4-A (2019)  
+A14~A15: ARMv8.6-A (2020~2021)  
+A16: ? (2022) (iPhone 14)  
+
+### MTK处理器架构
+Dimensity系列早期均采用ARMv8.2-A  
+Dimensity 7200 (MT6886): ARMv9-A (2023)  
+Dimensity 9000系列: ARMv9-A (2021~2023)  
 
 
 ## 架构和编译器

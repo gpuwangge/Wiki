@@ -53,15 +53,15 @@ Playstation采用FreeBSD内核
 2021年，ARM发布了ARMv9。  
 
 ### Apple处理器架构
-A1~A2: ARMv6  
-A3~A5: ARMv7  
+A1 ~ A2: ARMv6  
+A3 ~ A5: ARMv7  
 A6: ARMv7s (2012)  
-A7~A9: ARMv8.0-A (2013~2015)  
+A7 ~ A9: ARMv8.0-A (2013~2015)  
 A10: ARMv8.1-A (2016)  
 A11: ARMv8.2-A (2017)  
 A12: ARMv8.3-A (2018)  
 A13: ARMv8.4-A (2019)  
-A14~A15: ARMv8.6-A (2020~2021)  
+A14 ~ A15: ARMv8.6-A (2020~2021)  
 A16: ? (2022) (iPhone 14)  
 
 ### MTK处理器架构
@@ -69,6 +69,8 @@ Dimensity系列早期均采用ARMv8.2-A
 Dimensity 7200 (MT6886): ARMv9-A (2023)  
 Dimensity 9000系列: ARMv9-A (2021~2023)  
 
+### Qualcomm处理器架构
+采用ARMv9-A的处理器包括：Qualcomm Snapdragon 7 Gen 1, 7+ Gen 2, 8(+)Gen 1, 8 Gen2等  
 
 ## 架构和编译器
 若为不同架构编译程序，需要不同的编译器，编译器的名字通常有约定成俗的规则，即编译器命名中应该包含如下组件：  

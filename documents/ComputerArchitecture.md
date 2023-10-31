@@ -110,7 +110,7 @@ arm-linux-gnueabihf-gcc
 
 
 #### Codesourcery
-Codesourcery是2005年成立的公司。工具链同样免费。其代表编译器如下：  
+Codesourcery是2005年成立的公司。已被Mentor收购，所以有的资料也称Mentor。其工具链同样免费，代表编译器如下：  
 arm-none-linux-gnueabi-gcc  
 同上，架构arm32位linux系统，glib+eabi, c程序  
 none这里的意思是没有vendor(工具链提供商，比如Cortex之类的)  

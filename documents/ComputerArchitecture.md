@@ -81,6 +81,7 @@ gcc
 
 ### 交叉编译
 如果要使x86_64架构下编译的二进制文件运行在arm架构下，则意味它不能在原本的架构下运行。  
+值得提出的是，如果目标平台是64位的，主机必须也是64位才行。  
 不仅如此，编译器也要选择特殊版本才行。  
 通常的交叉编译器工具商简单罗列如下  
 
@@ -96,28 +97,32 @@ eabi: embedded abi，新标准的abi，效率比旧版的高
 除此之外，库函数规范名还包含hf后缀，意思是hard float，这种情况支持更快的浮点数计算，但是需要arm硬件有fpu才行    
 
 若要安装该编译器，除了在Linaro官网下载外，还可以在Ubuntu下使用deb包管理器安装：  
-> apt-get install g++-aarch64-linux-gnu  
+> apt-get install g++-aarch64-linux-gnu
+
+(apt-get命令是一条linux命令，适用于deb包管理式的操作系统(比如Ubuntu)，主要用于自动从互联网的软件仓库中搜索、安装、升级、写在软件或操作系统)
+如果想看在软件仓库中有哪些aarch64编译器，可以用如下命令
+> apt-cache search aarch64  
 
 其它的Linaro编译器举例如下：  
-arm-linux-gnueabihf-gcc 
+arm-linux-gnueabihf-gcc   
 编译arm32架构linux系统下的c程序，使用新版abi，开启hard float支持  
 
-如果省略
+
 
 #### Codesourcery
 Codesourcery是2005年成立的公司。工具链同样免费。其代表编译器如下：  
 arm-none-linux-gnueabi-gcc  
 同上，架构arm32位linux系统，glib+eabi, c程序  
-none这里的意思是没有vendor(工具链提供商)  
+none这里的意思是没有vendor(工具链提供商，比如Cortex之类的)  
 
-如果连linux都省略了，那就是连操作系统都可以没有
+如果连linux都省略了，那就是连操作系统都可以没有  
 arm-none-eabi-gcc  
 跟操作系统相关的函数都用不了了。这种arm架构称为bare metal arm(裸机arm系统)。它不能编译linux的application，除非你自己提供一些底层函数的实现，比如print()，内存管理等。  
 
 #### ARM
 ARM提供一些收费编译工具，比如  
 armcc  
-
+这个工具跟arm-none-eabi类似，可以编译裸机程序（u-boot, kernel），但不能编译Linux应用程序  
 
 
 

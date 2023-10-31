@@ -99,7 +99,7 @@ eabi: embedded abi，新标准的abi，效率比旧版的高
 若要安装该编译器，除了在Linaro官网下载外，还可以在Ubuntu下使用deb包管理器安装：  
 > apt-get install g++-aarch64-linux-gnu
 
-(apt-get命令是一条linux命令，适用于deb包管理式的操作系统(比如Ubuntu)，主要用于自动从互联网的软件仓库中搜索、安装、升级、写在软件或操作系统)
+(apt-get命令是一条linux命令，适用于deb包管理式的操作系统(比如Ubuntu)，主要用于自动从互联网的软件仓库中搜索、安装、升级软件或操作系统)   
 如果想看在软件仓库中有哪些aarch64编译器，可以用如下命令
 > apt-cache search aarch64  
 

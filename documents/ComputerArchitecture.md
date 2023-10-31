@@ -73,26 +73,62 @@ Dimensity 9000系列: ARMv9-A (2021~2023)
 采用ARMv9-A的处理器包括：Qualcomm Snapdragon 7 Gen 1, 7+ Gen 2, 8(+)Gen 1, 8 Gen2等  
 
 ## 架构和编译器
-若为不同架构编译程序，需要不同的编译器，编译器的名字通常有约定成俗的规则，即编译器命名中应该包含如下组件：  
-arch: 架构  
-core: 使用哪个CPU Core，没有特殊指定也可以不填  
-kernel: 这里就是指才做系统，比如linux  
-system: 规范，比如gnu, gnueabi...  
-language: 编译语言，比如gcc, g++  
-
-
-### 32bit ARM(arm, armv6, armv7)
-若要为此系统编译，需要的编译器通常有如下命名：  
-gcc-arm-linux-gnu   
-
-### 64bit ARM(aarch64, arm64)
-若要为此系统编译，需要的编译器通常有如下命名：  
-gcc-aarch64-linux-gnu  
-
-### x86_64
-x86一开始是32bit，后来扩展成x86_64就是64bit了。因此x86_64也是兼容32bit的。  
-若要为此系统编译，需要的编译器通常有如下命名：  
+若为不同架构编译程序，需要不同的编译器。  
+一般来讲，开发的时候一般是用x86_64架构(无论是Linux或是Windows)，属于正常编译，通常编译器名字都很简洁，比如  
 gcc  
+编译完成的二进制文件在当前系统内可以立刻运行。  
+值得提出的是x86一开始是32bit，后来扩展成x86_64就是64bit了。因此x86_64也是兼容32bit的。   
+
+### 交叉编译
+如果要使x86_64架构下编译的二进制文件运行在arm架构下，则意味它不能在原本的架构下运行。  
+不仅如此，编译器也要选择特殊版本才行。  
+通常的交叉编译器工具商简单罗列如下  
+
+#### Linaro
+Linaro公司是2010年成立额非盈利公司，可免费提供如下交叉编译工具  
+aarch64-linux-gnu-g++  
+此工具能编译出运行在arm64架构linux系统下的c++程序。  
+gnu表示库函数的规范，gnu=glibc+oabi, gnueabi=glibc+eabi  
+glibc: 是GNU发布的libc库(c运行库)，包含linux系统最底层的api  
+abi: application binary interface，嵌入式的二进制接口，是编译链接工具的基础规范，获知说是arm的系统调用方式   
+oabi: old abi，旧标准的abi  
+eabi: embedded abi，新标准的abi，效率比旧版的高  
+除此之外，库函数规范名还包含hf后缀，意思是hard float，这种情况支持更快的浮点数计算，但是需要arm硬件有fpu才行    
+
+若要安装该编译器，除了在Linaro官网下载外，还可以在Ubuntu下使用deb包管理器安装：  
+> apt-get install g++-aarch64-linux-gnu  
+
+其它的Linaro编译器举例如下：  
+arm-linux-gnueabihf-gcc 
+编译arm32架构linux系统下的c程序，使用新版abi，开启hard float支持  
+
+如果省略
+
+#### Codesourcery
+Codesourcery是2005年成立的公司。工具链同样免费。其代表编译器如下：  
+arm-none-linux-gnueabi-gcc  
+同上，架构arm32位linux系统，glib+eabi, c程序  
+none这里的意思是没有vendor(工具链提供商)  
+
+如果连linux都省略了，那就是连操作系统都可以没有
+arm-none-eabi-gcc  
+跟操作系统相关的函数都用不了了。这种arm架构称为bare metal arm(裸机arm系统)。它不能编译linux的application，除非你自己提供一些底层函数的实现，比如print()，内存管理等。  
+
+#### ARM
+ARM提供一些收费编译工具，比如  
+armcc  
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

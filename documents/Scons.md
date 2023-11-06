@@ -10,13 +10,13 @@ CMake: 延续有比较长历史的传统工具链，虽然简化了，但仍旧�
 Scons：放弃传统工具链，直接调用编译器。没有专门语言，直接使用Python。  
 
 ## 安装运行方法(Windows)：
-1.Download SCons-4.5.2  
-2.python setup.py install  
+**`1.Download SCons-4.5.2`**  
+**`2.python setup.py install`**  
 如何验证安装好了：  
 > scons -v  
 > scons -h  
 
-3.写一个helloscons.c程序  
+**`3.写一个helloscons.c程序`**  
 ```
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,13 +25,13 @@ int main(int argc, char* argv[]){
     return 0;
 }
 ```
-4.写一个SConstruct文件  
+**`4.写一个SConstruct文件`**  
 ```
 Program('helloscons.c')
 ```
-5.运行如下程序  
+**`5.运行如下程序`**  
 scons  
-6.生成的结果如下：  
+**`6.生成的结果如下`**  
 .sconsign.dblite  
 helloscons.obj  
 helloscons.exe  

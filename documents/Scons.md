@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
 Program('helloscons.c')
 ```
 5.运行如下程序  
-scons
+scons  
 6.生成的结果如下：  
 .sconsign.dblite  
 helloscons.obj  

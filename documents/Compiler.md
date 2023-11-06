@@ -1,6 +1,6 @@
 # Compiler
 
-## LLVM工具链知识
+## LLVM工具链介绍
 LLVM是一个开源编译器框架，最早由Apple开发。  
 Apple还开开发了Clang，作为编译器的前端(用来编译C/C++/OC)。  
 Clang+LLVM的用途就相当于gcc。似乎在优化上比gcc强一些。  
@@ -32,7 +32,7 @@ llc: 作为LLVM的后端，llc可以把bitcode转换为目标机器(本机器)�
 
 (在macOS里.s就是asm文件)  
 
-### 如何安装LLVM(llc,llvm-dis...)
+## 如何安装LLVM(llc,llvm-dis...)
 进入WSL, 使用如下命令安装：
 > sudo apt install llvm  
 
@@ -75,6 +75,15 @@ llc -mtriple arm64-none-linux-android -o xxx.s xxx.air
 (-mtriple参数指定LLVM target triple， 即arch, vendor and os)  
 
 ### 这里存在的问题
+.air(bitcode)应该是平台无关  
+llc生成的asm是平台有关的。尽管.air是从metal shader来的，但llc生成的instruction set是CPU的，因此不合适。  
+解决办法是使用其他的LLVM backend，比如apple的内部工具，支持Apple GPU instruction的  
+
+
+
+
+
+
 
 
 

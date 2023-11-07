@@ -130,6 +130,30 @@ r gives read permissions
 w gives write permissions  
 x gives execute permissions  
 
+Linux/Unix的文件调用分为三级：依次为Owner(u), Group(g), Other Users(o)，各自有rwx属性：  
+ u   g   o  
+rwx-rwx-rwx  
+只有文件owner和超级用户root可以修改文件或目录的权限  
+
+其他使用方法举例  
+以下指令把文件file.txt设置为所有人可读
+> chmod ugo+r file.txt  
+> chmod a+r file.txt
+
+以下指令将目前目录下的所有文件与子目录皆设为任何人可读取
+> chmod -R a+r *
+
+以下指令将两个文件设置为ug科协，other user不可写  
+> chmod ug+w,o-w file1.txt file2.txt  
+
+以下指令将全部权限设置给ug, other user只给执行权限
+> chmod 777 file.txt
+
+说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x  
+以上指令也等价于以下指令  
+> chmod a=rwx file.txt
+
+
 ### gcc和安装的g++是啥架构
 x86_64：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
 AArch64: ARM的64位指令集。不支持32bit。常常简称为ARM64 

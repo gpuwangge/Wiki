@@ -40,7 +40,8 @@ Mac OS系统的环境变量主要由下面几个文件和文件夹所决定，�
 修改完后使用如下命令查看PATH(需要重启后生效)  
 > echo $PATH  
 
-```.bash_profile
+.bash_profile设置举例
+```
 export PATH=$PATH:/Users/mtk/32132/Downloads/nasm-2.16.01  
 export PATH=$PATH:/Application/CMake.app/Contents/bin  
 ```
@@ -82,5 +83,27 @@ https://developer.apple.com/download/all/
 ### 安装Chevron
 pip3 install chevron   
 
+## XCode Swift使用技巧
+可以建立一个带gui的app，或者控制台一样的项目  
+
+binary位置：  
+Users/userName/Library/Developer/Xcode/DerivedData/项目名字-随机生成的ID/Build/Products/Debug  
+
+在控制台使用open命令可以快速进入这个位置  
+
+如何切换Xcode编译Debug/Release版本：  
+Product/Scheme/Edit Scheme.../Build Configuration  
+
+## Windows如何向MacOS传输大文件
+通过网盘  
+1、windows上右键点击文件夹  
+2、选择give access to  
+3、选择Specific people...  
+4、选择Everyone，按Add，点击share  
+5、等一会儿，会生成一个NB打头的地址，记下来  
+6、macOS上点击Finder  
+7、点击Go->Connect to Server...  
+8、在地址栏中输入smb://刚才copy的地址  
+9、点击connect  
 
 

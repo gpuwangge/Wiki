@@ -106,7 +106,7 @@ Product/Scheme/Edit Scheme.../Build Configuration
 8、在地址栏中输入smb://刚才copy的地址  
 9、点击connect  
 
-## Xcode instruments使用技巧
+## XCode Instruments使用技巧
 在右上方spotlight里面搜索instruments可以打开  
 (instruments似乎是xcode的一个组件)  
 

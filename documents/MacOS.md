@@ -106,4 +106,13 @@ Product/Scheme/Edit Scheme.../Build Configuration
 8、在地址栏中输入smb://刚才copy的地址  
 9、点击connect  
 
+## Xcode instruments使用技巧
+在右上方spotlight里面搜索instruments可以打开  
+(instruments似乎是xcode的一个组件)  
+
+打开instruments软件后，在上方地址栏处，选择要record trace的文件夹和目标文件  
+点击edit，可以按+号添加argument  
+File/Record Trace可以开始执行trace的录制  
+
+
 

@@ -45,6 +45,42 @@ export PATH=$PATH:/Users/mtk/32132/Downloads/nasm-2.16.01
 export PATH=$PATH:/Application/CMake.app/Contents/bin  
 ```
 
+## MacOS安装软件举例
+### NASM
+https://www.nasm.us/  
+点击Stable  
+进入如下页面：  
+https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/macosx/  
+下载  
+https://nasm-2.16.01-macosx.zip/  
+并解压缩，把地址添加进PATH  
+
+这时候运行NASM，会出现如下错误：  
+Cannot Be Opened Because the Developer Cannot be Verified  
+
+解决办法：打开下载目录，按住control点击nasm  
+点击Open  
+这时候nasm会被加入白名单，以后就可以正常访问了  
+
+### Ninja
+https://ninja-build.org/  
+点击download the Ninja binary  
+根据系统选择文件binary下载  
+
+### 安装特定版本的XCode
+根据Geekbench 6的说明，需要XCode 14.2版(默认安装的是14.3)  
+并且，它去找的目录是  
+/Applications/Xcode-14.2.app/  
+（默认的位置是/Applications/Xcode/）  
+
+来到这个页面(需要输入苹果账号密码)  
+https://developer.apple.com/download/all/  
+搜索Xcode 14.2并下载xip文件  
+双击xip文件会自动解压缩，默认名字就是Xcode  
+更名为Xcode-14.2.app，然后拖入Applications文件夹下(control+点击 拖拽)  
+
+### 安装Chevron
+pip3 install chevron   
 
 
 

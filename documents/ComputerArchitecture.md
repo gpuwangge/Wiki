@@ -62,7 +62,8 @@ A11: ARMv8.2-A (2017)
 A12: ARMv8.3-A (2018)  
 A13: ARMv8.4-A (2019)  
 A14 ~ A15: ARMv8.6-A (2020 ~ 2021)  
-A16: ? (2022) (iPhone 14)  
+A16: ARMv8.6-A (September 7, 2022) (iPhone 14 Pro & 14 Pro Max, iPhone 15 & 15 Plus)  
+A17 Pro: AArch64? (September 12, 2023) (iPhone 15 Pro & 15 Pro Max)
 
 ### MTK处理器架构
 Dimensity系列早期均采用ARMv8.2-A  

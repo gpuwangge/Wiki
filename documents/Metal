@@ -1,0 +1,10 @@
+# Metal
+
+Metal是Apple公司为游戏开发者设计的图形API接口。  
+Metal 开发者工具包括 Xcode 中的 Metal 调试器和 Instruments 中的 Metal 系统追踪。  
+Xcode是IDE，它是专属MacOS上运行的开发工具，它不能在windows上运行。(但VS Code可以在MacOS上运行)  
+如果要开发iOS程序，必须使用安装在MacOS上的Xcode。换言之，Xcode不跨平台。  
+但是，可以在Windows虚拟机中安装MacOS，然后运行Xcode，~或使用黑苹果机  
+
+
+

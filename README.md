@@ -30,6 +30,7 @@
 
 ## [MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md) 
 
+## [Metal](https://github.com/gpuwangge/Wiki/blob/main/documents/Metal.md) 
 
 
 

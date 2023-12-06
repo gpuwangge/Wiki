@@ -211,6 +211,34 @@ cmake里面加上如下代码：
 **`Number of platforms`**      
 (As far as I know OpenCL is not currently supported on WSL2)  
 
+
+## Linux常用命令
+用于查看binary的架构  
+> file *  
+
+-l means use a long listing format  
+> ls -l
+
+dd命令 用于打印程序或者库文件所依赖的共享库列表。  
+> ldd *  
+
+查看所有环境变量  
+> env  
+
+在环境变量中寻找含某个关键字的条目  
+> env | grep wangge  
+
+查看执行过的命令  
+> history
+
+显示指定的目录或文件所占用的磁盘空间。  
+> du  
+
+
+
+
+
+
 ## References
 https://learn.microsoft.com/en-us/windows/wsl/install  
 https://jensd.be/1126/linux/cross-compiling-for-arm-or-aarch64-on-debian-or-ubuntu  

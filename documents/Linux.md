@@ -27,6 +27,8 @@ Arch Linux发行版由自由和开源软件组成。稳定性不如Redhat/Debian
 Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜爱。  
 
 
+## Wiki Reference
+https://github.com/gpuwangge/Wiki/blob/main/documents/WSL.md  
 
 
 

@@ -43,4 +43,14 @@ https://www.yimenapp.com/kb-yimen/27018/
 
 总结一下，当没有开发者账号时，可以通过Xcode的Archive和Export功能来打包IPA文件。虽然这种方式有一些限制，但是对于进行个人测试或者企业内部分发应用程序是非常有用的。   
 
+## XCFramework  
+macOS的基础链接库是.a(静态库)或.tbd(动态库)  
+.framework可作为动态库或静态库，需要使用lipo命令合成  
+XCFramework(.xcframework)是为了取代.framework的  
+
+## MoltenVK
+MoltenVK is a layered implementation of Vulkan 1.2 graphics and compute functionality, that is built on Apple's Metal graphics and compute framework on macOS, iOS, tvOS, and visionOS.  
+https://github.com/KhronosGroup/MoltenVK  
+
+
 

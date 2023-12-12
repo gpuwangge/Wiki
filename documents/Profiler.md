@@ -9,5 +9,18 @@ Defined in IEEE 754
 - int16: 16 bits, -32768 ~ 32767  
 - int64: 64 bits, -9223372036854775808 ~ 9223372036854775807
 
+## FLOPS
+FLOPS = floating-point operations per seconds  
+
+kiloFLOPS = 1000  
+megaFLOPS = 1000,000  
+gigaFLOPS = 1000,000,000 (10^9)  
+teraFLOPS = 1000,000,000,000 (10^12)  
+petaFLOPS = 10^15  
+exaFLOPS = 10^18  
+zettaFLOPS = 10^21  
+yottaFLOPS = 10^24  
+
+
 
 

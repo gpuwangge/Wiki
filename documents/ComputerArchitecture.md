@@ -52,7 +52,8 @@ Playstation采用FreeBSD内核
 2011年，ARM发布了ARMv8-A架构添加了对64位空间和64位算术运算支持。ARMv8有两种执行模式(execution mode): AArch64和AArch32。具体处理器包括Cortex-A35, Cortex-A50系列, Cortex-A72, Cortex-A73  
 2021年，ARM发布了ARMv9。  
 
-### Apple处理器架构
+### Apple A处理器架构
+Apple A处理器均采用ARM架构，被用于iPhone, IPad, Apple TV等产品上  
 A1 ~ A2: ARMv6  
 A3 ~ A5: ARMv7  
 A6: ARMv7s (2012)  
@@ -64,6 +65,17 @@ A13: ARMv8.4-A (2019)
 A14 ~ A15: ARMv8.6-A (2020 ~ 2021)  
 A16: ARMv8.6-A (September 7, 2022) (iPhone 14 Pro & 14 Pro Max, iPhone 15 & 15 Plus)  
 A17 Pro: AArch64? (September 12, 2023) (iPhone 15 Pro & 15 Pro Max)
+
+### Apple M处理器架构
+2020年，Apple开展了把使用Intel x86-64处理器的Mac电脑换成ARM64的芯片架构迁移计划。这项计划的动机：一是不再需购买其他公司的昂贵CPU，二是可以在Mac上运行ARM架构的iOS应用程序。三是ARM架构一般功耗更低，有利于研发更加轻薄的Mac笔记本。  
+Mac电脑在1994年前使用摩托罗拉68000架构，1994~2005年间使用PowerPC架构，2005~2020年间使用Intel x86架构。  
+为了在新架构上兼容x86应用程序，Apple使用了动态二进制翻译技术。  
+M1: (2020.11)  
+M1 Pro; M1 Max: (2021.10)  
+M1 Ultra: 应用于Mac Studio (2022.3)  
+M2: 应用于Macbook Air (2022.6)  
+M2 Pro: 应用于Mac Mini (2023.1), 应用于Macbook Air (2023.6)  
+M2 Ultra: 应用于Macbook Pro (2023.6)  
 
 ### MTK处理器架构
 Dimensity系列早期均采用ARMv8.2-A  

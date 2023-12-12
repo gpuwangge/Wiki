@@ -32,5 +32,8 @@
 
 ## [Metal](https://github.com/gpuwangge/Wiki/blob/main/documents/Metal.md) 
 
+## [Profiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Profiler.md) 
+
+
 
 

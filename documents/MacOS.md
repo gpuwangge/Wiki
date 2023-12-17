@@ -130,7 +130,8 @@ Product/Scheme/Edit Scheme.../Build Configuration
 有三种Build For模式：Running, Testing, Profiling  
 - Running is for running your app (on the Mac for Mac OS X, in the simulator or on the device for iOS).  
 - Profiling is for running your app with Instruments (for finding memory leaks, bottlenecks etc.).  
-- Testing is for running unit tests.   
+- Testing is for running unit tests.
+
 默认的三角形键应该是Running模式  
 点击Product->Build For可以选择其他模式  
 

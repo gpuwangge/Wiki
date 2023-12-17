@@ -105,6 +105,12 @@ File/Record Trace可以开始执行trace的录制
 
 ## XCode使用说明  
 
+### iOS开发基本概念  
+(https://developer.apple.com/documentation/xcode/running-your-app-in-simulator-or-on-a-device)  
+- target: 图像是一个靶子。举例：MoltenVK-iOS, MoltenVK-macOS  
+- scheme: A scheme is a collection of project details and settings that tell Xcode how to build and run a product from your project. 举例：如果选择的scheme是iOS app，则Xcode会include iOS simulators and devices as potential run destinations.   
+- destination: 举例：any iOS Simulator Device(arm64, x86_64)  
+
 ### 如何知道XCode生成的binary生成在哪里
 默认的build目录在File -> Project Settings 中有显示  
 

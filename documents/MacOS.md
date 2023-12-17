@@ -95,7 +95,7 @@ pip3 install chevron
 8、在地址栏中输入smb://刚才copy的地址  
 9、点击connect  
 
-## XCode Instruments使用技巧
+## XCode Instruments使用说明
 在右上方spotlight里面搜索instruments可以打开  
 (instruments似乎是xcode的一个组件)  
 
@@ -103,7 +103,7 @@ pip3 install chevron
 点击edit，可以按+号添加argument  
 File/Record Trace可以开始执行trace的录制  
 
-## XCode基本使用说明  
+## XCode使用说明  
 
 ### 如何知道XCode生成的binary生成在哪里
 默认的build目录在File -> Project Settings 中有显示  
@@ -127,7 +127,7 @@ Users/userName/Library/Developer/Xcode/DerivedData/项目名字-随机生成的I
 有以下三种方法： 
 - 在XCode里面点击三角形符号(build and run)  
 - 用Finder打开binary位置的文件夹，鼠标双击运行
-- 在terminal里打开binary位置的文件夹，使用Open命令运行
+- 在terminal里打开binary位置的文件夹，使用Open命令运行  
 (这里会发现编译好的binary并不是一个二进制文件，而是一个后缀为.app的文件夹。使用./并不能运行它)  
 
 ### 如何切换Xcode编译Debug/Release版本  

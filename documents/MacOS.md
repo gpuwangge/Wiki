@@ -135,7 +135,7 @@ Product/Scheme/Edit Scheme.../Build Configuration
 Build .xcframework的时候，如果选择Running，则build release的结果  
 Build .xcframework的时候，如果选择Testing，则build debug的结果  
 
-界面上的三角形按钮写着Run，猜测可能是Running模式  
-界面上的菱形中间有个三角形的按钮写着Test，但是实测可以Testing的项目，使用这个Test按钮也无法build，猜测功能也不尽相同  
+界面上的三角形按钮写着Run，猜测可能是Running模式。实测Run按钮除了编译，还会执行。Build for Running则只会build，不会执行。  
+界面上的菱形中间有个三角形的按钮写着Test，但是实测可以Testing的项目，使用这个Test按钮也无法build，猜测功能也不尽相同。Test应该包含了Build和执行的功能。  
 点击Product->Build For可以选择其他模式  
 

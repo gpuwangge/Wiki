@@ -146,3 +146,16 @@ Build .xcframework的时候，如果选择Testing，则build debug的结果
 界面上的菱形中间有个三角形的按钮写着Test，但是实测可以Testing的项目，使用这个Test按钮也无法build，猜测功能也不尽相同。Test应该包含了Build和执行的功能。  
 点击Product->Build For可以选择其他模式  
 
+### 如何使用xcodebuild命令编译  
+参数(https://fig.io/manual/xcodebuild)：  
+- build: Build the target in the build root (SYMROOT). This is the default build action  
+- quiet: Do not print any output except for warnings and errors  
+- project <NAME>: Build the project NAME  
+- scheme <NAME>: Build the scheme NAME(这个名字可以打开xcodeproject后，从Product->Scheme里面找到)  
+- configuration <NAME>: Use the build configuration NAME for building each target  
+- destination <DESTINATION SPECIFIER>: Use the destination described by DESTINATIONSPECIFIER (a comma-separated set of key=value pairs describing the destination to use)  
+
+举例：  
+> xcodebuild build -quiet -project MoltenVKPackaging.xcodeproj -scheme "MoltenVK Package (macOS only)" -configuration "Debug"  
+
+

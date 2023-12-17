@@ -83,17 +83,6 @@ https://developer.apple.com/download/all/
 ### 安装Chevron
 pip3 install chevron   
 
-## XCode Swift使用技巧
-可以建立一个带gui的app，或者控制台一样的项目  
-
-binary位置：  
-Users/userName/Library/Developer/Xcode/DerivedData/项目名字-随机生成的ID/Build/Products/Debug  
-
-在控制台使用open命令可以快速进入这个位置  
-
-如何切换Xcode编译Debug/Release版本：  
-Product/Scheme/Edit Scheme.../Build Configuration  
-
 ## Windows如何向MacOS传输大文件
 通过网盘  
 1、windows上右键点击文件夹  
@@ -114,5 +103,30 @@ Product/Scheme/Edit Scheme.../Build Configuration
 点击edit，可以按+号添加argument  
 File/Record Trace可以开始执行trace的录制  
 
+## XCode使用技巧  
 
+### 如何知道XCode生成的binary生成在哪里
+默认的build目录在File -> Project Settings 中有显示
+
+在Xcode界面下，点击左上角：  
+Xcode -> Settings... -> Locations  
+可以发现有一个default文件夹，名字是../Xcode/DerivedData  
+点击Advanced，可以发现更多选项。  
+默认选项是Unique。代表对于每一个Project，在DerivedData文件夹下会生成一个独特的名字，一般是Project名字加上一些随机数字和字母  
+
+如何进入这个文件夹：在Finder界面下，点击左上角：  
+Go -> Go to Folder...  
+在这里黏贴地址  
+
+binary位置举例：  
+Users/userName/Library/Developer/Xcode/DerivedData/项目名字-随机生成的ID/Build/Products/Debug  
+
+或者在控制台使用open命令也可以快速进入这个位置  
+
+### 如何切换Xcode编译Debug/Release版本  
+Product/Scheme/Edit Scheme.../Build Configuration  
+
+### XCFramework相关设置
+有三种Build For模式：Running, Testing, Profiling
+解决办法：点击Product->Build For->Testing
 

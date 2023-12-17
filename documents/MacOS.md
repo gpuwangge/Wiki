@@ -103,7 +103,7 @@ pip3 install chevron
 点击edit，可以按+号添加argument  
 File/Record Trace可以开始执行trace的录制  
 
-## XCode使用技巧  
+## XCode基本使用说明  
 
 ### 如何知道XCode生成的binary生成在哪里
 默认的build目录在File -> Project Settings 中有显示  
@@ -122,6 +122,13 @@ binary位置举例：
 Users/userName/Library/Developer/Xcode/DerivedData/项目名字-随机生成的ID/Build/Products/Debug  
 
 或者在控制台使用open命令也可以快速进入这个位置  
+
+### 如何执行XCode编译的binary
+有以下三种方法： 
+- 在XCode里面点击三角形符号(build and run)  
+- 用Finder打开binary位置的文件夹，鼠标双击运行
+- 在terminal里打开binary位置的文件夹，使用Open命令运行
+(这里会发现编译好的binary并不是一个二进制文件，而是一个后缀为.app的文件夹。使用./并不能运行它)  
 
 ### 如何切换Xcode编译Debug/Release版本  
 Product/Scheme/Edit Scheme.../Build Configuration  

@@ -106,7 +106,7 @@ File/Record Trace可以开始执行trace的录制
 ## XCode使用技巧  
 
 ### 如何知道XCode生成的binary生成在哪里
-默认的build目录在File -> Project Settings 中有显示
+默认的build目录在File -> Project Settings 中有显示  
 
 在Xcode界面下，点击左上角：  
 Xcode -> Settings... -> Locations  
@@ -127,6 +127,6 @@ Users/userName/Library/Developer/Xcode/DerivedData/项目名字-随机生成的I
 Product/Scheme/Edit Scheme.../Build Configuration  
 
 ### XCFramework相关设置
-有三种Build For模式：Running, Testing, Profiling
+有三种Build For模式：Running, Testing, Profiling  
 解决办法：点击Product->Build For->Testing
 

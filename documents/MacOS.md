@@ -132,6 +132,7 @@ Product/Scheme/Edit Scheme.../Build Configuration
 - Profiling is for running your app with Instruments (for finding memory leaks, bottlenecks etc.).  
 - Testing is for running unit tests.
 
-默认的三角形键应该是Running模式  
+界面上的三角形按钮写着Run，猜测可能是Running模式  
+界面上的菱形中间有个三角形的按钮写着Test，但是实测可以Testing的项目，使用这个Test按钮也无法build，猜测功能也不尽相同  
 点击Product->Build For可以选择其他模式  
 

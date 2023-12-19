@@ -95,6 +95,10 @@ pip3 install chevron
 8、在地址栏中输入smb://刚才copy的地址  
 9、点击connect  
 
+## MacOS如何截取屏幕为图片  
+shift+command+4  
+select the area of your screen to capture  
+
 ## XCode Instruments使用说明
 在右上方spotlight里面搜索instruments可以打开  
 (instruments似乎是xcode的一个组件)  

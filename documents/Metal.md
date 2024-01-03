@@ -51,8 +51,10 @@ XCFramework(.xcframework)是为了取代.framework的
 ## MoltenVK
 MoltenVK is a layered implementation of Vulkan 1.2 graphics and compute functionality, that is built on Apple's Metal graphics and compute framework on macOS, iOS, tvOS, and visionOS.  
 https://github.com/KhronosGroup/MoltenVK  
-Q: MacOS和iOS是否支持Vulkan? 
-A:   
+Q: MacOS和iOS是否支持Vulkan?   
+A: 原生不支持。在第三方公司Molten的帮助下，可以在Apple Silicon上编译运行Vulkan代码。事实上，在Vulkan Lunar网站上可以下载MacOS的SDK包。  
+安装完成后进入Applications/目录下可以看见一些vkcube可执行程序，如果可以运行，则说明安装成功。  
+vkcube在运行的时候，标题可见"MoltenVK Demo"，说明这些例子是通过MoltenVK实现的。  
 
 ### 先决条件
 - Vulkan Developer Tools For MacOS (https://vulkan.lunarg.com/sdk/home)  

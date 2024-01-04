@@ -83,7 +83,23 @@ https://developer.apple.com/download/all/
 ### 安装Chevron
 pip3 install chevron   
 
-## Windows如何向MacOS传输大文件
+## Finder使用技巧
+### Finder显示完整路径  
+默认状态下，Finder不会像windows那样显示完整路径，这很不方便。  
+可以进入View->Show Path Bar进行显示  
+
+### Finder显示隐藏文件夹
+默认状态Finder不显示隐藏文件夹。  
+同时按下Command+Shift+.可以显示隐藏文件和隐藏文件夹。  
+在Terminal里，隐藏文件夹是默认可见的。  
+在Terminal里用以下指令进入根目录：
+> cd ~   
+> cd ..  
+> cd ..  
+
+在根目录里，terminal可见所有目录(包括usr)，但Finder默认只能看见Applications, Library, System和Users。  
+
+### Windows如何向MacOS传输大文件
 通过网盘  
 1、windows上右键点击文件夹  
 2、选择give access to  

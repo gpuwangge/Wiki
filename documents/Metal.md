@@ -7,7 +7,7 @@ Xcode是IDE，它是专属MacOS上运行的开发工具，它不能在windows上
 但是，可以在Windows虚拟机中安装MacOS，然后运行Xcode，~~或使用黑苹果机~~  
 
 ## Xcode安装
-Xcode安装方式(10+Gb)：
+Xcode安装方式(10+Gb)：  
 1、App Store  
 2、xip文件  
 

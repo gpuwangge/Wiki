@@ -128,6 +128,19 @@ GitHub有三个状态区
 点击Resolve in Merge Editor按钮处理conflict。  
 
 
+## 切换Branch
+Github上clone的项目默认是default branch，如果需要切换其他branch，应当如何操作?  
+首先我们想知道项目一共有多少个branches：
+> git branch -a
+
+该指令列出了所有可能的branch，比如一下格式：  
+remotes/origin/Lesson_0  
+remotes/origin/Lesson2_2
+当前的Branch前面会带有一个*符号  
+切换branch的指令如下：  
+> git checkout -b Lesson_2_2
+
+
 
 ## 其他有用的GitHub指令
 如果commit之後後悔了怎么回退：  

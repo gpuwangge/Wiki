@@ -47,7 +47,7 @@ GitHub有三个状态区
 (被要求github.com的Username和Password怎么办)  
 
 
-### 从clone开始(使用已存在的Remote Repo的情況)
+## 从clone开始(使用已存在的Remote Repo的情況)
 登录GitHub账号，并建立一个repo，或选择一个repo。总之，准备好url。  
 (新建立的remote repo默认有一个main(而不是master)branch)  
 > git clone url
@@ -73,6 +73,15 @@ GitHub有三个状态区
 > git push
 
 (网站上会看到结果)  
+
+## MacOS Terminal的操作方法
+与Windows VS Code类似。先建立网站repo，再打开Terminal, git clone。  
+把文件拷贝入文件夹种，依照网站进行初始设置。  
+之后提交新的修改均可以再terminal内操作：  
+> git add -A  
+> git commit -m "message"  
+> git push  
+
 
 ## 在网站上修改了，或者换了一台机器，如何同步文件呢
 > git pull  

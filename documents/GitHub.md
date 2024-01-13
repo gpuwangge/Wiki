@@ -44,7 +44,21 @@ GitHub有三个状态区
 (左侧的sync按钮，其实就是sync = pull & push)  
 (pull的时候会产生conflict)   
 (如果上傳文件大於50mb，是不推薦的。目前來看69.59 MB的文件還是能成功上傳。只是過程中有個warning)  
-(被要求github.com的Username和Password怎么办)  
+
+
+## 被要求github.com的Username和Password怎么办  
+在push的时候会被要求提供authenticate。这是因为push的时候需要access github的API。  
+首先要提供用户名，这个就是github.com/后面的那个自定义名字。  
+密码并不是网站密码，而是在网站上设置的Token。设置方法如下：  
+1.go to github.com, click user icon  
+2.click Settings  
+3.click Developer settings  
+4.click Personal access tokens  
+5.put something in the Note, Set Expiration, choose scope(repo, workflow, gist, user)  
+6.click Generate token  
+7.save token in some save place  
+8.push again, when asked username to github.com, use gpuwangge  
+9.when asked password to xxx@github.com, paste the token  
 
 
 ## 从clone开始(使用已存在的Remote Repo的情況)

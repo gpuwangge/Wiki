@@ -34,7 +34,7 @@
 
 ## [Profiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Profiler.md) 
 
-## [Profiler](https://github.com/gpuwangge/Wiki/blob/main/documents/HouseRemodel.md)   
+## [House Remodel](https://github.com/gpuwangge/Wiki/blob/main/documents/HouseRemodel.md)   
 
 
 

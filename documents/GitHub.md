@@ -163,6 +163,18 @@ remotes/origin/Lesson2_2
 切换branch的指令如下：  
 > git checkout -b Lesson_2_2
 
+## 子模块(submodule)相关
+如何克隆含有子模块的项目。  
+### 方法1，使用两条git指令  
+> git submodule init  
+> git submodule update
+
+### 方法2，在clone原项目的时候假如recurse参数
+> git clone --recurse-submodules xxx.git
+
+### Reference
+https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97  
+
 
 
 ## 其他有用的GitHub指令

@@ -277,13 +277,13 @@ make原理：代码变成可执行文件的过程叫做编译(compile)；编译�
 > make < targetName >  
 
 如果用msbuild来构建：  
-> msbuild /t:$/<targetName>  
+> msbuild /t:$< targetName >  
 
 如果用xcodebuild来构建：  
-> xcodebuild -target /<targetName>  
+> xcodebuild -target < targetName >  
 
 多种构建方式用起来很麻烦，于是cmake统一成了如下格式：  
-> cmake --build . --target /<targetName>  
+> cmake --build . --target < targetName >  
 
 是不是很方便呢？当然如果确定使用make来编译，直接用make指令就好了。  
 

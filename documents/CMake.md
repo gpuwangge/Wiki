@@ -260,9 +260,32 @@ launch.json解析：
 关于VSCode的Debug/Release版本问题(尚未验证)：编译的时候的参数, -g是debug模式，-O2是release模式。所以VSCode默认是开debug模式的。  
 
 ## CMake参数
+### -j  
 以下参数用于并行编译，一般用在服务器上发挥多核性能优势。该参数不需要把参数写死  
-> make -j  
+> make -j
 
+### --build
+以下两条指令等价：
+> cmake --build .
+
+> make
+
+make原理：代码变成可执行文件的过程叫做编译(compile)；编译的(顺序)安排叫做构建(Build)。make是构建的工具。构建的方法写在makefile里。  
+前面说过，makefile是平台相关的文件，因此makeu也是平台相关的构建方法。  
+那么，有没有平台无关的构建方法呢? cmake提供了--build参数作为跨平台的构建解决方案。  
+举例来说，如果使用make来构建，语句如下：  
+> make <targetName>  
+
+如果用msbuild来构建：  
+> msbuild /t:$<targetName>  
+
+如果用xcodebuild来构建：  
+> xcodebuild -target <targetName>  
+
+多种构建方式用起来很麻烦，于是cmake统一成了如下格式：  
+> cmake --build . --target <targetName>  
+
+是不是很方便呢？当然如果确定使用make来编译，直接用make指令就好了。  
 
 
 

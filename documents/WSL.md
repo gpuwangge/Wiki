@@ -219,6 +219,17 @@ cmake里面加上如下代码：
 -l means use a long listing format  
 > ls -l
 
+Format介绍：  
+第一个字母肯定是-(代表regular file)或d(代表directory)  
+从第二个字母开始，三个为一组，格式是rwx，分别代表read, write and executecd。如果是-表示没有这项权限  
+接下来一个数字表示链接数？  
+接下来的两个word表示owner和owner group  
+接下来表示size(byte)  
+接下来宝石最后修改时间  
+最后表示文档名称。以.开始的是隐藏文件  
+举例：  
+-rw-r--r--.  1 root root   18 Dec 28  2013 .bash_logout  
+
 dd命令 用于打印程序或者库文件所依赖的共享库列表。  
 > ldd *  
 

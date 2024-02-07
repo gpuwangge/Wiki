@@ -246,7 +246,13 @@ dd命令 用于打印程序或者库文件所依赖的共享库列表。
 显示指定的目录或文件所占用的磁盘空间。  
 > du  
 
+查找某个文件夹下名字带有某个字符串的所有文件  
+> find . -maxdepth 1 -name "*string*" -print
 
+(.和-print都是Default参数也可以省略)  
+
+如果想把含有某个字符(":")的结果排除，可以用
+> find . -maxdepth 1 -name "*string*" ! -name "*:*" -print
 
 
 

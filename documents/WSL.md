@@ -212,6 +212,11 @@ cmake里面加上如下代码：
 (As far as I know OpenCL is not currently supported on WSL2)  
 
 
+## Grep
+
+### Reference
+https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  
+
 ## Linux常用命令
 用于查看binary的架构  
 > file *  

@@ -212,7 +212,8 @@ cmake里面加上如下代码：
 (As far as I know OpenCL is not currently supported on WSL2)  
 
 
-## Grep
+## GREP
+GREP = Global Regular Expression Print  
 ```
 $ cat file.txt
 ostechnix

@@ -213,6 +213,31 @@ cmake里面加上如下代码：
 
 
 ## Grep
+```
+$ cat file.txt
+ostechnix
+Ostechnix
+o$technix
+linux
+linus
+unix
+technology
+hello world
+HELLO world
+```
+
+```
+$ grep nix file.txt
+```
+
+output:  
+```
+ostechnix
+Ostechnix
+o$technix
+unix
+```
+
 
 ### Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  

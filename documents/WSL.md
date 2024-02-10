@@ -239,6 +239,35 @@ o$technix
 unix
 ```
 
+GREP is by default case sensitive  
+```
+$ grep os file.txt 
+```
+output:  
+```
+ostechnix
+```
+
+To disable case sensitive:  
+```
+$ grep -i os file.txt 
+```
+
+output:  
+```
+ostechnix
+Ostechnix
+```
+
+```
+$ grep -i 'hello world' file.txt 
+```
+
+output:  
+```
+hello world
+HELLO world
+```
 
 ### Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  

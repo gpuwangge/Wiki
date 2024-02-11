@@ -214,8 +214,10 @@ cmake里面加上如下代码：
 
 ## GREP
 GREP = Global Regular Expression Print  
+> $ cat file.txt
+
+output:  
 ```
-$ cat file.txt
 ostechnix
 Ostechnix
 o$technix

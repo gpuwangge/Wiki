@@ -278,9 +278,9 @@ some special characters or regular expressions in grep.
 ^ - search at the beginning of the line.  
 $ - search at the end of the line.  
 . - Search any character.  
-```
-$ grep tech file.txt
-```
+
+> $ grep tech file.txt
+
 output:  
 ```
 ostechnix

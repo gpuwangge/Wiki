@@ -269,6 +269,66 @@ hello world
 HELLO world
 ```
 
+pipe an output of a command into grep  
+```
+$ cat file.txt | grep os
+```
+output:  
+```
+ostechnix
+```
+
+some special characters or regular expressions in grep.  
+^ - search at the beginning of the line.  
+$ - search at the end of the line.  
+. - Search any character.  
+```
+$ grep tech file.txt
+```
+output:  
+```
+ostechnix
+Ostechnix
+o$technix
+technology
+```
+
+```
+$ grep ^tech file.txt
+```
+output:  
+```
+technology
+```
+
+```
+$ grep x$ file.txt
+```
+output:  
+```
+ostechnix
+Ostechnix
+o$technix
+linux
+unix
+```
+
+```
+$ grep .n file.txt
+```
+output:  
+```
+ostechnix
+Ostechnix
+o$technix
+linux
+linus
+unix
+technology
+```
+
+
+
 ### Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  
 

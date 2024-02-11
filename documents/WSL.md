@@ -229,9 +229,8 @@ hello world
 HELLO world
 ```
 
-```
-$ grep nix file.txt
-```
+> $ grep nix file.txt
+
 
 output:  
 ```
@@ -242,18 +241,16 @@ unix
 ```
 
 GREP is by default case sensitive  
-```
-$ grep os file.txt 
-```
+> $ grep os file.txt 
+
 output:  
 ```
 ostechnix
 ```
 
 To disable case sensitive:  
-```
-$ grep -i os file.txt 
-```
+> $ grep -i os file.txt 
+
 
 output:  
 ```
@@ -261,9 +258,7 @@ ostechnix
 Ostechnix
 ```
 
-```
-$ grep -i 'hello world' file.txt 
-```
+> $ grep -i 'hello world' file.txt 
 
 output:  
 ```
@@ -272,9 +267,8 @@ HELLO world
 ```
 
 pipe an output of a command into grep  
-```
-$ cat file.txt | grep os
-```
+> $ cat file.txt | grep os
+
 output:  
 ```
 ostechnix
@@ -295,17 +289,15 @@ o$technix
 technology
 ```
 
-```
-$ grep ^tech file.txt
-```
+> $ grep ^tech file.txt
+
 output:  
 ```
 technology
 ```
 
-```
-$ grep x$ file.txt
-```
+> $ grep x$ file.txt
+
 output:  
 ```
 ostechnix
@@ -315,9 +307,8 @@ linux
 unix
 ```
 
-```
-$ grep .n file.txt
-```
+> $ grep .n file.txt
+
 output:  
 ```
 ostechnix

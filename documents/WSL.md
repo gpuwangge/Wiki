@@ -321,6 +321,9 @@ technology
 ```
 
 
+## EGREP
+EGREP = Extended GREP. It is similar to "grep -E"   
+
 
 ### Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  

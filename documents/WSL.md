@@ -220,6 +220,14 @@ cmake里面加上如下代码：
 -l means use a long listing format  
 > ls -l
 
+-a means show all files, include hidden files  
+> ls -a
+
+以上两个参数可以联合使用  
+> ls -la
+> ls -al
+
+
 Format介绍：  
 第一个字母肯定是-(代表regular file)或d(代表directory)  
 从第二个字母开始，三个为一组，格式是rwx，分别代表read, write and executecd。如果是-表示没有这项权限  

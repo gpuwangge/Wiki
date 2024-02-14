@@ -150,6 +150,12 @@ GitHub有三个状态区
 这时候会打开Merge Changes面板，对比两个版本。绿色是remote pull下来的版本，蓝色是local修改的版本。  
 点击Resolve in Merge Editor按钮处理conflict。  
 
+## Local Repo修改了文件，Remote Repo也更新了，想扔掉Local文件更新到最新文件如何操作
+这时候git pull会出错  
+> git checkout -- filename.xxx
+
+然后git pull就可以了  
+
 
 ## 切换Branch
 Github上clone的项目默认是default branch，如果需要切换其他branch，应当如何操作?  

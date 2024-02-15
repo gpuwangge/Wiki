@@ -1,5 +1,13 @@
 # GREP
 GREP = Global Regular Expression Print  
+
+在当前目录下找某个字符串  
+> grep somestring
+
+在当前目录下和所有子目录下找某个字符串  
+> grep -R somestring
+
+
 > $ cat file.txt
 
 output:  

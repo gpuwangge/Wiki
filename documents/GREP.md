@@ -7,7 +7,7 @@ GREP = Global Regular Expression Print
 在当前目录下和所有子目录下找某个字符串  
 > grep -R somestring
 
-
+具体例子：  
 > $ cat file.txt
 
 output:  

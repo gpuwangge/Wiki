@@ -120,7 +120,7 @@ EGREP = Extended GREP. It is similar to "grep -E"
 
 > $ egrep '^(l|o)' file.txt  
 
-Got all of the words that starts with either "l" or "o". Normal grep command can't do this)  
+(Got all of the words that starts with either "l" or "o". Normal grep command can't do this)  
 output:  
 ```
 ostechnix

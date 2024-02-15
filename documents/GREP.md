@@ -118,9 +118,10 @@ technology
 # EGREP
 EGREP = Extended GREP. It is similar to "grep -E"   
 
-> $ egrep '^(l|o)' file.txt
+> $ egrep '^(l|o)' file.txt  
 
-output:
+Got all of the words that starts with either "l" or "o". Normal grep command can't do this)  
+output:  
 ```
 ostechnix
 o$technix

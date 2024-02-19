@@ -129,6 +129,19 @@ linux
 linus
 ```
 
+> $ egrep '^[l-u]' file.txt
+
+( search for the lines that start with any character range between "l" to "u". That means, we will get the lines that start with l, m, n, o, p, q, r, s, t, and u. Everything else will be omitted from the result)  
+output:
+```
+ostechnix
+o$technix
+linux
+linus
+unix
+technology
+```
+
 
 # Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  

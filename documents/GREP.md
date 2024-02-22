@@ -142,6 +142,22 @@ unix
 technology
 ```
 
+> $ egrep '^[l-u]|[L-U]' file.txt  
+> $ egrep '^([l-u]|[L-U])' file.txt  
+
+(These two commands display all the lines that starts with both upper and lower case letters)  
+
+output:
+```
+ostechnix
+Ostechnix
+o$technix
+linux
+linus
+unix
+technology
+```
+
 
 # Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  

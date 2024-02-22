@@ -266,7 +266,19 @@ ldd命令 用于打印程序或者库文件所依赖的共享库列表。
 列出二进制文件中符号名字，比如函数名，变量名等  
 > nm -DC xxx.so
 
+查看当前用户  
+>whoami
 
+Linux df(全称: disk free)命令用于显示目前在Linux系统上的文件系统磁盘使用情况  
+>df
+
+使用人类可读的格式输出disk free  
+>df -h
+
+(h 是human readable的意思)  
+
+查看自己的所有运行任务情况  
+> bjobs
 
 
 ## References

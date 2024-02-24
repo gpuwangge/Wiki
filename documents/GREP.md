@@ -159,6 +159,13 @@ technology
 ```
 
 
+# FGREP
+FGREP = Fast GREP. It is similar to "grep -F"   
+
+
+
+
+
 # Reference
 https://ostechnix.com/the-grep-command-tutorial-with-examples-for-beginners/  
 

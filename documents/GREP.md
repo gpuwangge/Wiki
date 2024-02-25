@@ -161,9 +161,34 @@ technology
 
 # FGREP
 FGREP = Fast GREP. It is similar to "grep -F"   
+fgrep会忽略特殊字符。当需要检索的字符里含有特殊字符的时候很有用   
 
+先看正常grep(检索文件里以x为结尾的字符):  
+> $ grep x$ file.txt
 
+output:  
+```
+ostechnix
+Ostechnix
+o$technix
+linux
+unix
+```
 
+如果换成fgrep，则没有任何输出，因为fgrep直接检索"x$"这个字符串
+> $ fgrep x$ file.txt
+
+看下面的命令，也没有输出，因为文件里没有以o为结尾的字符串
+> $ grep o$ file.txt
+
+换成fgrep，则可以找到含"o$"字符串的字符串了
+
+> $ fgrep o$ file.txt 
+
+output:  
+```
+o$technix
+```
 
 
 # Reference

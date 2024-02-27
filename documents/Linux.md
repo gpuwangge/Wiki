@@ -25,6 +25,9 @@ Arch Linux发行版由自由和开源软件组成。稳定性不如Redhat/Debian
 Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜爱。  
 
 # Linux环境变量
+## 如何查看某个环境变量
+> echo $PATH  
+
 ## 种类  
 - 永久的：通过修改配置文件实现  
 > vim /etc/profile  
@@ -41,7 +44,7 @@ export PATH=/home/fs: $PATH
 > export 变量名=变量值  
 
 ## PATH格式
-
+PATH=$PATH:<PATH1>:<PATH2>:<PATH3>:-----:<PATHn>  
 
 # Linux常用命令
 用于查看binary的架构  

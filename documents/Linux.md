@@ -28,6 +28,13 @@ Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜
 ## 如何查看某个环境变量
 > echo $PATH  
 
+
+## 如何查看所有环境变量  
+> env  
+
+在环境变量中寻找含某个关键字的条目  
+> env | grep wangge
+> 
 ## 种类  
 - 永久的：通过修改配置文件实现  
 > vim /etc/profile  
@@ -45,6 +52,18 @@ export PATH=/home/fs: $PATH
 
 ## PATH格式
 PATH=$PATH:\<PATH1\>:\<PATH2\>:\<PATH3\>:-----:\<PATHn\>  
+
+# Linux Module
+## 微内核体系结构(Micro Kernel)
+在该结构下，操作系统的核心部分是一个很小的内核，实现一些最基本的服务，比如创建和删除进程，内存管理，中断管理等。  
+其他功能都放在微内核外的用户空间进行，比如文件系统，网络协议等。  
+微内核结构的有点事扩展性好，缺点是效率较低。  
+采用微结构内核的典型系统是WindowsNT  
+
+## 单一体系结构(Monolithic Kernel)
+
+
+
 
 # Linux常用命令
 用于查看binary的架构  
@@ -75,12 +94,6 @@ Format介绍：
 
 ldd命令 用于打印程序或者库文件所依赖的共享库列表。  
 > ldd *  
-
-查看所有环境变量  
-> env  
-
-在环境变量中寻找含某个关键字的条目  
-> env | grep wangge  
 
 查看执行过的命令  
 > history
@@ -116,7 +129,6 @@ Linux df(全称: disk free)命令用于显示目前在Linux系统上的文件系
 
 
 # Reference
-https://github.com/gpuwangge/Wiki/blob/main/documents/WSL.md  
-
+https://zhuanlan.zhihu.com/p/431707034
 
 

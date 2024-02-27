@@ -24,6 +24,24 @@ Debian系包管理工具采用dpkg(.deb), apt-get。
 Arch Linux发行版由自由和开源软件组成。稳定性不如Redhat/Debian系。优点是软件库庞大。包管理器叫pacman。  
 Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜爱。  
 
+# Linux环境变量
+## 种类  
+- 永久的：通过修改配置文件实现  
+> vim /etc/profile  
+
+如下命令可以把/home加入到PATH变量的最前面（若想生效还需要source或重开shell）：  
+```
+export PATH=/home/fs: $PATH  
+```
+以上配置文件对所有用户生效  
+也可以编辑对单独用户生效的文件  
+> vim /home/user/.bash.profile  
+
+- 临时的：使用export命令可以设置，但是关闭shell的时候失效  
+> export 变量名=变量值  
+
+## PATH格式
+
 
 # Linux常用命令
 用于查看binary的架构  

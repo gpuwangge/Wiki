@@ -44,7 +44,7 @@ export PATH=/home/fs: $PATH
 > export 变量名=变量值  
 
 ## PATH格式
-PATH=$PATH:<PATH1>:<PATH2>:<PATH3>:-----:<PATHn>  
+PATH=$PATH:\<PATH1\>:\<PATH2\>:\<PATH3\>:-----:\<PATHn\>  
 
 # Linux常用命令
 用于查看binary的架构  

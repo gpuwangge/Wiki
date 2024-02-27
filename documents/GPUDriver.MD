@@ -1,6 +1,6 @@
 # 基本概念  
 CPU的简单指令储存在BIOS里  
-CPU的复杂些的指令集成在OS上(为什么没有CPU Driver呢？因为集成在OS上了)  
+CPU的复杂些的指令集成在OS上(为什么没有CPU Driver呢？因为集成在OS上了。CPU Driver也叫CPU核心，bootloader，中断管理，进程管理，内存管理，电源管理等一大堆功能)  
 Compiler可以把指令编译成机器码让CPU运行  
 
 GPU的基本指令也存储在VGA BIOS里(调用这些指令也是通过CPU来完成)  

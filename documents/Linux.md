@@ -41,7 +41,7 @@ Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜
 
 如下命令可以把/home加入到PATH变量的最前面（若想生效还需要source或重开shell）：  
 ```
-export PATH=/home/fs: $PATH  
+export PATH=/home/fs:$PATH  
 ```
 以上配置文件对所有用户生效  
 也可以编辑对单独用户生效的文件  

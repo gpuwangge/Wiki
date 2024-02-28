@@ -34,7 +34,7 @@ Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜
 
 在环境变量中寻找含某个关键字的条目  
 > env | grep wangge
-> 
+
 ## 种类  
 - 永久的：通过修改配置文件实现  
 > vim /etc/profile  
@@ -69,6 +69,28 @@ PATH=$PATH:\<PATH1\>:\<PATH2\>:\<PATH3\>:-----:\<PATHn\>
 用户可以根据需要，在不对内核重新编译的情况下，动态地把模块从内核里装入或移出  
 
 Module的特点：不能独立运行。可以在运行时链接到系统中作为内核的一部分。本质是一些函数和数据结构。  
+
+查看所有模块  
+> module av
+
+查看某个模块  
+> module av [moduleName]
+
+查看已加载模块  
+> module list
+
+加载和卸载模块  
+> module load [modulefile]  
+> module unload [modulefile]  
+
+切换模块  
+> module switch [modulefile]
+
+清空所有模块  
+> module purge
+
+显示模块内容  
+> module show [modulefile]
 
 
 # Linux常用命令

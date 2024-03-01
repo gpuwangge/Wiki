@@ -8,7 +8,7 @@ GREP = Global Regular Expression Print
 > grep -R somestring
 
 具体例子：  
-> $ cat file.txt
+> cat file.txt
 
 output:  
 ```
@@ -23,7 +23,7 @@ hello world
 HELLO world
 ```
 
-> $ grep nix file.txt
+> grep nix file.txt
 
 
 output:  
@@ -35,7 +35,7 @@ unix
 ```
 
 GREP is by default case sensitive  
-> $ grep os file.txt 
+> grep os file.txt 
 
 output:  
 ```
@@ -43,7 +43,7 @@ ostechnix
 ```
 
 To disable case sensitive:  
-> $ grep -i os file.txt 
+> grep -i os file.txt 
 
 
 output:  
@@ -52,7 +52,7 @@ ostechnix
 Ostechnix
 ```
 
-> $ grep -i 'hello world' file.txt 
+> grep -i 'hello world' file.txt 
 
 output:  
 ```
@@ -61,7 +61,7 @@ HELLO world
 ```
 
 pipe an output of a command into grep  
-> $ cat file.txt | grep os
+> cat file.txt | grep os
 
 output:  
 ```
@@ -73,7 +73,7 @@ some special characters or regular expressions in grep.
 $ - search at the end of the line.  
 . - Search any character.  
 
-> $ grep tech file.txt
+> grep tech file.txt
 
 output:  
 ```
@@ -83,14 +83,14 @@ o$technix
 technology
 ```
 
-> $ grep ^tech file.txt
+> grep ^tech file.txt
 
 output:  
 ```
 technology
 ```
 
-> $ grep x$ file.txt
+> grep x$ file.txt
 
 output:  
 ```
@@ -101,7 +101,7 @@ linux
 unix
 ```
 
-> $ grep .n file.txt
+> grep .n file.txt
 
 output:  
 ```
@@ -118,7 +118,7 @@ technology
 # EGREP
 EGREP = Extended GREP. It is similar to "grep -E"   
 
-> $ egrep '^(l|o)' file.txt  
+> egrep '^(l|o)' file.txt  
 
 (Got all of the words that starts with either "l" or "o". Normal grep command can't do this)  
 output:  
@@ -129,7 +129,7 @@ linux
 linus
 ```
 
-> $ egrep '^[l-u]' file.txt
+> egrep '^[l-u]' file.txt
 
 ( search for the lines that start with any character range between "l" to "u". That means, we will get the lines that start with l, m, n, o, p, q, r, s, t, and u. Everything else will be omitted from the result)  
 output:
@@ -142,8 +142,8 @@ unix
 technology
 ```
 
-> $ egrep '^[l-u]|[L-U]' file.txt  
-> $ egrep '^([l-u]|[L-U])' file.txt  
+> egrep '^[l-u]|[L-U]' file.txt  
+> egrep '^([l-u]|[L-U])' file.txt  
 
 (These two commands display all the lines that starts with both upper and lower case letters)  
 
@@ -164,7 +164,7 @@ FGREP = Fast GREP. It is similar to "grep -F"
 fgrep会忽略特殊字符。当需要检索的字符里含有特殊字符的时候很有用   
 
 先看正常grep(检索文件里以x为结尾的字符):  
-> $ grep x$ file.txt
+> grep x$ file.txt
 
 output:  
 ```
@@ -176,14 +176,14 @@ unix
 ```
 
 如果换成fgrep，则没有任何输出，因为fgrep直接检索"x$"这个字符串
-> $ fgrep x$ file.txt
+> fgrep x$ file.txt
 
 看下面的命令，也没有输出，因为文件里没有以o为结尾的字符串
-> $ grep o$ file.txt
+> grep o$ file.txt
 
 换成fgrep，则可以找到含"o$"字符串的字符串了
 
-> $ fgrep o$ file.txt 
+> fgrep o$ file.txt 
 
 output:  
 ```

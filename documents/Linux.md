@@ -140,7 +140,7 @@ ldd命令 用于打印程序或者库文件所依赖的共享库列表。
 列出二进制文件中符号名字，比如函数名，变量名等  
 > nm -DC xxx.so
 
--D: 打印动态符号  
+-D: 打印动态符号。Display the dynamic symbols rather than the normal symbols. This is only meaningful for dynamic objects, such as certain types of shared libraries。总之，看见.so无脑加-D就行了  
 -C: 输出demangle过了的符号名称。-C 总是适用于c++编译出来的对象文件。还记得c++中有重载么？为了区分重载函数，c++编译器会将函数返回值/参数等信息附加到函数名称中去形成一个mangle过的符号，那用这个选项列出符号的时候，做一个逆操作，输出那些原始的、我们可理解的符号名称。  
 常见的符号类型:  
 A 该符号的值在今后的链接中将不再改变；  
@@ -152,7 +152,9 @@ W 未明确指定的弱链接符号；同链接的其他对象文件中有它的
 
 strip命令  
 > strip filename
+
 该命令会去除一个程序中的符号表，使其体积变小  
+但是因为符号表在Debug中有重要作用，所以之应该在调试完毕，即将发布的时候使用strip命令  
 file命令可以查看一个程序是否strip  
 对strip程序使用nm命令，会得到"no symbols"的提示。  
 

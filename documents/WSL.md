@@ -14,6 +14,7 @@ WSL本质上是个虚拟机
 (It will show installing: Virtual Machine Platform; Installing Ubuntu)  
 (This command will enable the features necessary to run WSL and install the Ubuntu distribution of Linux. )  
 (The requested operation is successful. Changes will not be effective until the system is rebooted.)  
+(卸载使用wsl --uninstall)  
 **`3.重新启动后，继续自动安装Ubuntu`**  
 **`4.按要求创建具有管理员权限（sudo）的账号和密码`**  
 > [username]  

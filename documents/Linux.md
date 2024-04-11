@@ -94,9 +94,11 @@ Module的特点：不能独立运行。可以在运行时链接到系统中作�
 
 
 # Linux常用命令
+## file
 用于查看binary的架构  
 > file *  
 
+## ls
 -l means use a long listing format  
 > ls -l
 
@@ -107,8 +109,7 @@ Module的特点：不能独立运行。可以在运行时链接到系统中作�
 > ls -la  
 > ls -al
 
-
-Format介绍：  
+## Format  
 第一个字母肯定是-(代表regular file)或d(代表directory)  
 从第二个字母开始，三个为一组，格式是rwx，分别代表read, write and executecd。如果是-表示没有这项权限  
 (身份顺序为：owner、group、others)  
@@ -120,15 +121,19 @@ Format介绍：
 举例：  
 -rw-r--r--.  1 root root   18 Dec 28  2013 .bash_logout  
 
+## ldd
 ldd命令 用于打印程序或者库文件所依赖的共享库列表。  
 > ldd *  
 
+## history
 查看执行过的命令  
 > history
 
+## du
 显示指定的目录或文件所占用的磁盘空间。  
 > du  
 
+## find
 查找某个文件夹下名字带有某个字符串的所有文件  
 > find . -maxdepth 1 -name "*string*" -print
 
@@ -137,6 +142,7 @@ ldd命令 用于打印程序或者库文件所依赖的共享库列表。
 如果想把含有某个字符(":")的结果排除，可以用
 > find . -maxdepth 1 -name "*string*" ! -name "*:*" -print
 
+## nm
 列出二进制文件中符号名字，比如函数名，变量名等  
 > nm -DC xxx.so
 
@@ -150,7 +156,7 @@ T 该符号放在代码段中，通常是那些全局非静态函数；
 U 该符号未定义过，需要自其他对象文件中链接进来；  
 W 未明确指定的弱链接符号；同链接的其他对象文件中有它的定义就用上，否则就用一个系统特别指定的默认值。  
 
-strip命令  
+## strip  
 > strip filename
 
 该命令会去除一个程序中的符号表，使其体积变小  
@@ -158,20 +164,31 @@ strip命令
 file命令可以查看一个程序是否strip  
 对strip程序使用nm命令，会得到"no symbols"的提示。  
 
- 
+ ## whoami
 查看当前用户  
 > whoami
 
 Linux df(全称: disk free)命令用于显示目前在Linux系统上的文件系统磁盘使用情况  
 >df
 
+## df
 使用人类可读的格式输出disk free  
 >df -h
 
 (h 是human readable的意思)  
 
+## bjobs
 查看自己的所有运行任务情况  
 > bjobs
+
+## tar
+Linux下压缩和解压缩用    
+> tar -xvf xxxx.tar  
+
+-x: extract, 展开文件  
+-v: verbose，详细显示处理的文件  
+-f: file, 指定要处理的文件  
+
 
 
 

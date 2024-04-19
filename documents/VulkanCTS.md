@@ -1,3 +1,14 @@
+# Introduction
+VulkanCTS is Build on dEQP framework.
+
+# DrawElements Quality Program(DEQP)
+DEQP is an Android Open Source toolkit Project for benchmarking the accuracy, precision, feature conformance and stability of OpenGL ES and OpenCL GPUs. 
+
+# Requirement
+- Git  
+- Python 3.x  
+- CMake 3.20.0 or newer  
+
 
 # Build for Windows (Visual Studio 2022)
 > git clone --recurse-submodules  https://github.com/KhronosGroup/VK-GL-CTS.git  
@@ -21,7 +32,17 @@ Binary位置：有很多个位置，比如：
 VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe  
 运行deqp-vk.exe，结果写在TestResults.qpa里。  
 
-# Build for Linux
+
+# Build for Linux 64-bit Debug  
+未验证
+- Download source  
+> python3 external/fetch_source.py  
+> python3 -m pip install lxml  
+
+> cmake <path to vulkancts> -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64  
+> make -j  
+
+## Execute
 
 
 # Reference

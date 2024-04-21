@@ -40,13 +40,15 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 > python3 external/fetch_sources.py  
 > python3 -m pip install lxml  
 
+> mkdir build  
+> cd build  
 
 > cmake <path to vulkancts> -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64  
 > make -j
 
 试验  
 cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64 ..   
-(lld-link: error)    
+(error: glslang, mutex...)    
 
 ## Execute
 

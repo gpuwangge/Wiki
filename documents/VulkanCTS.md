@@ -34,7 +34,7 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 
 
 # Build for Linux 64-bit Debug  
-未验证
+一下测试是在windows下
 - Download source  
 > git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git  
 > python3 external/fetch_sources.py  

@@ -39,6 +39,8 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 > python3 external/fetch_sources.py  
 > python3 -m pip install lxml  
 
+ERROR: Could not install packages due to an OSError: Could not find a suitable TLS CA certificate bundle, invalid path: C:\Users\mtk32132\Downloads\cacertmtk.pem
+
 > cmake <path to vulkancts> -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64  
 > make -j  
 

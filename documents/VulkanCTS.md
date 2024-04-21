@@ -36,7 +36,7 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 未验证
 - Download source  
 > git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git  
-> python3 external/fetch_source.py  
+> python3 external/fetch_sources.py  
 > python3 -m pip install lxml  
 
 > cmake <path to vulkancts> -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64  

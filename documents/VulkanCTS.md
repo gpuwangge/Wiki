@@ -46,8 +46,8 @@ ERROR: Could not install packages due to an OSError: Could not find a suitable T
 > make -j
 
 试验  
-cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64 ..  
-(lld-link: error)  
+cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64 ..   
+(lld-link: error)    
 
 ## Execute
 

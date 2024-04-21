@@ -29,7 +29,8 @@ Build(debug)
 Build: 205 succeed  
 Binary位置：有很多个位置，比如：  
 VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe  
-运行deqp-vk.exe，结果写在TestResults.qpa里。  
+运行deqp-vk.exe，结果写在当前目录下的TestResults.qpa里。  
+运行时间？  
 
 
 # Build for Linux 64-bit Debug  

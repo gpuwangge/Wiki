@@ -12,8 +12,7 @@ DEQP is an Android Open Source toolkit Project for benchmarking the accuracy, pr
 
 # Build for Windows (Visual Studio 2022)
 > git clone --recurse-submodules  https://github.com/KhronosGroup/VK-GL-CTS.git  
-
-python external/fetch_sources.py  
+> python external/fetch_sources.py  
 (会下载spirv-tools/src/)  
 
 ## Command
@@ -36,6 +35,7 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 # Build for Linux 64-bit Debug  
 未验证
 - Download source  
+> git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git  
 > python3 external/fetch_source.py  
 > python3 -m pip install lxml  
 

@@ -35,21 +35,17 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 --deqp-log-images=disable  
 --deqp-log-shader-sources=disable  
 举例:  
-先把vk-default.txt和vk-defult/文件夹拷贝到binary同文件夹  
-> deqp-vk --deqp-caselist-file=vk-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
-
-> deqp-vk --deqp-caselist-file=../../../../../../external/vulkancts/mustpass/main/vk-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
+> deqp-vk --deqp-caselist-file=..\..\..\..\..\..\external\vulkancts\mustpass\main\vk-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
 
 
 或  
-先把vksc-default.txt和vksc-defult/文件夹拷贝到binary同文件夹  
-> deqp-vksc --deqp-caselist-file=vksc-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable  
+> deqp-vksc --deqp-caselist-file=..\..\..\..\..\..\external\vulkancts\mustpass\main\vksc-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
 
-> deqp-vksc --deqp-caselist-file=../../../../../../external/vulkancts/mustpass/main/vksc-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
+Issue: deqp-vksc只有begin session，没有end session  
 
 
 # Build for Linux 64-bit Debug  
-一下测试是在windows下
+以下测试是在windows下
 - Download source  
 > git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git  
 > python3 external/fetch_sources.py  

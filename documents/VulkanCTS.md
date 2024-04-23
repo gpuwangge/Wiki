@@ -29,8 +29,17 @@ Build(debug)
 Build: 205 succeed  
 Binary位置：有很多个位置，比如：  
 VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe  
-运行deqp-vk.exe，结果写在当前目录下的TestResults.qpa里。  
-运行时间？  
+运行deqp-vk.exe或deqp-vksc.exe，结果写在当前目录下的TestResults.qpa里。  
+运行参数：  
+--deqp-caselist-file=<vulkancts>/external/vulkancts/mustpass/main/vk-default.txt (or vksc-default.txt for Vulkan SC implementations)  
+--deqp-log-images=disable  
+--deqp-log-shader-sources=disable  
+举例:  
+先把vk-default.txt和vk-defult/文件夹拷贝到binary同文件夹  
+或  
+先把vksc-default.txt和vksc-defult/文件夹拷贝到binary同文件夹  
+> deqp-vksc --deqp-caselist-file=vksc-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable  
+> deqp-vk --deqp-caselist-file=vk-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable  
 
 
 # Build for Linux 64-bit Debug  

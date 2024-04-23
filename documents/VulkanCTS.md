@@ -35,11 +35,11 @@ VK-GL-CTS/build/external/vulkancts/modules/vulkan/Debug/deqp-vk.exe
 --deqp-log-images=disable  
 --deqp-log-shader-sources=disable  
 举例:  
-> deqp-vk --deqp-caselist-file=..\\..\\..\\..\..\..\external\vulkancts\mustpass\main\vk-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
+> deqp-vk --deqp-caselist-file=..\\..\\..\\..\\..\\..\external\vulkancts\mustpass\main\vk-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
 
 
 或  
-> deqp-vksc --deqp-caselist-file=..\..\..\..\..\..\external\vulkancts\mustpass\main\vksc-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
+> deqp-vksc --deqp-caselist-file=..\\..\\..\\..\\..\\..\external\vulkancts\mustpass\main\vksc-default.txt --deqp-log-images=disable --deqp-log-shader-sources=disable
 
 Issue: deqp-vksc只有begin session，没有end session  
 

@@ -157,6 +157,7 @@ vk-default/ycbcr.txt
 ```
 
 ## vksc-default.txt  
+Vulkan SC = Vulkan Safety Critical  
 ```
 vksc-default/api.txt
 vksc-default/binding-model.txt
@@ -222,4 +223,6 @@ vksc-default/ycbcr.txt
 # Reference
 https://github.com/KhronosGroup/VK-GL-CTS  
 https://github.com/KhronosGroup/VK-GL-CTS/blob/main/external/vulkancts/README.md  
+https://www.khronos.org/blog/vulkan-sc-overview/  
+ 
 

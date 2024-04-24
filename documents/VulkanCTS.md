@@ -44,7 +44,8 @@ Issue: deqp-vksc只有begin session，没有end session
 
 
 # Build for Linux 64-bit Debug  
-以下测试是在windows下
+以下测试是在windows下交叉编译,未进行WSL或Linux测试  
+
 - Download source  
 > git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git  
 > python3 external/fetch_sources.py  
@@ -158,6 +159,7 @@ vk-default/ycbcr.txt
 
 ## vksc-default.txt  
 Vulkan SC = Vulkan Safety Critical  
+Vulkan SC 简化了开放的跨平台 Vulkan API ，用于确定性 GPU 图形和计算，在安全认证和实时嵌入式平台上实现高级应用程序和用例。
 ```
 vksc-default/api.txt
 vksc-default/binding-model.txt

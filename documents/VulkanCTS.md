@@ -47,7 +47,10 @@ Issue: deqp-vksc只有begin session，没有end session
 以下测试是在windows下交叉编译,未进行WSL或Linux测试  
 
 - Download source  
-> git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git  
+> git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git
+(2.92GB, 7663 Files)   
+
+> cd VK-GL-CTS
 > python3 external/fetch_sources.py  
 > python3 -m pip install lxml  
 

@@ -13,7 +13,7 @@ DEQP is an Android Open Source toolkit Project for benchmarking the accuracy, pr
 > git clone --recurse-submodules  https://github.com/KhronosGroup/VK-GL-CTS.git  
 > python external/fetch_sources.py    
 
-(会下载spirv-tools/src/)  
+(会下载spirv-tools/src/ 之类的tools)  
 
 ## Command
 ```
@@ -49,6 +49,7 @@ Issue: deqp-vksc只有begin session，没有end session
 
 - Download source  
 > git clone --recurse-submodules https://github.com/KhronosGroup/VK-GL-CTS.git
+
 (2.92GB, 7663 Files)   
 
 > cd VK-GL-CTS

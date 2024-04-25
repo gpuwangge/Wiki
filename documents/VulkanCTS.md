@@ -53,6 +53,9 @@ Issue: deqp-vksc只有begin session，没有end session
 
 > cd VK-GL-CTS
 > python3 external/fetch_sources.py  
+
+(3.40GB, 15983 Files)  
+
 > python3 -m pip install lxml  
 
 > mkdir build  

@@ -62,7 +62,10 @@ Issue: deqp-vksc只有begin session，没有end session
 > mkdir build  
 > cd build  
 
-> cmake <path to vulkancts> -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64  
+> cmake <path to vulkancts> -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS=-m64 -DCMAKE_CXX_FLAGS=-m64  ..  
+
+(make sure cmake version is 3.20.0 or newer)
+
 > make -j
 
 试验  

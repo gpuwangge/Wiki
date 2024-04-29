@@ -156,6 +156,11 @@ GitHub有三个状态区
 
 然后git pull就可以了  
 
+另外，如果修改了local文件，但是不想要了，手动delete。这时候git pull仍然显示uptodate，但实际上该文件并没有出现在local文件夹下，编译会出错。   
+这时候git status可以发现delete的文件。  
+如果要把文件复原(为remote repo上的原始文件)，可以用如下指令：  
+> git restore .  
+
 
 ## 切换Branch
 Github上clone的项目默认是default branch，如果需要切换其他branch，应当如何操作?  

@@ -161,6 +161,12 @@ GitHub有三个状态区
 如果要把文件复原(为remote repo上的原始文件)，可以用如下指令：  
 > git restore .  
 
+restore的作用是丢掉工作区的改动。但是文件本身的添加或删除不会变化。  
+
+要完全还原到某个工作区，使用如下指令：  
+> git checkout HEAD :/  
+
+
 
 ## 切换Branch
 Github上clone的项目默认是default branch，如果需要切换其他branch，应当如何操作?  

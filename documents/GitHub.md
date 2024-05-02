@@ -180,18 +180,6 @@ remotes/origin/Lesson2_2
 切换branch的指令如下：  
 > git checkout -b Lesson_2_2
 
-## 子模块(submodule)相关
-如何克隆含有子模块的项目。  
-### 方法1，使用两条git指令  
-> git submodule init  
-> git submodule update
-
-### 方法2，在clone原项目的时候假如recurse参数
-> git clone --recurse-submodules xxx.git
-
-### Reference
-https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97  
-
 ## Branch的合并方法
 在如下开发例子中，在C2的时候出现了两个不同分支的更新。其中C3在master上，用户在C2基础上更新了C4。  
 ```
@@ -215,7 +203,8 @@ C0 <- C1 <- C2 <- C3 <- C4'
 用户再回到master分支(这时候是C3)。  
 这时候的情况相当于用户在C3上更新了C4'，进行快速合并就可以了。  
 使用Rebase的时候，如果观察历史记录，就好像C0 <- C1 <- C2 <- C3 <- C4'是串行开发，C4不存在一样。提交历史会比较整洁。  
-应用举例：  
+
+### 使用Rebase来合并有什么好处  
 有一个原作者正在积极维护的开源项目，某位用户希望参与开发。  
 该用户首先下载分支，进行开发。  
 当开发完成后，如果用户把代码Merge到原作者的主分支(通常这时候主分支也更新了好几个版本)的时候，原作者很可能需要处理很多冲突(三方合并)。  
@@ -225,6 +214,18 @@ C0 <- C1 <- C2 <- C3 <- C4'
 ### Reference
 https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA  
 
+
+## 子模块(submodule)相关
+如何克隆含有子模块的项目。  
+### 方法1，使用两条git指令  
+> git submodule init  
+> git submodule update
+
+### 方法2，在clone原项目的时候假如recurse参数
+> git clone --recurse-submodules xxx.git
+
+### Reference
+https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97  
 
 ## 其他有用的GitHub指令
 如果commit之後後悔了怎么回退：  

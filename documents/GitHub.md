@@ -192,6 +192,24 @@ remotes/origin/Lesson2_2
 ### Reference
 https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97  
 
+## Branch的合并方法
+在如下开发例子中，在C2的时候出现了两个不同分支的更新。  
+```
+C0 <- C1 <- C2 <- C3  
+             | <- C4  
+```
+### 合并方法一：Merge
+Merge命令会把C3和C4，以及两者共同的祖先C2进行三方合并，最终生成C5提交
+```
+C0 <- C1 <- C2 <- C3  <- C5  
+             | <- C4  |  
+```
+
+### 合并方法二: Rebase
+
+
+### Reference
+https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA  
 
 
 ## 其他有用的GitHub指令

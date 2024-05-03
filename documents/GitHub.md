@@ -228,12 +228,28 @@ https://git-scm.com/book/zh/v2/Git-%E5%88%86%E6%94%AF-%E5%8F%98%E5%9F%BA
 https://git-scm.com/book/zh/v2/Git-%E5%B7%A5%E5%85%B7-%E5%AD%90%E6%A8%A1%E5%9D%97  
 
 # Reset相关
+Reset是比较强的命令，它可以强制让本地repo更新为某一个remote分支版本   
+> git reset --hard origin/some_branch  
 
+该指令不仅更改了HEAD，还把本地工作目录一起修改了(index区也改了)，彻底还原到以前的某次提交，并且无法找回。因此使用上要特别小心。  
 
-# 其他有用的GitHub指令
+如果只需要修改HEAD，可以用soft参数  
+> git reset --soft origin/some_branch
+
+举例：  
 如果commit之後後悔了怎么回退：  
 > git reset --soft HEAD^1  
 
+reset还有一个--mixed参数，作用是除了修改HEAD，还修改了index。  
+(index就是暂存区，add之后还没commit的东西就放在这里)  
+
+# Revert相关
+git revert也有回退版本的作用。举例：  
+以下指令回退到最近的第4个提交状态  
+> git revert HEAD~3  
+
+
+# 其他有用的GitHub指令
 查看项目仓库大小可以使用命令:  
 > git count-objects -vH   
 

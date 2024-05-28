@@ -32,7 +32,7 @@ GPU Firmware是一段运行在GPU上的软件(可以理解为显卡上有一个�
 早期的固件是在生产过程中写到硬件里的，成为产品后不能更改。但是后来设计上为了灵活性，固件也支持不频繁的更新了。而驱动的升级就频繁很多。  
 以下以ARM GPU为例说明一块显卡的启动流程，以及驱动和固件在其中的作用：  
 1. 用户运行图形API程序，CPU运行驱动程序准备叫显卡工作  
-2. 驱动程序把GPU需要的数据准备到内存中，数据包含Pagetable，固件和GPU执行指令的Program, Program数据  
+2. 驱动程序把GPU需要的数据准备到内存中。数据包含Pagetable、固件和GPU执行指令的Program、以及Program数据  
 3. 驱动程序通过设置GPU MMU(Memory Mange Unit) Register的方式告知GPU Pagetable的位置(Pagetable的作用是为GPU使用内存空间做准备。GPU使用内存空间的两个部分是固件和GPU指令，因此可能存在两个Pagetable)  
 4. 驱动程序通过设置GPU MMU Register的方式唤醒固件和GPU的其他部分，固件会开始去内存中读pagetable  
 5. 驱动程序通过设置GPU MMU Register的方式命令固件去读固件program，也就是固件会运行的指令，之后固件会根据这些指令运行设置  

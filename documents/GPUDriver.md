@@ -22,6 +22,7 @@ GPU Driver要做的事情是：把一些稍微复杂的指令（比如给GPU发�
 4. (Driver)对指令中使用的数据，应使用DMA进行数据传递到GPU的显存。这些数据可能是顶点坐标，或是贴图等  
 5. GPU执行指令，比如进行顶点矩阵变换，或者像素的alpha运算。GPU和CPU之间的DMA可能成为执行速度的瓶颈。DMA传输速度看PCIE的速度  
 
+
 # GPU Driver(驱动)和GPU Firmware(固件)的关系
 如上所述，GPU Driver是一段运行在CPU上的软件。以下简称"驱动"。  
 GPU Firmware是一段运行在GPU上的软件(可以理解为显卡上有一个小的CPU组件)。以下简称"固件"。  
@@ -30,8 +31,15 @@ GPU Firmware是一段运行在GPU上的软件(可以理解为显卡上有一个�
 当然除了主板有固件，其他的网卡、硬盘等都有各自的固件。这一章我们讨论的“固件”特指显卡固件。  
 早期的固件是在生产过程中写到硬件里的，成为产品后不能更改。但是后来设计上为了灵活性，固件也支持不频繁的更新了。而驱动的升级就频繁很多。  
 以下以ARM GPU为例说明一块显卡的启动流程，以及驱动和固件在其中的作用：  
-
-
+1. 用户运行图形API程序，CPU运行驱动程序准备叫显卡工作  
+2. 驱动程序把GPU需要的数据准备到内存中，数据包含Pagetable，固件和GPU执行指令的Program, Program数据  
+3. 驱动程序通过设置GPU MMU(Memory Mange Unit) Register的方式告知GPU Pagetable的位置(Pagetable的作用是为GPU使用内存空间做准备。GPU使用内存空间的两个部分是固件和GPU指令，因此可能存在两个Pagetable)  
+4. 驱动程序通过设置GPU MMU Register的方式唤醒固件和GPU的其他部分，固件会开始去内存中读pagetable  
+5. 驱动程序通过设置GPU MMU Register的方式命令固件去读固件program，也就是固件会运行的指令，之后固件会根据这些指令运行设置  
+  （同时也包含驱动想告诉固件的一些setting参数，比如command queue size，command queue地址等，它们会被驱动提前准备在GPU的固件内存里） 
+7. 驱动程序通过设置GPU MMU Register的方式命令GPU去读GPU program。这个program是真的GPU会做的事情，比如做一个draw call  
+8. 驱动程序通过设置Doorbell让GPU开始工作，然后等待GPU工作完成返回的中断  
+9. 驱动程序通过设置GPU MMU Register的方式令固件和GPU关闭(沉睡)  
 
 
 # Reference  

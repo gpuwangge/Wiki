@@ -41,9 +41,9 @@ GPU Firmware是一段运行在GPU上的软件(可以理解为显卡上有一个�
 8. 驱动程序通过设置Doorbell让GPU开始工作，然后等待GPU工作完成返回的中断  
 9. 驱动程序通过设置GPU MMU Register的方式令固件和GPU关闭(沉睡)  
 
-从Driver的角度看，当memory的部分配置好了之后，Driver对GPU的操作就是不停写和读一些register，以及很多memory操作。真正让GPU干活的底层操作是由Firmware来调配的。但Firmware需要的program和data还是要由driver准备。  
+从Driver的角度看，除了memory和data的配置操作，Driver对GPU的操作就是不停写和读一些register。真正让GPU干活的底层操作是由Firmware来调配的。但Firmware需要的program和data还是要由driver准备。  
 
-另外，Driver和Firmware的沟通实际上是两套软件在dynamic地沟通。会存在某个系统透过memory等待另一个系统的情况。比如驱动程序叫固件去读pagetable之后，必须等待固件读取完毕才能进行下一步(读program)操作。  
+另外，Driver和Firmware的沟通实际上是两套软件在dynamic地沟通。会存在某个系统透过memory等待另一个系统的情况。比如驱动程序叫固件去读pagetable之后，必须等待固件读取完毕才能进行下一步(读program)操作。这也是为什么driver需要读register的原因。  
 
 # Reference  
 https://blog.csdn.net/m0_51737348/article/details/122657090  

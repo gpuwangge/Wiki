@@ -319,9 +319,22 @@ https://www.redhat.com/en/blog/position-independent-executables-pie
 举例：  
 > make -j -c build/release
 
+## all
+该参数用于build整个项目。  
+一个项目可以包含很多源文件和库。all参数可以一次全部编译。  
+在Makefile文件中定义target。all是其中一个target。通常它的形式如下：
+···
+all: target1 target2 target3
+target1:
+gcc -c target1.c
+target2:
+gcc -c target2.c
+target3:
+gcc -c target3.c
+···
 
-
-
+举例：  
+> make all  
 
 
 

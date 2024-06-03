@@ -309,7 +309,7 @@ https://www.redhat.com/en/blog/position-independent-executables-pie
 > make -j  
 
 ## -C
-指定一个目录。在读取Makefile之前，线进入到目录DIR中，用法如下：  
+指定一个目录。在读取Makefile之前，先进入到目录DIR中，用法如下：  
 > -C DIR  
 
 上述指令和以下两条指令分别等效：  

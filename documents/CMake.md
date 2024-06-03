@@ -286,6 +286,23 @@ make原理：代码变成可执行文件的过程叫做编译(compile)；编译�
 举例：  
 > cmake -B build/release
 
+## -DCMAKE_BUILD_TYPE
+设置编译类型。具体类型跟编译target有关。比如Release, Debug, ReleaseWithDebInfo等等  
+举例：  
+> cmake -DCMAKE_BUILD_TYPE=Release  
+
+## -DCMAKE_CXX_FLAGS
+将额外的参数传递给编译器。比如-m32或-m64来实现32位和64位编译。如果未指定，将使用工具链原生默认参数。  
+举例：  
+> cmake -DCMAKE_BUILD_TYPE=-no-pie  
+
+这里pie的意思是position independent executable。这个设置可以enable Address Space Layout Randomization(ASLR)。  
+当ASLR被打开的的时候，kernel会把binary/dependencies load进随机的虚拟内存位置。  
+
+### Reference
+https://www.redhat.com/en/blog/position-independent-executables-pie  
+
+
 # Make参数
 ## -j  
 以下参数用于并行编译，一般用在服务器上发挥多核性能优势。该参数不需要把参数写死  

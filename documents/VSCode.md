@@ -1,9 +1,7 @@
-# VS Code
-
-## VS Code介绍
+# VS Code介绍
 VS Code是文本编辑器，所以是不带编译器的，需要下载一个C++编译器，比如MinGW(x86_64-win32-seh)  
  
-## 安装MinGW
+# 安装MinGW
 MinGW下载地址：  
 https://www.mingw-w64.org/downloads/  
 页面底下 Sources这一栏，点击SourceForge。拉到底下，选择x86_64-win32-seh
@@ -19,7 +17,7 @@ https://www.mingw-w64.org/downloads/
 (关于posix版本编译器：可以再下载x86_64-posix-seh，然后文件夹加上后缀_posix跟win32版放在一起，如果遇上p线程的问题可以换这个: 修改CMakeLists，使用posix版g++，但make还是一样的)  
 
 
-## GitHub+VS Code安装方法
+# GitHub+VS Code安装方法
 VS Code下载地址：  
 https://code.visualstudio.com/download  
 
@@ -29,10 +27,14 @@ C/C++
 Better Comments (optional)  
 Shader languages support
 
-### 安装Git
+## 安装Git
 要先安装VS Code(安装时勾选允许添加入右键菜单)，再安装git(在Choosing the default editor used by Git这个选项里选择VS Code作为Git's default editor)。  
 
-## VS Code使用说明
+# VS Code常用快捷键
+Ctrl + P: 显示所有文件  
+Ctrl + Shift + P 或 F1: 显示Command Editor  
+
+# VS Code使用说明
 打开VS Code后，点击Open Folder，选择一个你希望保存code的文件夹。  
 新建一个名字为xxx.c的文件，就会弹窗问你是否需要安装C/C++ Extension Pack，安装之。  
 安装好了之后会提示你选择Default Compiler（gcc or g++）。  
@@ -52,7 +54,7 @@ Shader languages support
 (多文件项目，其实就是建立不同的文件夹。可以新建更多工作区来存放不同代码，不同工作区有不同的.vscode编译和调试配置)  
 第一次运行C++文件的时候，会提示选择g++编译器  
 
-## VS Code配置文件
+# VS Code配置文件
 新建文件夹，打开VSCode后打开该文件夹。  
 如果有需要的话，拷贝相应的资源(obj, png, dll…)到工作目录内。  
 添加源文件和后缀（比如.cpp），VS Code会自动生成.vscode文件夹，内含配置文件   
@@ -68,7 +70,7 @@ settings.json
  "C_Cpp.default.compilerPath": "C:\\mingw64\\bin\\g++.exe"  
 ```
 
-### settings.json
+## settings.json
 说明：这个文件设置VS Code的compiler path and IntelliSense settings  
 更新这个文件会自动更新c_cpp_properties.json。但有时候这个文件并不出现，这时候直接修改c_cpp_properties.json即可。  
 ```
@@ -82,10 +84,12 @@ settings.json
 ```
 另一种方法是设置好环境变量，然后再json中使用%VULKAN_SDK%来代替地址  
 
-### tasks.json
+## tasks.json
 说明：告诉Compiler build instructions。即使修改了settings.json，Compiler仍旧不知道includePaths在哪里。(注意VS Code不是IDE，因此VS Code和Compiler是独立存在的)，所以要一同修改task.json。
-(如果一开始没有这个文件，只要运行一次代码它就会出现)
-注意：不知为何，glfw的MingG64版本只能使用dll版，因此需要拷贝dll文件到开发目录下。
+(如果一开始没有这个文件，只要运行一次代码它就会出现)  
+注意：不知为何，glfw的MingG64版本只能使用dll版，因此需要拷贝dll文件到开发目录下。  
+首先按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
+
 ```
             "args": [
                 "-std=c++17",
@@ -107,7 +111,7 @@ settings.json
             ],
 ```
 
-### launch.json
+## launch.json
 debugger settings。这个Json会自动生成不需要修改。  
 这个文件也不一定会出现。  
 以下代码设定用哪个debugger
@@ -117,11 +121,11 @@ debugger settings。这个Json会自动生成不需要修改。
 program这一项设定要debug的binary  
 > "program": "${cwd}/bin/simpleMipmap.exe"  
 
-### c_cpp_properties.json
+## c_cpp_properties.json
 settings.json修改了之后，这个也会更新。  
 如果cpp代码是c++17之后，需要手动把这个信息添加进这个文件。    
 
-#### IntelliSense
+### IntelliSense
 其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
 但是vscode的IntelliSense可以自动发现一些错误。以下是设置IntelliSense的方法。  
 Ctrl+Shift+P 跳出设置command prompt，选择C/C++: Edit Configuration(JSON)，这时候会生成c_cpp_properties.json。

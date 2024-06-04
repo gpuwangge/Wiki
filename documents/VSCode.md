@@ -85,11 +85,12 @@ settings.json
 另一种方法是设置好环境变量，然后再json中使用%VULKAN_SDK%来代替地址  
 
 ## tasks.json
+首先要生成tasks.json文件。  
+按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
+
 说明：告诉Compiler build instructions。即使修改了settings.json，Compiler仍旧不知道includePaths在哪里。(注意VS Code不是IDE，因此VS Code和Compiler是独立存在的)，所以要一同修改task.json。
 (如果一开始没有这个文件，只要运行一次代码它就会出现)  
 注意：不知为何，glfw的MingG64版本只能使用dll版，因此需要拷贝dll文件到开发目录下。  
-首先按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
-
 ```
             "args": [
                 "-std=c++17",

@@ -33,6 +33,7 @@ Shader languages support
 # VS Code常用快捷键
 Ctrl + P: 显示所有文件  
 Ctrl + Shift + P 或 F1: 显示Command Editor  
+Ctrl + Shift + B: Run Build Task  
 
 # VS Code使用说明
 打开VS Code后，点击Open Folder，选择一个你希望保存code的文件夹。  
@@ -87,6 +88,8 @@ settings.json
 ## tasks.json
 首先要生成tasks.json文件。  
 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
+接下来是如何通过run task来build。  
+使用快捷键Ctrl+Shift+B，或者打开Command Editor, 输入"Build"，选择"Tasks:Run Build Task"  
 
 说明：告诉Compiler build instructions。即使修改了settings.json，Compiler仍旧不知道includePaths在哪里。(注意VS Code不是IDE，因此VS Code和Compiler是独立存在的)，所以要一同修改task.json。
 (如果一开始没有这个文件，只要运行一次代码它就会出现)  

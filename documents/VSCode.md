@@ -38,6 +38,9 @@ https://www.git-scm.com/downloads
 要先安装VS Code，再安装git  
 在Choosing the default editor used by Git这个选项里选择  
 Use Visual Studio Code as Git's default editor   
+安装好之后，就可以在console里使用Git Clone等命令了  
+在local git repo打开VS Code，可以发现左边的Source Control功能会自动开启git功能，表示安装成功  
+
 
 # VS Code常用快捷键
 Ctrl + P: 显示所有文件  

@@ -35,7 +35,9 @@ Shader languages support
 
 # Git安装方法
 https://www.git-scm.com/downloads  
-要先安装VS Code，再安装git(在Choosing the default editor used by Git这个选项里选择VS Code作为Git's default editor)。  
+要先安装VS Code，再安装git  
+在Choosing the default editor used by Git这个选项里选择  
+Use Visual Studio Code as Git's default editor   
 
 # VS Code常用快捷键
 Ctrl + P: 显示所有文件  

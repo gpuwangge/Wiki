@@ -17,7 +17,7 @@ https://www.mingw-w64.org/downloads/
 (关于posix版本编译器：可以再下载x86_64-posix-seh，然后文件夹加上后缀_posix跟win32版放在一起，如果遇上p线程的问题可以换这个: 修改CMakeLists，使用posix版g++，但make还是一样的)  
 
 
-# GitHub+VS Code安装方法
+# VS Code安装方法
 VS Code下载地址：  
 https://code.visualstudio.com/download  
 
@@ -32,7 +32,8 @@ C/C++
 Better Comments (optional)  
 Shader languages support
 
-## 安装Git
+# Git安装方法
+https://www.git-scm.com/downloads  
 要先安装VS Code，再安装git(在Choosing the default editor used by Git这个选项里选择VS Code作为Git's default editor)。  
 
 # VS Code常用快捷键

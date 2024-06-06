@@ -43,6 +43,7 @@ Use Visual Studio Code as Git's default editor
 如果要使用git来check in，别忘了设定name和email，比如：
 > git config --global user.name "Connor"  
 > git config --global user.email wxj995@gmail.com  
+
 可以设置成任意值，这个是只为了区分这此修改是哪个id提交的  
 
 

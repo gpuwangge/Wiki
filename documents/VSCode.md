@@ -1,5 +1,6 @@
 # VS Code介绍
-VS Code是文本编辑器，所以是不带编译器的，需要下载一个C++编译器，比如MinGW(x86_64-win32-seh)  
+VS Code是文本编辑器，所以是不带编译器的，需要下载一个C++编译器，比如MinGW(x86_64-win32-seh)。  
+同时，使用Git进行版本管理。因为VS Code和Git有很好的兼容性。  
  
 # 安装MinGW
 MinGW下载地址：  

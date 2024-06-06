@@ -21,6 +21,11 @@ https://www.mingw-w64.org/downloads/
 VS Code下载地址：  
 https://code.visualstudio.com/download  
 
+安装时勾选允许添加入右键菜单,也就是勾选如下两个选项：  
+Add "Open with code" action to Windows Explorer file context menu  
+Add "Open with code" action to Windows Explorer directory context menu  
+
+
 安装vscode后，再安装必要插件GitLens. 安装后，左侧出现GitLens和GitLens Inspect图标。  
 建议安装如下Extensions:  
 C/C++  
@@ -28,7 +33,7 @@ Better Comments (optional)
 Shader languages support
 
 ## 安装Git
-要先安装VS Code(安装时勾选允许添加入右键菜单)，再安装git(在Choosing the default editor used by Git这个选项里选择VS Code作为Git's default editor)。  
+要先安装VS Code，再安装git(在Choosing the default editor used by Git这个选项里选择VS Code作为Git's default editor)。  
 
 # VS Code常用快捷键
 Ctrl + P: 显示所有文件  

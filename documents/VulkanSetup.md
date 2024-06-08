@@ -39,7 +39,7 @@ C:\VulkanSDK\GLFW\lib-vc2017
 C:\VulkanSDK\1.2.176.1\Lib  
 注：这里的lib-vc2017是对于visual studio 2017, 如果使用mingw, 可以更改为lib-static-ucrt   
 
-属性，Linker, Input  
+属性, Linker, Input  
 vulkan-1.lib  
 glfw3.lib  
 

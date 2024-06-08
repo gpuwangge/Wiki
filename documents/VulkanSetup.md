@@ -32,17 +32,19 @@ C:\VulkanSDK
 C:\VulkanSDK\GLM  
 C:\VulkanSDK\GLFW\include  
 C:\VulkanSDK\1.2.176.1\Include  
+注：这里的版本号按照实际版本变更  
 
 属性，Linker,  Additional library directories
-C:\VulkanSDK\GLFW\lib-vc2017
-C:\VulkanSDK\1.2.176.1\Lib
+C:\VulkanSDK\GLFW\lib-vc2017  
+C:\VulkanSDK\1.2.176.1\Lib  
+注：这里的lib-vc2017是对于visual studio 2017, 如果使用mingw, 可以更改为lib-static-ucrt   
 
-属性，Linker, Input
-vulkan-1.lib
-glfw3.lib
+属性，Linker, Input  
+vulkan-1.lib  
+glfw3.lib  
 
-### 另一种配置方法
-先设置好环境变量，然后在include和lib directories里面加入：  
+### 另一种配置方法  
+先设置好环境变量(INCLUDE和LIB)，然后在include和lib directories里面加入：  
 $(INCLUDE)  
 $(LIB)  
 仍旧需要拷贝vulkan-1.lib和glfw3.lib  

@@ -40,7 +40,7 @@ WSL本质上是个虚拟机
 实际存储位置可能在
 > user\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc
 
-**`在这里建议进入\\wsl$后，右键点击Ubuntu后，选择"Map network drive.."添加快捷方式`**  
+**`如何创建某个文件夹的快捷方式：比如要创建\\wsl$，右键点击Ubuntu后，选择"Map network drive.."添加快捷方式`**  
 
 ### WSL下如何通过shell打开c、d...盘文件
 > cd /mnt

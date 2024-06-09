@@ -1,8 +1,7 @@
-# WSL
 Windows从Windows 10开始引入了Windows Subsystem for Linux(WSL)  
 WSL本质上是个虚拟机  
 
-## 安装教程
+# 安装教程
 **`1.Open Windows PowerShell in administrator mode`**  
 **`2.Run command`**  
 > wsl --install  
@@ -27,6 +26,9 @@ WSL本质上是个虚拟机
 (到这一步安装就完成了)   
 (左侧文件管理器会出现一个企鹅🐧图标的Linux，点击里面会发现Ubuntu文件夹)  
 
+## 如何进入WSL
+方法1：进入Powershell，键入WSL指令，就可以在蓝色背景的Powershell进行操作  
+方法2：点击Start，点击WSL应用程序图标(是一个企鹅头)，会进入黑色背景的WSL Shell  
 
 ## Windows如何同WSL交换文件
 ### Windows下如何用文件管理器打开/home/wangge  
@@ -42,7 +44,7 @@ WSL本质上是个虚拟机
 
 **`如何创建某个文件夹的快捷方式：比如要创建\\wsl$，右键点击Ubuntu后，选择"Map network drive.."添加快捷方式`**  
 
-### WSL下如何通过shell打开c、d...盘文件
+## WSL下如何通过shell打开c、d...盘文件
 > cd /mnt
 
 在shell里试图运行.exe会先显示找不到xxx.dll的错误  
@@ -52,14 +54,14 @@ windows也可以修改/home/wangge下面的文件
 
 **`如果删除了这个wsl2 Linux子系统,它里面的文件也就没了`**   
 
-### 如何查看自己使用的wsl version是1还是2
+## 如何查看自己使用的wsl version是1还是2
 在Windows PowerShell里面使用命令  
 > wsl --list --verbose  
 
 或  
 > wsl -l -v
 
-### 如何查看wsl默认安装设置
+## 如何查看wsl默认安装设置
 > wsl --status  
 
 举例:
@@ -68,7 +70,7 @@ Default Distribution: Ubuntu
 Default Version: 2
 ```
 
-### 如何查看Ubuntu版本
+## 如何查看Ubuntu版本
 wsl或ubuntu内  
 > lsb_release -a
 
@@ -83,17 +85,18 @@ Codename:       jammy
 或
 > cat /etc/os-release
 
-### WSL升级
+## WSL升级
 首先要处于Admin Group
 > wsl --upgrade  
 
-## 如何在WSL里编译Linux binary
+
+# 如何在WSL里编译Linux binary
 以下指令可以在shell里打开vs code  
 > code .  
 
 但是光打开也没用，编译出来的还是windows .exe  
 
-### VS Code使用WSL的正确方法：  
+## VS Code使用WSL的正确方法：  
 windows下打开VS Code，下载WSL插件。  
 点击左下角链接WSL: Ubuntu. 选择Ubuntu里的文件夹。  
 这个时候VS Code就正确运行在WSL里面了。  
@@ -116,11 +119,11 @@ WSL Ubuntu自带gcc，但没有g++，使用如下指令安装g++:
 然后make指令可以生成没有任何后缀的可执行文件  
 该可执行文件就是Linux可执行文件，可以在wsl shell里面运行。  
 
-### 如何运行Linux binary
+## 如何运行Linux binary
 打开Windows PowerShell后运行
 > wsl.exe
 
-### 如何通过VS Code编辑器运行Linux binary
+## 如何通过VS Code编辑器运行Linux binary
 将希望运行的binary拷贝到WSL系统文件夹内，比如:  
 > Z:\home\wangge\projects  
 
@@ -159,7 +162,7 @@ rwx-rwx-rwx
 > chmod a=rwx file.txt
 
 
-### gcc和安装的g++是啥架构
+## gcc和安装的g++是啥架构
 x86_64：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
 AArch64: ARM的64位指令集。不支持32bit。常常简称为ARM64 
 
@@ -172,13 +175,13 @@ wsl和SWRD上获得的信息：
 windows上获得的信息：  
 **`Target: x86_64-w64-mingw32`**  
 
-### 如何查看一个binary是什么架构
+## 如何查看一个binary是什么架构
 (在Ubuntu系统下)  
 > file filename
 
 (会打印出elf信息)  
 
-### 如何编译出AArch64架构的binary
+## 如何编译出AArch64架构的binary
 需要用Cross Compile技术   
 **`1、安装aarch64版gcc(g++)`**  
 > sudo apt install gcc make gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
@@ -191,7 +194,7 @@ windows上获得的信息：
 set(CMAKE_C_COMPILER /usr/bin/aarch64-linux-gnu-gcc)  
 set(CMAKE_CXX_COMPILER /usr/bin/aarch64-linux-gnu-g++)  
 
-## 如何把代码从Windows上移植到WSL  
+# 如何把代码从Windows上移植到WSL  
 以OpenCL为例  
 **`1.把整个项目拷贝到\home\wangge\coding\底下`**  
 **`2.如上所述，把CMakeLists.txt里面SET编译器那两行去掉`**  
@@ -207,7 +210,7 @@ cmake里面加上如下代码：
 > find_package(OpenCL REQUIRED)  
 > link_libraries(OpenCL::OpenCL)  
 
-### 如何得知当前系统是否支持OpenGL gpu platform
+## 如何得知当前系统是否支持OpenGL gpu platform
 在Ubuntu系统下  
 > sudo apt install clinfo  
 > clinfo  
@@ -220,7 +223,7 @@ cmake里面加上如下代码：
 
 
 
-## References
+# References
 https://learn.microsoft.com/en-us/windows/wsl/install  
 https://jensd.be/1126/linux/cross-compiling-for-arm-or-aarch64-on-debian-or-ubuntu  
 https://github.com/KhronosGroup/OpenCL-Guide/blob/main/chapters/getting_started_linux.md  

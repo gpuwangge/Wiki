@@ -29,11 +29,13 @@ WSL本质上是个虚拟机
 
 
 ## Windows如何同WSL交换文件
-### Windows下如何用文件管理器打开/home/wangge
-> \\wsl$
+### Windows下如何用文件管理器打开/home/wangge  
+方法1：点击左侧企鹅，展开目录Linux->Ubuntu->home->wangge  
+方法2：在地址栏输入  
+> \\\wsl$
 
 或者
-> \\wsl.localhost\Ubuntu\home\wangge
+> \\\wsl.localhost\Ubuntu\home\wangge
 
 实际存储位置可能在
 > user\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu_79rhkp1fndgsc

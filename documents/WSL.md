@@ -20,11 +20,13 @@ WSL本质上是个虚拟机
 > [username]  
 > [password]  
 
+(这时候pwd: /home/wangge)  
 **`5.更新package`**  
 > sudo apt update && sudo apt upgrade  
 
-(到这一步安装就完成了)  
-(这时候pwd: /home/wangge)  
+(到这一步安装就完成了)   
+(左侧文件管理器会出现一个企鹅🐧图标的Linux，点击里面会发现Ubuntu文件夹)  
+
 
 ## Windows如何同WSL交换文件
 ### Windows下如何用文件管理器打开/home/wangge

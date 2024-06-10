@@ -48,7 +48,7 @@
 
 ## [Version Control System](https://github.com/gpuwangge/Wiki/blob/main/documents/VersionControlSystem.md)    
 
-
+## [Stable Diffusion](https://github.com/gpuwangge/Wiki/blob/main/documents/StableDiffusion.md)    
 
 
 

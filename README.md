@@ -34,7 +34,7 @@
 
 ## [Profiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Profiler.md) 
 
-## [House Remodel](https://github.com/gpuwangge/Wiki/blob/main/documents/HouseRemodel.md)   
+## [Hardware Infrastructure](https://github.com/gpuwangge/Wiki/blob/main/documents/HardwareInfrastructure.md)   
 
 ## [GREP](https://github.com/gpuwangge/Wiki/blob/main/documents/GREP.md)  
 

@@ -1,9 +1,13 @@
 # stability.ai
-stability.ai是推出Stable Diffusion的公司， 于2020年创办。致力于像Open AI一样构建开源AI项目。Stable Diffusion是其首个开源产品。  
+stability.ai是推出Stable Diffusion的公司， 于2020年创办, 致力于像Open AI一样构建开源AI项目。  
+Stable Diffusion是其首个开源产品。  
 Midjourney是Stable Diffusion的主要竞争对手。OpenAI的DALLE也是竞品，但实力稍逊。  
-Stability AI的大语言模型是StableLM。目前有3亿到7亿个参数可用(3B, 7B)，后续将提升到15亿到65亿个参数。StableLM和Stable Diffusion的代码托管在GitHub上。  
-OpenAI由于受金主微软的影响，Open程度不如stability.ai。与DALL-E不同的是，stable.ai允许用户在没有监管的情况下使用和构建模型。用户可以使用该软件进行商业创作。  
-2022年8月，stability.ai发布了DreamStudio应用程序，用户可以通过这个程序根据自然语言的描述创建图像。虽然Stable Diffusion是开源的，但如果要使用DreamStudio还是需要付费。  
+Stability AI的大语言模型是StableLM。目前有3亿到7亿个参数可用(3B, 7B)，后续将提升到15亿到65亿个参数。  
+StableLM和Stable Diffusion的代码托管在GitHub上。  
+OpenAI由于受金主微软的影响，Open程度不如stability.ai。  
+与DALL-E不同的是，stable.ai允许用户在没有监管的情况下使用和构建模型。用户可以使用该软件进行商业创作。  
+2022年8月，stability.ai发布了DreamStudio应用程序，用户可以通过这个程序根据自然语言的描述创建图像。  
+虽然Stable Diffusion是开源的，但如果要使用DreamStudio还是需要付费。  
 
 # 安装Stable Diffusion
 本章讨论如何在Windows环境下安装纯净Stable Diffusion WebUI，并且使用官方SDXL1.0生成图像。  

@@ -10,14 +10,18 @@ OpenAI由于受金主微软的影响，Open程度不如stability.ai。与DALL-E�
 (https://github.com/AUTOMATIC1111/stable-diffusion-webui)  
 WebUI是被越南人AUTOMATIC1111整合了web ui界面的Stable Diffusion版本。  
 最低配置：显存至少8GB，本地磁盘15GB。另外准备几十GB用来保存模型。  
-1.安装git  
-2.安装python(根据提示，必须Python 3.10.6) checking "Add Python to PATH".  
+**`1.安装git'**  
+**`2.安装python'**
+根据提示，必须Python 3.10.6  
+checking "Add Python to PATH"  
 https://www.python.org/downloads/release/python-3106/  
 安装完成后，打开console，使用如下命令：  
 python  
 如果显示Python 3.10.6，则说明安装成功了  
-3.git clone这个库。size约40mb  
-4.运行webui-user.bat, 大概安装十五分钟吧  
+**`3.git clone这个库'**  
+size约40mb  
+**`4.运行webui-user.bat'**  
+大概安装十五分钟吧  
 会下载文件到这个repo文件夹里，最后size为9.37GB  
 最后会出现文字:  
 Running on local URL: http://127.0.0.1:7860  
@@ -29,7 +33,7 @@ stable-diffusion-webui\models\Stable-diffusion\v1-5-pruned-emaonly.safetensors
 这样就表示安装成功了  
 注意运行的时候webui.bat窗口不可以关闭  
 以后再次运行的时候，就只用10几秒就可以了(待确认)  
-5.模型安装  
+**`5.模型安装'**  
 https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/tree/main  
 下载这个文件：  
 sd_xl_base_1.0.safetensors (6.94 GB)  

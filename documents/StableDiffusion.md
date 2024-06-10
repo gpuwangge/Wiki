@@ -9,7 +9,7 @@ OpenAI由于受金主微软的影响，Open程度不如stability.ai。与DALL-E�
 本文讨论如何安装纯净Stable Diffusion WebUI，并且使用官方SDXL1.0生成图像。  
 (https://github.com/AUTOMATIC1111/stable-diffusion-webui)  
 WebUI是被越南人AUTOMATIC1111整合了web ui界面的Stable Diffusion版本。  
-最低配置：显存至少8GB，本地磁盘15GB。另外准备几十GB用来保存模型。
+最低配置：显存至少8GB，本地磁盘15GB。另外准备几十GB用来保存模型。  
 1.安装git  
 2.安装python(根据提示，必须Python 3.10.6) checking "Add Python to PATH".  
 https://www.python.org/downloads/release/python-3106/  

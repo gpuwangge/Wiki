@@ -1,6 +1,4 @@
-# Vulkan
-
-## Vulkan多队列同步机制： Fences and Semaphores
+# Vulkan多队列同步机制： Fences and Semaphores
 同步的目的是什么：最大化使用CPU和GPU的资源，减少两者等待的时间。  
 
 同步机制有两种  
@@ -20,12 +18,12 @@ Vulkan下GPU的执行顺序：
 同一个VkSubmitInfo内，如果有很多commands，也是index小的先执行。  
 renderpass and subpass?  
 
-### Fence
+## Fence
 Fence配合vkQueueSubmit(Fence)使用。这时候Fence处于被设置状态。  
 vkResetFence会把Fence恢复。   
 vkWaitForFences会在Fence恢复之前阻塞CPU。这个函数可以理解成一个状态查询，它可能返回VK_TIMEOUT或VK_SUCCESS。  
 
-### Semaphore
+## Semaphore
 Semaphore也是配合vkQueueSubmit(VksubmitInfo)使用，只不过它是在VksubmitInfo结构中。  
 在VksubmitInfo结构中有三个参数：  
 pWaitSemaphores: 指向一些Semaphore。队列的指令会等待这些Semaphre被通知了之后才开始执行。  
@@ -37,11 +35,11 @@ pSignalSemaphores: 此次提交的命令全部接收后，本指针指向的所�
 以上Semaphore技巧也叫Binary Semaphore。  
 另外有Timeline Semaphore技巧，区别是增加了64-bit integer来指示payload。   
 
-### 结论
+## 结论
 Fence用于阻塞CPU直到Queue中的命令执行结束(GPU、CPU之前同步)。  
 Semaphre用于不同的命令提交之间的同步(GPU、GPU之前同步)。  
 
-### 举例
+## 举例
 在simple_triangle这个实例中，使用了2个frame，Semaphore四个，Fence两个  
 imageAvailableSemaphore x2 被pWaitSemaphores指向  
 renderFinishedSemaphore x2 被pSignalSemaphores指向(两个合起来表示的逻辑就是render完成后，通知image可用了。)  
@@ -76,18 +74,18 @@ vkResetFences(logicalDevice, 1, &inFlightFences[currentFrame]);
 两个Semaphore合起来表示的逻辑就是render完成后，通知image可用了。  
 vkAcquireNextImageKHR()的执行依赖image是否可用。  
 
-### Links
+## Links
 https://www.youtube.com/watch?v=GiKbGWI4M-Y  
 https://zhuanlan.zhihu.com/p/449222522  
 
 
-## 如何添加Texture支持
+# 如何添加Texture支持
 贴图三要素：  
 1. 图片Texture Image(需要Texture Image View支持-用来显示图像资源，信息打包进Sampler Descriptor)  
 2. 采样方法Sampler(需要Sampler Descriptor支持)  
 3. UV坐标TexCoord(需要改输入数据和Shaders)  
 
-## 如何添加深度测试
+# 如何添加深度测试
 Setup阶段：  
 1. 创建render pass的时候，同时创建depth attachment。同时设定是否early-Z(在PS之前进行一次深度测试)  
 2. 创建深度图createDepthResources()：depthImageBuffer and depthImageView  
@@ -97,7 +95,7 @@ Setup阶段：
 Run阶段  
 1. begin renderpass(recordCommandBuffer())的时候，设定renderPassInfo的时候，设置depthStencil  
 
-## 如何启用MSAA
+# 如何启用MSAA
 1. 确认Sample Count  
 (more samples lead to better results, however it is also more computationally expensive)  
 定义  
@@ -123,11 +121,11 @@ MSAA必须开DepthBuffer。
 5. GraphicsPipeline创建的时候设置msaaSamples数量  
 
 
-### Links
+## Links
 https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/01%20Depth%20testing/  
 https://developer.aliyun.com/article/325636  
 
-## Todo  
+# Todo  
 multi object sample  
 ray tracing    
 android screen flicking(Mipmap, furMark)  

@@ -99,7 +99,7 @@ Anime, Photographic, Digital Art, Comic Book, Fantasy Art, Analog Film, Neon Pun
 有一些主模型不需要任何LoRA，也能产生各种画风：  
 GhostMix, Deliberate, ReV, DreamShaper  
 
-# SDXL模型风格
+# SDXL模型风格示例
 Width=1024, Height=1024  
 necromancer, anime  
 necromancer, photographic  

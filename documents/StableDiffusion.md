@@ -100,6 +100,23 @@ Anime, Photographic, Digital Art, Comic Book, Fantasy Art, Analog Film, Neon Pun
 GhostMix, Deliberate, ReV, DreamShaper  
 
 # SDXL模型风格
+Width=1024, Height=1024  
+necromancer, anime  
+necromancer, photographic  
+necromancer, digital art  
+necromancer, Comic Book  
+necromancer, Fantasy Art  
+necromancer, Analog Film  
+necromancer, Neon Punk  
+necromancer, Isometric  
+necromancer, Low Poly  
+necromancer, Origami  
+necromancer, Line Art  
+necromancer, Cinematic  
+necromancer, 3D Model  
+necromancer, Pixel Art    
+
+
 
 
 # 参考文献

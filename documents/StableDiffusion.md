@@ -154,6 +154,11 @@ Stable Diffusion在生成图片的时候，使用Seed作为随机数。当创建
 原理猜测：Stable Diffusion会在模型库里寻找跟这个名字对应的人脸。如果该名子是一个名人，那么大概率就会抽取这个名人的脸来做模特。  
 如果是一个不存在的虚拟名字，实际上是找不到对应的人脸的。但是会根据一定规律生成一张脸。  
 只要模型没有变更，生成的脸大概率是比较一致的。  
+还有一种做法，就是找感兴趣的不同的明星名字拼起来，后面放一个系数，这样可以生成由名人脸组合的新的虚拟脸，效果也是比较一致的。  
+```
+[Taylor Swift : Gal Gadot : 0.5]
+```
+
 ### 实例
 ```
 1girl, [Jauny Doey], ((dressed in detailed rusty silver armor)), upper body, studio light, medieval age armor, angry, black hair, brown eyes, high quality, ((battlefield background)), blurry background,

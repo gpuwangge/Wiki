@@ -114,9 +114,9 @@ necromancer, Comic Book
 necromancer, Fantasy Art  
 necromancer, Analog Film  
 <p float="left">
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/ComicBook_necromancer.png" alt="alt text" width="150" height="150">  
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/FantasyArt_necromancer.png" alt="alt text" width="150" height="150">  
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/AnalogFilm_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/comicbook_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/fantasyart_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/analogfilm_necromancer.png" alt="alt text" width="150" height="150">  
 </p>  
 
 necromancer, Neon Punk  

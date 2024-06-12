@@ -144,6 +144,10 @@ necromancer, Pixel Art
 
 ## 固定对象特征
 本章讨论SDXL对于生成一致性虚拟角色的效果。所谓虚拟，是指凭空创造的，现实中不存在的角色。所谓一致性，是指角色的风格、特征具有一致性，使得人类可以一眼辨认出现在不同画面的角色是同一个角色。  
+Seed：Stable Diffusion在生成图片的时候，使用Seed作为随机数。当创建一致性角色的时候，我们希望每张图片的Seed是一样的。这样，当我们生成了一个满意角色的时候，需要将当前图片的Seed记录下来以备复用。  
+如果当时没有记下来，也可以在WebUI的图片信息里找到这个数字。  
+如果Seed=-1，则代表没有手动设定Seed，生成图片的时候将采用随机Seed。  
+差异Seed：这是一个可选属性。差异Seed提供了额外一个参数，它与Seed共同决定图片生成的效果。差异强度也可以设置，靠近强度0表示效果接近Seed，靠近强度1表示效果接近差异Seed。  
 ```
 1girl, [Jauny Doey], ((dressed in detailed rusty silver armor)), upper body, studio light, medieval age armor, angry, black hair, brown eyes, high quality, ((battlefield background)), blurry background,
 Negative prompt: helmet
@@ -157,5 +161,7 @@ https://www.yuque.com/a-chao/sd/nxcwfkw7vmfw8dz6
 https://www.uisdc.com/stable-diffusion-guide-4  
 https://m.paoka.com/info/1059  
 https://indienova.com/u/aigc/blogread/33638  
+https://huke88.com/article/8093.html
+
 
 

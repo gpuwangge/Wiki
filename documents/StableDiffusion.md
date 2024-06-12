@@ -36,7 +36,7 @@ stable-diffusion-webui\models\Stable-diffusion\v1-5-pruned-emaonly.safetensors
 这是2022年10月发布的官方1.5版本  
 这样就表示安装成功了  
 注意运行的时候webui.bat窗口不可以关闭  
-以后再次运行的时候，就只用10几秒就可以了(待确认)  
+以后再次运行webui-user.bat的时候，就只用24秒就打开  
 **`5.模型安装`**  
 https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/tree/main  
 下载这个文件：  

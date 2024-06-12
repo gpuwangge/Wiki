@@ -104,6 +104,13 @@ Width=1024, Height=1024
 necromancer, anime  
 necromancer, photographic  
 necromancer, digital art  
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/anime_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/photographic_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/digitalart_necromancer.png" alt="alt text" width="150" height="150">  
+</p>  
+
 necromancer, Comic Book  
 necromancer, Fantasy Art  
 necromancer, Analog Film  

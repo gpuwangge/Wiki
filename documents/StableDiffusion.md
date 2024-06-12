@@ -96,7 +96,7 @@ Stable DiffusionXL(SDXL) 1.0 是2023年7月官方新出的大模型。模型开�
 有一些其他大模型不需要任何LoRA，也能产生各种画风：GhostMix, Deliberate, ReV, DreamShaper  
 
 ## 固定图像风格
-Width=1024, Height=1024  
+txt2img, Width=1024, Height=1024  
 necromancer, anime  
 necromancer, photographic  
 necromancer, digital art  

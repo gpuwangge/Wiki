@@ -20,7 +20,9 @@ WebUI是被越南人AUTOMATIC1111整合了web ui界面的Stable Diffusion版本�
 checking "Add Python to PATH"  
 https://www.python.org/downloads/release/python-3106/  
 安装完成后，打开console，使用如下命令：  
-python  
+```
+python
+```
 如果显示Python 3.10.6，则说明安装成功了  
 **`3.git clone这个库`**  
 size约40mb  
@@ -142,12 +144,18 @@ necromancer, Pixel Art
 
 ## 固定对象特征
 本章讨论SDXL对于生成一致性虚拟角色的效果。所谓虚拟，是指凭空创造的，现实中不存在的角色。所谓一致性，是指角色的风格、特征具有一致性，使得人类可以一眼辨认出现在不同画面的角色是同一个角色。  
+```
+1girl, [Jauny Doey], ((dressed in detailed rusty silver armor)), upper body, studio light, medieval age armor, angry, black hair, brown eyes, high quality, ((battlefield background)), blurry background,
+Negative prompt: helmet
+Steps: 30, Sampler: Euler a, CFG scale: 10, Seed: 1151986892, Face restoration: CodeFormer, Size: 768x512, Model hash: 9aba26abdf, Model: deliberate_v2, Clip skip: 2, ENSD: 31337
+```
 
 
-
-# 参考文献
+# Reference
 https://foresightnews.pro/article/detail/18576  
 https://www.yuque.com/a-chao/sd/nxcwfkw7vmfw8dz6  
 https://www.uisdc.com/stable-diffusion-guide-4  
 https://m.paoka.com/info/1059  
+https://indienova.com/u/aigc/blogread/33638  
+
 

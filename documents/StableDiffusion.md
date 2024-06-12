@@ -37,7 +37,7 @@ stable-diffusion-webui\models\Stable-diffusion\v1-5-pruned-emaonly.safetensors
 这样就表示安装成功了  
 注意运行的时候webui.bat窗口不可以关闭  
 以后再次运行webui-user.bat的时候，就只用24秒就打开  
-**`5.模型安装`**  
+**`5.SDXL模型安装(Optional)`**  
 https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/tree/main  
 下载这个文件：  
 sd_xl_base_1.0.safetensors (6.94 GB)  

@@ -92,8 +92,7 @@ Stable Diffusion的官方模型是耗费了几十万美元成本获得的模型�
 ## Stable DiffusionXL(SDXL) 1.0
 是2023年7月官方新出的大模型。模型开源，免费商用。是世界上最大参数级的开放绘图模型。1.0基础版使用35亿参数，精修版使用66亿参数。  
 并且，不同于以往的512~768尺寸分辨率，SDXL使用1024x1024的分辨率，保证了我们生成这个分辨率的图片不再会产生多人多头的问题了。  
-另外，提示词功能也更加全面，只需要少量词汇就可以生成精美图片了。也支持更多风格，比如：  
-Anime, Photographic, Digital Art, Comic Book, Fantasy Art, Analog Film, Neon Punk, Isometric, Low Poly, Origami, Line Art, Cinematic, 3D Model, Pixel Art  
+另外，提示词功能也更加全面，只需要少量词汇就可以生成精美图片了。也支持更多风格。  
 
 ## 其他模型
 有一些主模型不需要任何LoRA，也能产生各种画风：  

@@ -175,6 +175,7 @@ https://m.paoka.com/info/1059
 https://indienova.com/u/aigc/blogread/33638  
 https://huke88.com/article/8093.html
 https://blog.csdn.net/FL1623863129/article/details/130922349  
+https://www.uisdc.com/stable-diffusion-guide-3
 
 
 

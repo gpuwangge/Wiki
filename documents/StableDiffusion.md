@@ -46,7 +46,7 @@ sd_xl_base_1.0.safetensors (6.94 GB)
 同样用猫测试，如果可以生成就成功了  
 SDXL可以生成1024x1024的大图片而不出现诡异的效果  
 
-# Stable Diffusion模型
+# Stable Diffusion模型种类介绍
 定义：模型是经过训练学习后得到的程序文件  
 模型中存储的不是一张张可视的原始图片，而是将图像特征解析后的代码，因此模型更像是一个储存了图片信息的大脑。  
 Stable Diffusion的官方模型是耗费了几十万美元成本获得的模型，并且是免费开源的。然而，其效果很多时候并不好。原因是官方模型是一个通用模型。假如我们想生成一个头像，最好用头像专用模型。  
@@ -100,6 +100,7 @@ Anime, Photographic, Digital Art, Comic Book, Fantasy Art, Analog Film, Neon Pun
 GhostMix, Deliberate, ReV, DreamShaper  
 
 # SDXL模型风格示例
+## 固定图像风格
 Width=1024, Height=1024  
 necromancer, anime  
 necromancer, photographic  
@@ -143,6 +144,8 @@ necromancer, Pixel Art
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/3dmodel_necromancer.png" alt="alt text" width="150" height="150">  
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/pixelart_necromancer.png" alt="alt text" width="150" height="150">  
 </p>  
+
+## 固定对象特征
 
 
 

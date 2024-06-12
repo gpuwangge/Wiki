@@ -104,7 +104,6 @@ Width=1024, Height=1024
 necromancer, anime  
 necromancer, photographic  
 necromancer, digital art  
-
 <p float="left">
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/anime_necromancer.png" alt="alt text" width="150" height="150">  
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/photographic_necromancer.png" alt="alt text" width="150" height="150">  
@@ -114,6 +113,12 @@ necromancer, digital art
 necromancer, Comic Book  
 necromancer, Fantasy Art  
 necromancer, Analog Film  
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/comicbook_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/fantasyart_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/analogfilm_necromancer.png" alt="alt text" width="150" height="150">  
+</p>  
+
 necromancer, Neon Punk  
 necromancer, Isometric  
 necromancer, Low Poly  

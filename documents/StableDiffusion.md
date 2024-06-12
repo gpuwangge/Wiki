@@ -44,7 +44,7 @@ sd_xl_base_1.0.safetensors (6.94 GB)
 扔到stable-diffusion-webui\models\Stable-diffusion\这个文件夹下  
 在WebUI选择这个.safetensor文件  
 同样用猫测试，如果可以生成就成功了  
-SDXL可以生成1024x1024的大图片  
+SDXL可以生成1024x1024的大图片而不出现诡异的效果  
 
 # Stable Diffusion模型
 定义：模型是经过训练学习后得到的程序文件  

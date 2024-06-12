@@ -122,12 +122,27 @@ necromancer, Analog Film
 necromancer, Neon Punk  
 necromancer, Isometric  
 necromancer, Low Poly  
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/neonpunk_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/isometric_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/lowpoly_necromancer.png" alt="alt text" width="150" height="150">  
+</p>  
+
 necromancer, Origami  
 necromancer, Line Art  
 necromancer, Cinematic  
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/origami_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/lineart_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cinematic_necromancer.png" alt="alt text" width="150" height="150">  
+</p>  
+
 necromancer, 3D Model  
 necromancer, Pixel Art    
-
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/3dmodel_necromancer.png" alt="alt text" width="150" height="150">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/pixelart_necromancer.png" alt="alt text" width="150" height="150">  
+</p>  
 
 
 

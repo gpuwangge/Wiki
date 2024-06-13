@@ -160,6 +160,7 @@ Stable Diffusion在生成图片的时候，使用Seed作为随机数。当创建
 ```
 
 ### 实例
+锁定Seed=2771310497, Batch size=6  
 ```
 1girl, [uxia], necromancer, fantasy art, upper body, studio light, medieval age cloth, black hair, brown eyes, ((battlefield background)), blurry background
 Negative prompt: helmet

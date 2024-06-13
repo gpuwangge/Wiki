@@ -161,6 +161,24 @@ Stable Diffusion在生成图片的时候，使用Seed作为随机数。当创建
 
 ### 实例
 ```
+1girl, [uxia], necromancer, fantasy art, upper body, studio light, medieval age cloth, black hair, brown eyes, ((battlefield background)), blurry background
+Negative prompt: helmet
+Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 2771310497, Size: 512x768, Model hash: 31e35c80fc, Model: sd_xl_base_1.0, Version: v1.9.4
+```
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia1.png" alt="alt text" width="150" height="225">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia2.png" alt="alt text" width="150" height="225">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia3.png" alt="alt text" width="150" height="225">  
+</p> 
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia4.png" alt="alt text" width="150" height="225">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia5.png" alt="alt text" width="150" height="225">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia6.png" alt="alt text" width="150" height="225">  
+</p> 
+
+```
 1girl, [Jauny Doey], ((dressed in detailed rusty silver armor)), upper body, studio light, medieval age armor, angry, black hair, brown eyes, high quality, ((battlefield background)), blurry background,
 Negative prompt: helmet
 Steps: 30, Sampler: Euler a, CFG scale: 10, Seed: 1151986892, Face restoration: CodeFormer, Size: 768x512, Model hash: 9aba26abdf, Model: deliberate_v2, Clip skip: 2, ENSD: 31337

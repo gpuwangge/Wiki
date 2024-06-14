@@ -150,7 +150,7 @@ rwx-rwx-rwx
 以下指令将两个文件设置为ug科协，other user不可写  
 > chmod ug+w,o-w file1.txt file2.txt  
 
-以下指令将全部权限设置给ug, other user只给执行权限
+以下指令将全部权限设置给ugo
 > chmod 777 file.txt
 
 说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x  

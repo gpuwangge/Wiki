@@ -51,7 +51,7 @@ GNU计划发布一系列自由软件，并且它们可以实现Unix系统的标�
 1990年，GNU计划开发发布的著名软件包括文字编辑器Emacs，C语言编译器GCC等等。  
 1991年，完全自由的操作系统Linux诞生，虽然其并不是GNU计划的一部分。  
 
-## GCC编译器
+## GCC编译器和MinGW
 GCC(GNU Compiler Collection)是GNU计划的关键一部分，也是GNU工具链的主要组成部分。GCC也是迄今为止诞生的最大的自由软件。  
 最早GCC只支持C语言(gcc)，后来也可以编译C++(g++)。  
 MinGW(Minimalist GNU for Windows)是将GCC编译器移植到Windows平台的产物。  

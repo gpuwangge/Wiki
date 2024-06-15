@@ -44,6 +44,19 @@ VSCode自带多文件编译系统，也就是task.json，但是用起来不够�
 对于复杂一些的多文件项目，使用CMake。而且CMake是平台无关的。  
 注意安装CMake的时候，选择下载解压包然后放到c盘下。如果选择安装包，似乎会自动指定MS的编译器。  
 
+## GNU计划
+20世纪八十年代流行的Unix是一套广泛使用的商业操作系统。  
+1983年，一些科技活动家发起了自由软件集体写作计划，计划目标是建立一套完全自由的操作系统，称为GNU(GNU is Not Unix)。  
+GNU计划发布一系列自由软件，并且它们可以实现Unix系统的标准接口。但后来很多依此计划发布软件也支持Windows/Mac OS等系统。  
+1990年，GNU计划开发发布的著名软件包括文字编辑器Emacs，C语言编译器GCC等等。  
+1991年，完全自由的操作系统Linux诞生，虽然其并不是GNU计划的一部分。  
+
+## GCC编译器
+GCC(GNU Compiler Collection)是GNU计划的关键一部分，也是GNU工具链的主要组成部分。GCC也是迄今为止诞生的最大的自由软件。  
+最早GCC只支持C语言(gcc)，后来也可以编译C++(g++)。  
+MinGW(Minimalist GNU for Windows)是将GCC编译器移植到Windows平台的产物。  
+MinGW编译的时候使用了Windows的C运行时库，因此其开发的程序可以直接在Windows下运行。  
+
 # CMake使用步骤
 目标： 运行一个基本的编译命令生成exe   
 **`1. 安装CMake`**  

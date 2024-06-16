@@ -14,10 +14,31 @@ CApplication::run(){
     UpdateRecordRender();
   }
 }
-CApplication::initialize(){
+
+CApplication::initialize(){ //sample also implement this
+  create sync objects
 }
+
 CApplication::UpdateRecordRender(){
+  update()
+  switch(renderMode){
+    case RENDER_GRAPHICS_Mode
+    case RENDER_COMPUTE_Mode
+    case RENDER_COMPUTE_SWAPCHAIN_Mode
+    case RENDER_COMPUTE_GRAPHICS_Mode
+  }
+  postUpdate() //this function is reserved for sample to implement. 通常作用是在compute单步完成后打印此时的状态。在graphics中因为已经画出了图形，这个地方一般没啥用。
+  renderer.Update()
 }
+
+CApplication::update(){ //sample also implement this
+  update main camera
+  for each descriptor{
+    update MVP uniform buffer
+    update VP uniform buffer
+  }
+}
+
 ```
 
 

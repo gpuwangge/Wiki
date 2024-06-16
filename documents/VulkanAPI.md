@@ -6,6 +6,7 @@ update()
 recordGraphcisCommandBuffer()  
 recordCoputeCommandBuffer()  
 postUpdate()  
+这些函数的执行顺序如下：  
 ```cpp
 CApplication::run(){
   create window

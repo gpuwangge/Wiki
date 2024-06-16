@@ -1,6 +1,6 @@
 # Vulkan Platform结构
 ## application.cpp
-```
+```cpp
 CApplication::run(){
   create window
   create instance

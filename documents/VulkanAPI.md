@@ -1,5 +1,11 @@
 # Vulkan Platform结构
 ## application.cpp
+Sample需要实现以下函数：  
+initialize()  
+update()  
+recordGraphcisCommandBuffer()  
+recordCoputeCommandBuffer()  
+postUpdate()  
 ```cpp
 CApplication::run(){
   create window

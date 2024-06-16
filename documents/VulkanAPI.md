@@ -23,12 +23,34 @@ CApplication::UpdateRecordRender(){
   update()
   switch(renderMode){
     case RENDER_GRAPHICS_Mode
+      renderer.WaitForGraphicsFence();
+      recordGraphicsCommandBuffer();  //this function is reserved for sample to implement.
+      renderer.AquireSwapchainImage(swapchain);
+      renderer.SubmitGraphics();
+      renderer.PresentSwapchainImage(swapchain); 
     case RENDER_COMPUTE_Mode
+      renderer.WaitForComputeFence();
+      recordComputeCommandBuffer(); //this function is reserved for sample to implement.
+      renderer.SubmitCompute();
     case RENDER_COMPUTE_SWAPCHAIN_Mode
+      renderer.WaitForComputeFence();
+      recordComputeCommandBuffer();
+      renderer.AquireSwapchainImage(swapchain);
+      renderer.SubmitCompute();
+      renderer.PresentSwapchainImage(swapchain); 
     case RENDER_COMPUTE_GRAPHICS_Mode
+      renderer.WaitForComputeFence();
+      recordComputeCommandBuffer();
+      renderer.WaitForGraphicsFence();
+      recordGraphicsCommandBuffer();
+      renderer.AquireSwapchainImage(swapchain);
+      renderer.SubmitCompute();
+      renderer.SubmitGraphics();
+      renderer.PresentSwapchainImage(swapchain); 
   }
-  postUpdate() //this function is reserved for sample to implement. 通常作用是在compute单步完成后打印此时的状态。在graphics中因为已经画出了图形，这个地方一般没啥用。
-  renderer.Update()
+  postUpdate() //this function is reserved for sample to implement.
+  //postUpdate通常作用是在compute单步完成后打印此时的状态。在graphics中因为已经画出了图形，这个地方一般没啥用。
+  renderer.Update() //just update currentFrame
 }
 
 CApplication::update(){ //sample also implement this

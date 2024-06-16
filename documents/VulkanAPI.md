@@ -1,3 +1,26 @@
+# Vulkan Platform结构
+## application.cpp
+```
+CApplication::run(){
+  create window
+  create instance
+  create surface
+  find physical devices
+  pick physical devices
+  create swapchain images
+  create image views
+  initialize();
+  loop{
+    UpdateRecordRender();
+  }
+}
+CApplication::initialize(){
+}
+CApplication::UpdateRecordRender(){
+}
+```
+
+
 # Vulkan多队列同步机制： Fences and Semaphores
 同步的目的是什么：最大化使用CPU和GPU的资源，减少两者等待的时间。  
 

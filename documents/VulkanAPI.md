@@ -20,7 +20,7 @@ CApplication::run(){
   create image views
   initialize();
   loop{
-    UpdateRecordRender();
+    UpdateRecordRender(); //这个函数依次做update, record, render这三件事
   }
 }
 

@@ -1,11 +1,13 @@
 # Vulkan Platform结构
 ## application.cpp
 Sample需要实现以下函数：  
+```cpp
 initialize()  
 update()  
 recordGraphcisCommandBuffer()  
 recordCoputeCommandBuffer()  
-postUpdate()  
+postUpdate()
+```
 这些函数的执行顺序如下：  
 ```cpp
 CApplication::run(){

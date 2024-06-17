@@ -24,6 +24,18 @@ NVIDIA H100的Memory Efficency更低。
 GPU的DRAM Latency比CPU大数倍(数据搬运延迟更大)，但线程数比CPU多上百倍。 
 结论：GPU的多线程架构是为大量任务并行设计的。  
 
+# AI编程本质
+## Convolutional Computation
+在图像处理中，每一个卷积核需要跟图片里对应的元素相乘再相加，最后获得特征图。  
+实际计算的时候，会对图片元素进行重排，再把卷积核也进行重排，这样就得到了两个大矩阵。通过矩阵相乘计算的方式获得特征图矩阵。最后把特征图矩阵恢复成特征图。  
+## GPU Thread Hierarchical
+在AI计算中，并不是所有计算都是线程独立的。  
+如果运算元素之间相互独立，那确实可以把所有的线程并行计算。  
+但实际计算中某些元素的计算依赖于周边数据的配合，因此不能完全线程独立。  
+
+## Relation of AI and Thread
+## Algorithmic Efficency
+
 
 # NVidia GPU Architecture
 ## CUDA Core

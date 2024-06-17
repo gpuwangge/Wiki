@@ -50,7 +50,7 @@
 
 ## [Stable Diffusion](https://github.com/gpuwangge/Wiki/blob/main/documents/StableDiffusion.md)    
 
-
+## [GPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUArchitecture.md)   
 
 
 

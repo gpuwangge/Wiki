@@ -112,7 +112,7 @@ Block线程块只在一个SM上通过Warp进行调度。
 SM可以同时保存多个Block线程块，块间并行的执行。  
 
 ### 算力计算NVIDA Peak FLOPs
-**'PeakFLOPS = F_clk * N_sm * F_req'**  
+**`PeakFLOPS = F_clk * N_sm * F_req`**  
 F_clk: GPU时钟周期内指令执行行数(FLOPS/Cycle)  
 N_sm: SM数量  
 F_req: 运行频率  

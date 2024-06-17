@@ -87,6 +87,7 @@ Dispatch Unit: 分发指令用的。因为线程其实是软件概念，最终�
 Load/Store: 访问存储单元LD/ST，用来负责数据处理。  
 Multi Level Cache  
 在旧的架构里还有个SP(Stream Processor)的概念，后来它被CUDA Core取代了。  
+
 ### CUDA并行计算平台与CUDA线程层次结构
 CUDA是一个并行计算构架和编程模型。  
 CUDA有基于LLVM构建的CUDA编译器，方便开发者使用C进行开发。  
@@ -94,7 +95,28 @@ CUDA提供了C/C++和Python等语言的支持，并且提供OpenCL等API接口�
 CUDA TOOLKIT: CUDA Compiler, Developer Tools(Debugger/Profiler), CUDA C++ Core  
 CUDA DRIVER: Memory Management, Windows & Graphics, Comms Libraries  
 CUDA-X LIBRARIES: Machine Learning(cuDF, cuML, cuGRAPH), DL/HPC(cuDNN, CUTLASS, TENSORRT, CUDA Math Libraries)  
+Host: CPU  
+Device: GPU  
+Host和Device交互执行，可以互相通讯。  
+Kernel函数: 处理并行计算的函数。CUDA会把Kernel函数编译成GPU能执行的程序，运行在Device上。  
+Kernel函数写在.cu文件里(Host代码也写在.cu文件里)，用__global__符号声明，并且用<<<grid,block>>>来指定运行参数。  
+每个grid包含很多block，block里面包含很多线程。  
+每个block内部有共享内存(Shared Memory)供其内部线程共享。不同block之间的内存不能共享，也不能通信，也不保证并行。  
+
+### CUDA架构和NVidia硬件架构的联系
+CUDA概念：Thread，Block，Grid  
+NVidia硬件架构概念：CUDA Core，SM，Device  
+Thread线程是执行在CUDA Core里面的。  
+Block线程块只在一个SM上通过Warp进行调度。  
+一旦在SM上调起了Block线程块，就会一直保留到执行完Kernel。  
+SM可以同时保存多个Block线程块，块间并行的执行。  
+
 ### 算力计算NVIDA Peak FLOPs
+**'PeakFLOPS = F_clk * N_sm * F_req'**  
+F_clk: GPU时钟周期内指令执行行数(FLOPS/Cycle)  
+N_sm: SM数量  
+F_req: 运行频率  
+
 
 # Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  

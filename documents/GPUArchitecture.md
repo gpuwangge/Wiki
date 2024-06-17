@@ -1,6 +1,14 @@
 # GPU工作原理
 GPU和CPU设计上的区别：GPU设计目标是最大化吞吐量(Throughout), 关心并行度(Parallelism)。  
 CPU更关心延迟(Latency)和并发(Concurrency)。  
+并行：同时处理多个任务。  
+并发：处理多个任务，但不是同时。  
+
+## 举例
+Intel Exon 8280: Memory Bandwidth = 131 GB/sec, Memory Latency = 89ns, 则在89ns内理论可以传输的数据量是131*89=11659 bytes。  
+实际在一个乘加运算里只移动了16 bytes，则Memory Efficency = 16/11659 = 0.14%  
+如果用并发展开，一次可以执行更多指令，但是有约束。  
+如果使用并行展开，需要使用大量线程。  
 
 
 # NVidia GPU Architecture

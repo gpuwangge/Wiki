@@ -74,7 +74,23 @@ H100是数据中心GPU，因此没有RT Core
 
 ## NVidia硬件架构和CUDA的关系
 ### 基本概念
+SM(Stream Multiprocessors): 如前所述，SM是GPU最小的计算单位。  
+其核心组件有各种Core，还有共享内存，寄存器等。  
+同样如前所述，一个Block上的线程是放在同一个SM。  
+SM的硬件限制(主要是Cache的大小)也制约了每个Block的线程数量。  
+Warp Scheduler: 调度线程用的。  
+Dispatch Unit: 分发指令用的。因为线程其实是软件概念，最终要转化成指令发给运算单元(也就是各种Core)。  
+理论上，分发到每个Block的线程都应该是并行处理的。但这仅仅是软件逻辑层面的假设。  
+事实上，从硬件角度上说，即使分发到同一个Block的thread，也并不是能够同一时刻执行。  
+真正保证thread并行的是一个Warp。比如一个Warp包含32个并行单元，就表示最多可以32个Thread并行运行。  
+换句话说，这32个Thread执行于SIMT模式。即每个Thread使用各自的Data执行指令分支。  
+Load/Store: 访问存储单元LD/ST，用来负责数据处理。  
+Multi Level Cache  
+在旧的架构里还有个SP(Stream Processor)的概念，后来它被CUDA Core取代了。  
 ### CUDA并行计算平台与CUDA线程层次结构
+CUDA是一个并行计算构架和编程模型。  
+CUDA有基于LLVM构建的CUDA编译器，方便开发者使用C进行开发。  
+CUDA提供了C/C++和Python等语言的支持，并且提供OpenCL等API接口。  
 ### 算力计算NVIDA Peak FLOPs
 
 # Reference

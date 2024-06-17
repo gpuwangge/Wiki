@@ -32,10 +32,14 @@ GPU的DRAM Latency比CPU大数倍(数据搬运延迟更大)，但线程数比CPU
 在AI计算中，并不是所有计算都是线程独立的。  
 如果运算元素之间相互独立，那确实可以把所有的线程并行计算。  
 但实际计算中某些元素的计算依赖于周边数据的配合，因此不能完全线程独立。  
-
-## Relation of AI and Thread
+Grid：所有的线程组成的任务系统。  
+Block：Grid中的一些任务线程组成Block，Block中的线程都是独立执行的，可以通过本地数据共享同步交换数据(via local memory)。  
+Grid/Block的本质是将线程进行分层。  
+Memory/Cache的本质也是将内存进行分层。  
 ## Algorithmic Efficency
-
+以矩阵乘法为例，矩阵A的某一行乘以矩阵B的某一列，其中涉及一系列元素的并行乘加操作，可以在同一个Block内实现。  
+随着矩阵size的增加，此算法计算强度也会线性增加。  
+GPU设计不仅仅关注算力。还需要关注算力和内存，带宽和时延的匹配。  
 
 # NVidia GPU Architecture
 ## CUDA Core

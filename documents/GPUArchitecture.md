@@ -1,3 +1,8 @@
+# GPU工作原理
+GPU和CPU设计上的区别：GPU设计目标是最大化吞吐量(Throughout), 关心并行度(Parallelism)。  
+CPU更关心延迟(Latency)和并发(Concurrency)。  
+
+
 # NVidia GPU Architecture
 ## CUDA Core
 CUDA Core是指一个执行基础运算的处理单元。  
@@ -29,8 +34,10 @@ H200(2024): CUDA Core=?, Hopper架构
 每个GPU含有8x9x2x4=576个Tensor Core
 H100是数据中心GPU，因此没有RT Core  
 
-## Reference
+
+# Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  
+https://www.bilibili.com/video/BV1bm4y1m7Ki/?spm_id_from=333.880.my_history.page.click&vd_source=e9d9bc8892014008f20c4e4027b98036  
 
 
 

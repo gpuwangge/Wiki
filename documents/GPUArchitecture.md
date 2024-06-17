@@ -24,8 +24,8 @@ H200(2024): CUDA Core=?, Hopper架构
 每个GPC内含有9个TPC(Texture Process Cluster, 纹理处理集群)  
 每个TPC含有2个SM(?, 流式多处理器)  
 每个SM含有128个FP32 CUDA Core和4个Tensor Core  
-因此，每个GPU含有8*9*2*128=18432个CUDA Core  
-每个GPU含有8*9*2*4=576个Tensor Core
+因此，每个GPU含有8x9x2x128=18432个CUDA Core  
+每个GPU含有8x9x2x4=576个Tensor Core
 
 ## Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  

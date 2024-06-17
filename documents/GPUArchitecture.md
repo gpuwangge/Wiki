@@ -91,6 +91,9 @@ Multi Level Cache
 CUDA是一个并行计算构架和编程模型。  
 CUDA有基于LLVM构建的CUDA编译器，方便开发者使用C进行开发。  
 CUDA提供了C/C++和Python等语言的支持，并且提供OpenCL等API接口。  
+CUDA TOOLKIT: CUDA Compiler, Developer Tools(Debugger/Profiler), CUDA C++ Core  
+CUDA DRIVER: Memory Management, Windows & Graphics, Comms Libraries  
+CUDA-X LIBRARIES: Machine Learning(cuDF, cuML, cuGRAPH), DL/HPC(cuDNN, CUTLASS, TENSORRT, CUDA Math Libraries)  
 ### 算力计算NVIDA Peak FLOPs
 
 # Reference

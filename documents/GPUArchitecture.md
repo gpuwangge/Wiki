@@ -72,6 +72,10 @@ H200(2024): CUDA Core=?, Hopper架构
 每个GPU含有8x9x2x4=576个Tensor Core
 H100是数据中心GPU，因此没有RT Core  
 
+## NVidia硬件架构和CUDA的关系
+### 基本概念
+### CUDA并行计算平台与CUDA线程层次结构
+### 算力计算NVIDA Peak FLOPs
 
 # Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  

@@ -61,16 +61,21 @@ L40S(2023): CUDA Core=18176, RT Core=142(212 TFLOPS), Tensor Core=568, Ada Lovel
 H200(2024): CUDA Core=?, Hopper架构  
 
 ## Hopper架构(以H100为例)
-最外层使用PCIE 5.0接口，18条NVLink  
-中间两个L2 Cache，链接8个GPC(GPU Process Cluster, GPU处理集群)  
+### NVIDA Grace Hopper Superchip
+NVDIA Hopper GPU 通过 NVLink链接NVIDIA Grace CPU,整个构架叫做NVIDA Grace Hopper Superchip  
+(使得CPU-GPU通讯速度有了很大提升)  
+不同GPU间也通过NVLink链接  
+不同机器间通过PCIE 5.0接口链接。  
+GPU内部含中间两个L2 Cache，链接8个GPC(GPU Process Cluster, GPU处理集群)  
 
 ### GPC结构
 每个GPC内含有9个TPC(Texture Process Cluster, 纹理处理集群)  
 每个TPC含有2个SM(Streaming Multiprocessor, 流式多处理器)  
 每个SM含有128个FP32 CUDA Core和4个Tensor Core，同时还有64个INT32 CUDA Core和64个FP64 CUDA Core    
 因此，每个GPU含有8x9x2x128=18432个CUDA Core  
-每个GPU含有8x9x2x4=576个Tensor Core
+每个GPU含有8x9x2x4=576个Tensor Core  
 H100是数据中心GPU，因此没有RT Core  
+另外，每个SM含四个Warp Scheduler  
 
 ## NVidia硬件架构和CUDA的关系
 ### 基本概念

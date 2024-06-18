@@ -117,7 +117,7 @@ F_clk: GPU时钟周期内指令执行行数(FLOPS/Cycle)
 N_sm: SM数量  
 F_req: 运行频率  
 
-# ARM GPU Architecture
+# ARM GPU(Mali) Architecture
 ## 典型架构
 Utgard(2007\~2015)  
 Midgard(2010\~2016)  
@@ -125,13 +125,14 @@ Bifrost(2016\~2018)
 Valhall(2019\~2022)  
 5thGen(2023)  
 
-## Mali Bifrost架构
-Shader Core: 相当于NVidia的SM。  
-EE: Execution Engine(EE)相当于NVidia的SP(也就是后来的CUDA Core)。EE属于Shader Core的一部分，就如同CUDA Core是SM的一部分。  
-Load/Store Unit  
-Varying Unit: 进行attribute的插值运算。  
-Texture Unit  
-ZS & Blend Unit  
+## Mali架构
+**`Shader Core`**: 相当于NVidia的SM。  
+**`EE`**: Execution Engine(EE)相当于NVidia的SP(也就是后来的CUDA Core)。EE属于Shader Core的一部分，就如同CUDA Core是SM的一部分。  
+SP内部含有上百个CUDA Core，但Shader Core里只有两个EE。这可能跟Mali的设计目标为移动设备有关。  
+**`Load/Store Unit`**  
+**`Varying Unit`**: 进行attribute的插值运算。  
+**`Texture Unit`**  
+**`ZS & Blend Unit`**    
 
 
 # Reference

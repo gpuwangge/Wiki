@@ -64,7 +64,7 @@ H200(2024): CUDA Core=?, Hopper架构
 最外层使用PCIE 5.0接口，18条NVLink  
 中间两个L2 Cache，链接8个GPC(GPU Process Cluster, GPU处理集群)  
 
-### GPC架构
+### GPC结构
 每个GPC内含有9个TPC(Texture Process Cluster, 纹理处理集群)  
 每个TPC含有2个SM(Streaming Multiprocessor, 流式多处理器)  
 每个SM含有128个FP32 CUDA Core和4个Tensor Core，同时还有64个INT32 CUDA Core和64个FP64 CUDA Core    

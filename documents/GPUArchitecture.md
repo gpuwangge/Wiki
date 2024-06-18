@@ -86,7 +86,7 @@ SM的硬件限制(主要是Cache的大小)也制约了每个Block的线程数量
 换句话说，这32个Thread执行于SIMT模式。即每个Thread使用各自的Data执行指令分支。  
 **`Load/Store`**: 访问存储单元LD/ST，用来负责数据处理。  
 **`Multi Level Cache`**  
-在旧的架构里还有个SP(Stream Processor)的概念，后来它被CUDA Core取代了。  
+在旧的架构里还有个SP(Stream Processor)的概念，后来(2010+)它被CUDA Core取代了。  
 
 ### CUDA并行计算平台与CUDA线程层次结构
 CUDA是一个并行计算构架和编程模型。  

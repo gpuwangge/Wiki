@@ -118,7 +118,7 @@ N_sm: SM数量
 F_req: 运行频率  
 
 # ARM GPU Architecture
-## 典型构架
+## 典型架构
 Utgard(2007\~2015)  
 Midgard(2010\~2016)  
 Bifrost(2016\~2018)  

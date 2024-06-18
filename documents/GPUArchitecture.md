@@ -119,10 +119,10 @@ F_req: 运行频率
 
 # ARM GPU Architecture
 ## 典型构架
-Utgard(2007/~2015)  
-Midgard(2010/~2016)  
-Bifrost(2016/~2018)  
-Valhall(2019/~2022)  
+Utgard(2007`~2015)  
+Midgard(2010`~2016)  
+Bifrost(2016`~2018)  
+Valhall(2019`~2022)  
 5thGen(2023)  
 
 ## Mali Bifrost架构

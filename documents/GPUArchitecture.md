@@ -130,6 +130,7 @@ Valhall(2019\~2022)
 **`EE`**: Execution Engine(EE)相当于NVidia的SP(也就是后来的CUDA Core)。EE属于Shader Core的一部分，就如同CUDA Core是SM的一部分。  
 SP内部含有上百个CUDA Core，但Shader Core里只有两个EE。这可能跟Mali的设计目标为移动设备有关。  
 **`Load/Store Unit`**  
+**`Attribute Unit`**    
 **`Varying Unit`**: 进行attribute的插值运算。  
 **`Texture Unit`**  
 **`ZS & Blend Unit`**    

@@ -117,11 +117,28 @@ F_clk: GPU时钟周期内指令执行行数(FLOPS/Cycle)
 N_sm: SM数量  
 F_req: 运行频率  
 
+# ARM GPU Architecture
+## 典型构架
+Utgard(2007~2015)  
+Midgard(2010~2016)  
+Bifrost(2016~2018)  
+Valhall(2019~2022)  
+5thGen(2023)  
+
+## Mali Bifrost架构
+Shader Core: 相当于NVidia的SM。  
+EE: Execution Engine(EE)相当于NVidia的SP(也就是后来的CUDA Core)。EE属于Shader Core的一部分，就如同CUDA Core是SM的一部分。  
+Load/Store Unit  
+Varying Unit: 进行attribute的插值运算。  
+Texture Unit  
+ZS & Blend Unit  
+
 
 # Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  
 https://www.bilibili.com/video/BV1bm4y1m7Ki/?spm_id_from=333.880.my_history.page.click&vd_source=e9d9bc8892014008f20c4e4027b98036  
-
+https://en.wikipedia.org/wiki/Mali_(processor)  
+https://blog.csdn.net/FishSeeker/article/details/84844330  
 
 
 

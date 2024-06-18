@@ -1,11 +1,11 @@
 # GPU设计原理
-GPU和CPU设计上的区别：GPU设计目标是最大化吞吐量(Throughout), 关心并行度(Parallelism)。  
+**`GPU和CPU设计上的区别`**：GPU设计目标是最大化吞吐量(Throughout), 关心并行度(Parallelism)。  
 CPU更关心延迟(Latency)和并发(Concurrency)。  
-并行：同时处理多个相同任务。  
-并发：处理多个任务，但不是同时。 
-显存：GPU里面独立的内存。HBM(High Bandwidth Memory)，通过PCIe与CPU内存通讯。  
-GPU缓存Cache机制：目的是为了减少内存(显存，Latency=15x, B/W=1x)的时延。  
-GPU寄存器：通常把GPU寄存器regs也当作缓存(L0，Latency=?, B/W=?)。regs距离SM非常近。因为SM是实际的计算单元，所以希望尽快的获取数据。    
+**`并行`**：同时处理多个相同任务。  
+**`并发`**：处理多个任务，但不是同时。 
+**`显存`**：GPU里面独立的内存。HBM(High Bandwidth Memory)，通过PCIe与CPU内存通讯。  
+**`GPU缓存Cache机制`**：目的是为了减少内存(显存，Latency=15x, B/W=1x)的时延。  
+**`GPU寄存器`**：通常把GPU寄存器regs也当作缓存(L0，Latency=?, B/W=?)。regs距离SM非常近。因为SM是实际的计算单元，所以希望尽快的获取数据。    
 同时有一些缓存(L2, Latency=5x, B/W=3x)希望离显存更近已方便读取内存的数据。  
 SM本身也有专属的缓存(L1, Latency=1x, B/W=13x)。因此GPU实际会设计多级缓存机制。  
 作为对比，GPU外部传输的PCIe速度为Latency=25x, B/W=0.02x，完全跟不上GPU内部的带宽传输速度，会拖累计算。  
@@ -32,8 +32,8 @@ GPU的DRAM Latency比CPU大数倍(数据搬运延迟更大)，但线程数比CPU
 在AI计算中，并不是所有计算都是线程独立的。  
 如果运算元素之间相互独立，那确实可以把所有的线程并行计算。  
 但实际计算中某些元素的计算依赖于周边数据的配合，因此不能完全线程独立。  
-Grid：所有的线程组成的任务系统。  
-Block：Grid中的一些任务线程组成Block，Block中的线程都是独立执行的，可以通过本地数据共享同步交换数据(via local memory)。  
+**`Grid`**：所有的线程组成的任务系统。  
+**`Block`**：Grid中的一些任务线程组成Block，Block中的线程都是独立执行的，可以通过本地数据共享同步交换数据(via local memory)。  
 Grid/Block的本质是将线程进行分层。  
 Memory/Cache的本质也是将内存进行分层。  
 ## Algorithmic Efficency
@@ -74,31 +74,31 @@ H100是数据中心GPU，因此没有RT Core
 
 ## NVidia硬件架构和CUDA的关系
 ### 基本概念
-SM(Stream Multiprocessors): 如前所述，SM是GPU最小的计算单位。  
+**`SM(Stream Multiprocessors)`**: 如前所述，SM是GPU最小的计算单位。  
 其核心组件有各种Core，还有共享内存，寄存器等。  
 同样如前所述，一个Block上的线程是放在同一个SM。  
 SM的硬件限制(主要是Cache的大小)也制约了每个Block的线程数量。  
-Warp Scheduler: 调度线程用的。  
-Dispatch Unit: 分发指令用的。因为线程其实是软件概念，最终要转化成指令发给运算单元(也就是各种Core)。  
+**`Warp Scheduler`**: 调度线程用的。  
+**`Dispatch Unit`**: 分发指令用的。因为线程其实是软件概念，最终要转化成指令发给运算单元(也就是各种Core)。  
 理论上，分发到每个Block的线程都应该是并行处理的。但这仅仅是软件逻辑层面的假设。  
 事实上，从硬件角度上说，即使分发到同一个Block的thread，也并不是能够同一时刻执行。  
 真正保证thread并行的是一个Warp。比如一个Warp包含32个并行单元，就表示最多可以32个Thread并行运行。  
 换句话说，这32个Thread执行于SIMT模式。即每个Thread使用各自的Data执行指令分支。  
-Load/Store: 访问存储单元LD/ST，用来负责数据处理。  
-Multi Level Cache  
+**`Load/Store`**: 访问存储单元LD/ST，用来负责数据处理。  
+**`Multi Level Cache`**  
 在旧的架构里还有个SP(Stream Processor)的概念，后来它被CUDA Core取代了。  
 
 ### CUDA并行计算平台与CUDA线程层次结构
 CUDA是一个并行计算构架和编程模型。  
 CUDA有基于LLVM构建的CUDA编译器，方便开发者使用C进行开发。  
 CUDA提供了C/C++和Python等语言的支持，并且提供OpenCL等API接口。  
-CUDA TOOLKIT: CUDA Compiler, Developer Tools(Debugger/Profiler), CUDA C++ Core  
-CUDA DRIVER: Memory Management, Windows & Graphics, Comms Libraries  
-CUDA-X LIBRARIES: Machine Learning(cuDF, cuML, cuGRAPH), DL/HPC(cuDNN, CUTLASS, TENSORRT, CUDA Math Libraries)  
-Host: CPU  
-Device: GPU  
+**`CUDA TOOLKIT`**: CUDA Compiler, Developer Tools(Debugger/Profiler), CUDA C++ Core  
+**`CUDA DRIVER`**: Memory Management, Windows & Graphics, Comms Libraries  
+**`CUDA-X LIBRARIES`**: Machine Learning(cuDF, cuML, cuGRAPH), DL/HPC(cuDNN, CUTLASS, TENSORRT, CUDA Math Libraries)  
+**`Host`**: CPU  
+**`Device`**: GPU  
 Host和Device交互执行，可以互相通讯。  
-Kernel函数: 处理并行计算的函数。CUDA会把Kernel函数编译成GPU能执行的程序，运行在Device上。  
+**`Kernel函数`**: 处理并行计算的函数。CUDA会把Kernel函数编译成GPU能执行的程序，运行在Device上。  
 Kernel函数写在.cu文件里(Host代码也写在.cu文件里)，用__global__符号声明，并且用<<<grid,block>>>来指定运行参数。  
 每个grid包含很多block，block里面包含很多线程。  
 每个block内部有共享内存(Shared Memory)供其内部线程共享。不同block之间的内存不能共享，也不能通信，也不保证并行。  

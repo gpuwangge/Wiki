@@ -88,8 +88,8 @@ SM的硬件限制(主要是Cache的大小)也制约了每个Block的线程数量
 **`Multi Level Cache`**  
 在旧的架构里还有个SP(Stream Processor)的概念，后来(2010+)它被CUDA Core取代了。  
 事实上，从2017年起，CUDA Core在硬件上也被拆分成了FPU和ALU，CUDA Core也仅仅成为软件上的概念。  
-ALU(Arithmetic Logic Unit): 做基本算数，比如加减乘除和逻辑运算(and, or, not, xor)  
-FPU(Floating Point Unit): 专门做浮点数运算，比ALU更加复杂。  
+**`ALU(Arithmetic Logic Unit)`**: 做基本算数，比如加减乘除和逻辑运算(and, or, not, xor)  
+**`FPU(Floating Point Unit)`**: 专门做浮点数运算，比ALU更加复杂。  
 
 ### CUDA并行计算平台与CUDA线程层次结构
 CUDA是一个并行计算构架和编程模型。  

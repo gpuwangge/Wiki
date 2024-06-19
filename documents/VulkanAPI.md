@@ -35,7 +35,7 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 **`Framebuffer(帧缓冲)`**：很多Attachments组合就成了Framebuffer。  
 
 最简单的情况，需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
-然后创建Framebuffer,里面当然只有这一个容器(Color Attachment)。
+然后创建Framebuffer,里面当然只有这一个容器(Color Attachment)。  
 将Framebuffer交给Driver，看看哪个swapchain image/view是空闲的，挂上去就行了。  
 
 实际情况比这个复杂一些，比如用户这时候掏出两张图片，这其中就存在遮挡关系，后挪进容器的图片就会遮挡住第一张图片。  

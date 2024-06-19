@@ -19,8 +19,8 @@ vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
 
 # Swapchain
 在解释Swapchain概念之前，首先阐述Vulkan是如何处理图像的。  
-VkImage：包含真正存储图像数据的内存结构VkDeviceMemory。  
-VkImageView: 定义了这一段VkImage的那一部分将被使用。  
+**`VkImage`**：包含真正存储图像数据的内存结构VkDeviceMemory。  
+**`VkImageView`**: 定义了这一段VkImage的那一部分将被使用。  
 如果打个比方，VkImage是一幅画，VkImageView是一个画框。你可以通过画框选择这幅画的呈现方式，但又不用改变画本身。  
 每一个图片都必须先配一个画框，否则无法使用。  
 
@@ -30,9 +30,9 @@ Swapchain本身就是把一串VkImageView(以及相关联的VkImage)串起来。
 Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者借用)，并在一定时间内把这个资源呈现出来。  
 
 另外，通常我们不是仅仅想把一幅画显示出来，我们还需要对其做各种处理，这里就涉及到多幅画的融合。  
-首先介绍如下概念：
-Attachment(附件): 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。  
-Framebuffer(帧缓冲)：很多Attachments组合就成了Framebuffer。  
+首先介绍如下概念：  
+**`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。  
+**`Framebuffer(帧缓冲)`**：很多Attachments组合就成了Framebuffer。  
 
 最简单的情况，需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
 然后创建Framebuffer,里面当然只有这一个容器(Color Attachment)。

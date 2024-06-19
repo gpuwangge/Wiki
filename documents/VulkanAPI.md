@@ -1,3 +1,25 @@
+# Surface
+Vulkan是与平台无关API，使用surface以实现跟窗口系统隔离。  
+```
+VkSurfaceKHR surface;
+```
+在创建instance后，选择物理设备之前，应该创建surface。因为物理设备的创建依赖surface。  
+在windows下，surface可以通过GLFW创建  
+```
+glfwCreateWindowSurface(instance->getHandle(), window, nullptr, &surface);
+```
+Android下可以通过如下方式创建  
+```
+vkCreateAndroidSurfaceKHR(sample.instance->getHandle(), &create_info,nullptr /* pAllocator */, &sample.surface)
+```
+程序运行结束之前，需要释放surface资源  
+```
+vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
+```
+
+# Swapchain
+
+
 # Vulkan Platform结构
 ## application.cpp
 Sample需要实现以下函数：  

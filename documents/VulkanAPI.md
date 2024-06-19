@@ -39,7 +39,7 @@ CApplication::run(){
   find physical devices
   pick physical devices
   create swapchain images
-  create image views
+  create swapchain image views
   initialize();
   loop{
     UpdateRecordRender(); //这个函数依次做update, record, render这三件事

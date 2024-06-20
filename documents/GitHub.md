@@ -1,5 +1,3 @@
-单机版GitHub相关知识  
-
 # 基础知识
 GitHub有三个状态区  
 - **`工作区`**(Working Directory，VS Code里叫Changes区)-直接编辑的地方，比如记事本打开的文件，肉眼可见，直接操作。add可以把文件增添到暂存区。  

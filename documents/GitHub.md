@@ -168,6 +168,7 @@ restore的作用是丢掉工作区的改动。但是文件本身的添加或删�
 
 # Local Repo修改了若干文件，Remote Repo也更新了。想把local更新到最新文件，然后继续local开发该如何操作
 直接git pull肯定不行  
+(可能的出错提示是"cannot pull with rebase: You have unstaged changes. Please commit or stash them")  
 使用如下步骤：  
 > git stash  
 > git pull  

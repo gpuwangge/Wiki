@@ -134,19 +134,6 @@ GitHub有三个状态区
 (会提示输入comments)  
 > git push  
 
-# 修改了Local Repo，也修改了Repote Repo，如何同步呢？
-这个时候，push或pull都会失败(Please move or remove them before you merge. Aborting)  
-思路是先stash local修改，再执行git pull拉代码，最后pop stash。之后就可以git add, git commit, git push三件套了。  
-可以输入git status查看local repo的状态。   
-如果local repo有untracked的file，要先commit。  
-具体操作如下：  
-> git status  
-> git stash  
-> git pull  
-
-在vs code面板左侧，STASHES目录下选择Apply Stash或Pop Stash。两者区别是前者会保留stash，后者会删除stash。选后者就可以了。  
-这时候会打开Merge Changes面板，对比两个版本。绿色是remote pull下来的版本，蓝色是local修改的版本。  
-点击Resolve in Merge Editor按钮处理conflict。  
 
 # Local Repo修改了文件，Remote Repo也更新了，想扔掉Local文件更新到最新文件如何操作
 这时候git pull会出错  
@@ -167,6 +154,7 @@ restore的作用是丢掉工作区的改动。但是文件本身的添加或删�
 # Local Repo修改了若干文件，Remote Repo也更新了。想把local更新到最新文件，然后继续local开发该如何操作
 直接git pull肯定不行  
 (可能的出错提示是"cannot pull with rebase: You have unstaged changes. Please commit or stash them")   
+(或者这个错误："Please move or remove them before you merge. Aborting")
 首先用status命令可以查看目前有哪些修改  
 > git status
 
@@ -193,6 +181,10 @@ restore的作用是丢掉工作区的改动。但是文件本身的添加或删�
 使用如下命令删除所有存储
 > git stash clear :  
 
+如果使用VSCode UI  
+在vs code面板左侧，STASHES目录下选择Apply Stash或Pop Stash。两者区别是前者会保留stash，后者会删除stash。选后者就可以了。  
+这时候会打开Merge Changes面板，对比两个版本。绿色是remote pull下来的版本，蓝色是local修改的版本。  
+点击Resolve in Merge Editor按钮处理conflict。  
 
 # Branch相关
 ## 切换Branch

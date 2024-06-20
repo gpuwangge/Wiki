@@ -20,7 +20,7 @@ vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
 # Swapchain
 在解释Swapchain概念之前，首先阐述Vulkan是如何处理图像的。  
 **`VkImage`**：包含真正存储图像数据的内存结构VkDeviceMemory。  
-**`VkImageView`**: 定义了这一段VkImage的那一部分将被使用。  
+**`VkImageView`**: 定义了这一段VkImage的哪一部分将被使用。  
 如果打个比方，VkImage是一幅画，VkImageView是一个画框。你可以通过画框选择这幅画的呈现方式，但又不用改变画本身。  
 每一个图片都必须先配一个画框，否则无法使用。  
 
@@ -164,8 +164,8 @@ pSignalSemaphores: 此次提交的命令全部接收后，本指针指向的所�
 另外有Timeline Semaphore技巧，区别是增加了64-bit integer来指示payload。   
 
 ## 结论
-Fence用于阻塞CPU直到Queue中的命令执行结束(GPU、CPU之前同步)。  
-Semaphre用于不同的命令提交之间的同步(GPU、GPU之前同步)。  
+Fence用于阻塞CPU直到Queue中的命令执行结束(GPU、CPU之间同步)。  
+Semaphre用于不同的命令提交之间的同步(GPU、GPU之间同步)。  
 
 ## 举例
 在simple_triangle这个实例中，使用了2个frame，Semaphore四个，Fence两个  

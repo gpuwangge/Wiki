@@ -166,14 +166,26 @@ restore的作用是丢掉工作区的改动。但是文件本身的添加或删�
 
 # Local Repo修改了若干文件，Remote Repo也更新了。想把local更新到最新文件，然后继续local开发该如何操作
 直接git pull肯定不行  
-(可能的出错提示是"cannot pull with rebase: You have unstaged changes. Please commit or stash them")  
-使用如下步骤：  
-> git stash  
-> git pull  
-> git stash pop  
+(可能的出错提示是"cannot pull with rebase: You have unstaged changes. Please commit or stash them")   
+首先用status命令可以查看目前有哪些修改  
+> git status
 
-另外可以用如下命令查看已经stash了哪些内容
-> git stash list  
+使用git stash可以保存当前的修改  
+> git stash
+
+这时候如果用status命令会发现修改都不见了，但是可以用stash show命令查看保存的修改  
+> git stash show
+
+这里显示的修改跟之前status命令显示的修改应该是一样的  
+
+还可以用stash list命令查看stash列表  
+> git stash list
+
+接下来就可以pull了  
+> git pull  
+
+把stash的修改内容回复，可以继续开发了  
+> git stash pop  
 
 使用如下命令丢掉存储  
 > git stash drop  
@@ -190,10 +202,10 @@ Github上clone的项目默认是default branch，如果需要切换其他branch�
 
 该指令列出了所有可能的branch，比如一下格式：  
 remotes/origin/Lesson_0  
-remotes/origin/Lesson2_2
+remotes/origin/Lesson2_2  
 当前的Branch前面会带有一个*符号  
 切换branch的指令如下：  
-> git checkout -b Lesson_2_2
+> git checkout -b Lesson_2_2  
 
 ## Branch的合并方法
 ### 没有冲突的合并

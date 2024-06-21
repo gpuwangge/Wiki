@@ -76,7 +76,8 @@ Renderer也负责处理同步问题：fence, semaphore
 - Bind Pipeline  
 - Set Viewport  
 - Set Scissor  
-- Bind Descriptor Sets  
+- Bind Descriptor Sets
+
 Vulkan Platform定义了四种渲染模式  
 ## RENDER_GRAPHICS_Mode
 正常的图形渲染，走graphics pipeline  

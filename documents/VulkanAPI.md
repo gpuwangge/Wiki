@@ -86,7 +86,9 @@ RenderPass通过subpass来组织这些资源。
 一个RenderPass里可以有多个subpass。  
 每个subpass可以设置输入attachment和输出attachment。  
 (这里的attachment其实就是swapchain里的attachment。所不同的是RenderPass里的不是真的attachment资源，仅仅是附件描述attachment description)  
-每个subpass都必须有至少一个attachment作为输出。一个subpass的输出attachment可以成为另一个subpass的输入attachment。    
+每个subpass都必须有至少一个attachment作为输出。一个subpass的输出attachment可以成为另一个subpass的输入attachment。  
+subpass设计的目的是为了实现TBR/TBDR，除此之外也没啥其他用处。  
+
 为了简单起见，也可以只建立1个subpass，然后添加多个attachments。  
 比如，可以输出一个Color Attachment和一个Depth Attachment。如果开启MSAA，还可以加一个Resolve Attachment。  
 
@@ -108,6 +110,13 @@ RenderPass通过subpass来组织这些资源。
 # Descriptor
 
 # Pipeline
+Pipeline的本质就是各种shader组合在一起。  
+每次走完一遍pipeline，就相当于一次renderPass。   
+如果同一帧走了两次同一个pipeline，则说明这个renderPass里包含了两个subpass。(比如延迟着色)  
+
+但是并不是所有的Pipeline都需要renderPass，比如光线追踪。  
+如果是使用Compute Pipeline的情况，也不需要renderPass。  
+
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
 

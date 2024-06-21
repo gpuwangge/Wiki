@@ -33,6 +33,7 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 首先介绍如下概念：  
 **`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。   
 **`Framebuffer(帧缓存)`**: 把一些attachment资源，以及对应的描述渲染过程的RenderPass包在一起，让渲染器可以在渲染的时候使用的结构。  
+因为每一帧画面实际上只用到一个swapchain image，所以也只会用到一份framebuffer。因此swapchain image/view数量跟framebuffer数量也是相同的。  
 
 Swapchain除了要创建本身的images和views，还要给这些attachment分别创建image和view。  
 

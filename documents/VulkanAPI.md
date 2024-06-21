@@ -60,8 +60,18 @@ RenderPass通过subpass来组织这些资源。
 
 通过构建不同的RenderPass，Vulkan定义了不同的渲染状态，允许开发者在渲染之前切换状态而不会导致性能下降。  
 
-# RenderProcess
-RenderProcess用来设置RenderPass的类。(FrameBuffer格式?Subpass?)
+在Vulkan Platform中，RenderProcess类用于创建RenderPass。(FrameBuffer格式?Subpass?)  
+RenderProcess同时创建Pipeline。  
+
+# Descriptor
+
+# Buffer
+
+# Texture
+
+# Shader
+
+# Pipeline
 
 
 

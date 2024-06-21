@@ -68,12 +68,20 @@ RenderProcess同时创建Pipeline。
 # Texture
 
 # Renderer
-Vulkan Platform定义了一些渲染模式  
+Renderer在Vulkan Platform里进行各种渲染的准备工作，包括准备vertex buffer，command buffer，获得swapchain image id（就是acquire那个swapchain image是available的）  
+Renderer也处理compute buffer/command的内容，虽然严格来说这不是“渲染”  
+Renderer也负责处理同步问题：fence, semaphore  
+在Render过程中最重要的Record过程留给Sample实现，但Renderer会做一些前后准备工作，包括但不仅限于：  
+- Begin Render Pass  
+- Bind Pipeline  
+- Set Viewport  
+- Set Scissor  
+- Bind Descriptor Sets  
+Vulkan Platform定义了四种渲染模式  
 ## RENDER_GRAPHICS_Mode
 正常的图形渲染，走graphics pipeline  
 ## RENDER_COMPUTE_Mode
 仅计算，走compute pipeline  
-(虽然这个模式严格来说不是“渲染”)  
 ## RENDER_COMPUTE_SWAPCHAIN_Mode
 主要走compute pipeline,但是最后画在swapchain上  
 (Sample: textureCompute)  

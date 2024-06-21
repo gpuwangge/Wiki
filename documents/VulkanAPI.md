@@ -31,50 +31,29 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 
 另外，通常我们不是仅仅想把一幅画显示出来，我们还需要对其做各种处理，这里就涉及到多幅画的融合。  
 首先介绍如下概念：  
-**`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。  
-**`Framebuffer(帧缓冲)`**：很多Attachments组合就成了Framebuffer。  
+**`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。   
 
 最简单的情况，需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
-然后创建Framebuffer,里面当然只有这一个容器(Color Attachment)。  
-将Framebuffer交给Driver，看看哪个swapchain image/view是空闲的，挂上去就行了。  
+然后创建RenderPass,里面当然只有这一个容器(Color Attachment)。   
 
 实际情况比这个复杂一些，比如用户这时候掏出两张图片，这其中就存在遮挡关系，后挪进容器的图片就会遮挡住第一张图片。  
 显然我们不希望发生这样的结果，我们希望离镜头近的图片遮挡住离镜头远的图片。  
 根据图片与镜头的距离，我们创建一张与窗口大小相同的深度图，并且也把它放进一个容器里(Depth Attachment)。  
-现在，我们的Framebuffer里就绑定了两个容器(or 附件Attachment)。  
-Driver在把Framebuffer挂在Swapchain的时候，就能够正确呈现两张图片的遮蔽关系了。  
+现在，我们的RenderPass里就绑定了两个容器(or 附件Attachment)，渲染的时候就能够正确呈现两张图片的遮蔽关系了。  
 
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  
-我们将在随后的步骤中建立attachment/framebuffer。  
-
-# RenderPass
-RenderPass描述了GPU如何进行渲染流程，它定义了渲染步骤和使用的资源。  
-RenderPass通过subpass来组织这些资源。  
-一个RenderPass里可以有多个subpass。  
-每个subpass可以设置输入attachment和输出attachment(通过Framebuffer?)。  
-每个subpass都必须有至少一个attachment作为输出。  
-比如，可以输出一个Color Attachment和一个Depth Attachment。如果开启MSAA，还可以加一个Resolve Attachment。
-一个subpass的输出attachment可以成为另一个subpass的输入attachment。  
-因此，subpass需要控制执行的顺序。控制顺序的办法是Subpass Dependency。  
-
-通过构建不同的RenderPass，Vulkan定义了不同的渲染状态，允许开发者在渲染之前切换状态而不会导致性能下降。  
-
-在Vulkan Platform中，RenderProcess类用于创建RenderPass。(FrameBuffer格式?Subpass?)  
-RenderProcess同时创建Pipeline。  
-
-# Buffer
-
-# Texture
 
 # Renderer
 Renderer在Vulkan Platform里进行各种渲染的准备工作，包括准备vertex buffer，command buffer，获得swapchain image id
 （就是acquire哪个swapchain image是available的）  
-Renderer跟RenderPass的区别是：后者定义了渲染流程，前者使用这个定义好的流程，并且配合其他必要的资源进行渲染  
+Renderer跟RenderPass的区别是：后者定义了渲染流程，前者使用这个定义好的流程，并且配合其他必要的资源（比如framebuffer）进行渲染  
+(RenderPass和pipelines都在Renderprocess里创建)
+(framebuffer在swapchain里创建, 因为framebuffer的size跟Swapchain Views的size一样，属于swapchain下面的资源)
 Renderer也处理compute buffer/command的内容，虽然严格来说这不是“渲染”  
 Renderer也负责处理同步问题：fence, semaphore  
 在Render过程中最重要的Record过程留给Sample实现，但Renderer会做一些前后准备工作，包括但不仅限于：  
-- Begin Render Pass  
+- Begin Render Pass(需要renderPass本身以及available的那个swapchain view的framebuffer)  
 - Bind Pipeline  
 - Set Viewport  
 - Set Scissor  
@@ -93,6 +72,34 @@ Vulkan Platform定义了四种渲染模式
 ## 4 RENDER_COMPUTE_GRAPHICS_Mode
 同时有graphics和compute pipeline，且各自都会提交command queue    
 一般来讲会通过compute shader做一些并行计算，然后把结果通过graphics pipeline画出来  
+
+
+
+
+
+# RenderPass
+RenderPass描述了GPU如何进行渲染流程，它定义了渲染步骤和使用的资源。  
+RenderPass通过subpass来组织这些资源。  
+一个RenderPass里可以有多个subpass。  
+每个subpass可以设置输入attachment和输出attachment(通过Framebuffer?)。  
+每个subpass都必须有至少一个attachment作为输出。一个subpass的输出attachment可以成为另一个subpass的输入attachment。    
+为了简单起见，也可以只建立1个subpass，然后添加多个attachments。  
+比如，可以输出一个Color Attachment和一个Depth Attachment。如果开启MSAA，还可以加一个Resolve Attachment。  
+
+因此，subpass需要控制执行的顺序。控制顺序的办法是Subpass Dependency。  
+如果只有一个subpass，也只需要一个简单的dependency。  
+
+通过构建不同的RenderPass，Vulkan定义了不同的渲染状态，允许开发者在渲染之前切换状态而不会导致性能下降。  
+
+在Vulkan Platform中，RenderProcess类用于创建RenderPass。(FrameBuffer格式?Subpass?)  
+RenderProcess同时创建Pipeline。  
+
+
+# Buffer
+
+# Texture
+
+
 
 # Shader
 

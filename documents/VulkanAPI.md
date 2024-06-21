@@ -129,9 +129,10 @@ Pipeline的本质就是各种shader组合在一起。
 第一步vkMapMemory()函数可以在deviceMemory上建立一个映射。映射名字叫什么无所谓。我就叫它pGpuMemory，是一个指向GPU内存的指针。
 第二步使用memcpy()函数把data拷贝到pGpuMemory上(就如同我们常常在CPU上的操作一样)
 第三步使用vkUnMapMemory()函数解除deviceMemory上的内存映射。但假如以后还需要从CPU访问这段内存，不解除也是可以的。  
-这个过程也叫fill deviceMemory。  
+这个过程也叫fill deviceMemory。
+
 至此，完成了内存空间的初始化。  
-别忘了在结束程序前，要使用vkDestroyBUffer(buffer)和vkFreeMemory(deviceMemory)清理资源。  
+别忘了在结束程序前，要使用vkDestroyBUffer(buffer)和vkFreeMemory(deviceMemory)清理内存资源。  
 
 
 # Vulkan Platform结构

@@ -80,7 +80,7 @@ Vulkan Platform定义了一些渲染模式
 这种情况不需要submit graphics command queue  
 原理是通过compute shader把数据写到texture buffer上，再让graphics pipeline显示这个texture  
 ## RENDER_COMPUTE_GRAPHICS_Mode
-同时有graphics和compute pipeline  
+同时有graphics和compute pipeline，且各自都会提交command queue    
 一般来讲会通过compute shader做一些并行计算，然后把结果通过graphics pipeline画出来  
 
 # Shader

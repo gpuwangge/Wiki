@@ -32,14 +32,19 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 另外，通常我们不是仅仅想把一幅画显示出来，我们还需要对其做各种处理，这里就涉及到多幅画的融合。  
 首先介绍如下概念：  
 **`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。   
+**`Framebuffer(帧缓存)`**: 把一些attachment资源，以及对应的描述渲染过程的RenderPass包在一起，让渲染器可以在渲染的时候使用的结构。  
 
-最简单的情况，需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
+Swapchain除了要创建本身的images和views，还要给这些attachment分别创建image和view。  
+
+举例来说，一个最简单的情况，只需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
 然后创建RenderPass(稍后会解释，这是一个描述渲染过程的结构),里面当然只有这一个容器(Color Attachment)。   
+Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuffer。每个swapchain image/view对应一份framebuffer资源。  
+渲染器渲染的时候会查看哪一个swapchain image当前available，如果确定了之后会获得swapchain id，于是就可以向swapchain索取相应id对应的framebuffer,从而开始渲染过程。  
 
-实际情况比这个复杂一些，比如用户这时候掏出两张图片，这其中就存在遮挡关系，后挪进容器的图片就会遮挡住第一张图片。  
+实际情况比这个复杂一些，比如用户掏出两张图片，这其中就存在遮挡关系，后挪进容器的图片就会遮挡住第一张图片。  
 显然我们不希望发生这样的结果，我们希望离镜头近的图片遮挡住离镜头远的图片。  
 根据图片与镜头的距离，我们创建一张与窗口大小相同的深度图，并且也把它放进一个容器里(Depth Attachment)。  
-现在，我们的RenderPass里就绑定了两个容器(or 附件Attachment)，渲染的时候就能够正确呈现两张图片的遮蔽关系了。  
+现在，我们的RenderPass里就绑定了两个容器(or 附件Attachment)，同样把两者打包进一个framebuffer，这样渲染的时候就能够正确呈现两张图片的遮蔽关系了。  
 
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  

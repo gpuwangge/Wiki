@@ -48,8 +48,8 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 Renderer在Vulkan Platform里进行各种渲染的准备工作，包括准备vertex buffer，command buffer，获得swapchain image id
 （就是acquire哪个swapchain image是available的）  
 Renderer跟RenderPass的区别是：后者定义了渲染流程，前者使用这个定义好的流程，并且配合其他必要的资源（比如swapchain的framebuffer）进行渲染  
-(RenderPass和pipelines都在Renderprocess里创建)
-(framebuffer在swapchain里创建, 因为framebuffer的size跟Swapchain Views的size一样，属于swapchain下面的资源)
+(RenderPass和pipelines都在Renderprocess里创建)  
+(framebuffer在swapchain里创建, 因为framebuffer的size跟Swapchain Views的size一样，属于swapchain下面的资源)  
 Renderer也处理compute buffer/command的内容，虽然严格来说这不是“渲染”  
 Renderer也负责处理同步问题：fence, semaphore  
 在Render过程中最重要的Record过程留给Sample实现，但Renderer会做一些前后准备工作，包括但不仅限于：  

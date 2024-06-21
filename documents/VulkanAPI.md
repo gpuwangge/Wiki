@@ -24,7 +24,7 @@ vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
 如果打个比方，VkImage是一幅画，VkImageView是一个画框。你可以通过画框选择这幅画的呈现方式，但又不用改变画本身。  
 每一个图片都必须先配一个画框，否则无法使用。  
 
-Swapchain本身就是把一串VkImageView(以及相关联的VkImage)串起来。  
+Swapchain本身就是把一串VkImageView(以及相关联的VkImage)资源串起来，以供渲染器调用。  
 这些VkImageView/VkImage跟API使用者自己创建的VkImageView/VkImage本质上是一个东西。  
 只不过Swapchain里面的image大小跟窗口大小一致。并且这些资源在创建完成后，使用权就交到Driver手里了。  
 Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者借用)，并在一定时间内把这个资源呈现出来。  

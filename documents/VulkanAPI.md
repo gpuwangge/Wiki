@@ -88,7 +88,24 @@ recordGraphcisCommandBuffer()
 recordCoputeCommandBuffer()  
 postUpdate()
 ```
-这些函数的执行顺序如下：  
+其中，Sample::initilize()要做如下事情：  
+```cpp
+initialize(){
+  set camera
+  Load Model
+  create vertex buffer for renderer
+  create command pool for renderer
+  create command buffer for renderer
+  load texture, create its image/imageview
+  create msaa image/imageview
+  create depth image/imageview
+  create render pass for renderprocess
+  load shaders
+  create descriptors
+  create pipelines for renderprocess
+}
+```
+Application的执行顺序如下：  
 ```cpp
 CApplication::run(){
   create window

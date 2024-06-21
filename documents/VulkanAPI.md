@@ -32,10 +32,9 @@ Driver/API开发者负责查询哪一组VkImageView/VkImage处于空闲(可以�
 另外，通常我们不是仅仅想把一幅画显示出来，我们还需要对其做各种处理，这里就涉及到多幅画的融合。  
 首先介绍如下概念：  
 **`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。   
+Swapchain除了要创建本身的images和views，还要给这些attachment分别创建image和view。  
 **`Framebuffer(帧缓存)`**: 把一些attachment资源，以及对应的描述渲染过程的RenderPass包在一起，让渲染器可以在渲染的时候使用的结构。  
 因为每一帧画面实际上只用到一个swapchain image，所以也只会用到一份framebuffer。因此swapchain image/view数量跟framebuffer数量也是相同的。  
-
-Swapchain除了要创建本身的images和views，还要给这些attachment分别创建image和view。  
 
 举例来说，一个最简单的情况，只需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
 然后创建RenderPass(稍后会解释，这是一个描述渲染过程的结构),里面当然只有这一个容器(Color Attachment)。   

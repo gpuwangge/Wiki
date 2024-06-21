@@ -34,7 +34,7 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 **`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。   
 
 最简单的情况，需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
-然后创建RenderPass,里面当然只有这一个容器(Color Attachment)。   
+然后创建RenderPass(稍后会解释，这是一个描述渲染过程的结构),里面当然只有这一个容器(Color Attachment)。   
 
 实际情况比这个复杂一些，比如用户这时候掏出两张图片，这其中就存在遮挡关系，后挪进容器的图片就会遮挡住第一张图片。  
 显然我们不希望发生这样的结果，我们希望离镜头近的图片遮挡住离镜头远的图片。  

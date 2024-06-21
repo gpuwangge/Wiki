@@ -63,13 +63,15 @@ RenderPass通过subpass来组织这些资源。
 在Vulkan Platform中，RenderProcess类用于创建RenderPass。(FrameBuffer格式?Subpass?)  
 RenderProcess同时创建Pipeline。  
 
-# Descriptor
-
 # Buffer
 
 # Texture
 
+# Renderer
+
 # Shader
+
+# Descriptor
 
 # Pipeline
 

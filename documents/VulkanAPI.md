@@ -31,7 +31,7 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 
 另外，通常我们不是仅仅想把一幅画显示出来，我们还需要对其做各种处理，这里就涉及到多幅画的融合。  
 首先介绍如下概念：  
-**`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。  
+**`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。  
 **`Framebuffer(帧缓冲)`**：很多Attachments组合就成了Framebuffer。  
 
 最简单的情况，需要把一张用户定义的图片画在窗口上。先准备一张窗口大小的容器(Color Attachment)，把画挪到容器里的某个位置。
@@ -46,9 +46,20 @@ Driver在把Framebuffer挂在Swapchain的时候，就能够正确呈现两张图
 
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 
-# RenderProcess
-
 # RenderPass
+一个RenderPass里可以有多个subpass。  
+每个subpass可以设置输入attachment和输出attachment(通过Framebuffer?)。  
+每个subpass都必须有至少一个attachment作为输出。  
+比如，可以输出一个Color Attachment和一个Depth Attachment。如果开启MSAA，还可以加一个Resolve Attachment。
+一个subpass的输出attachment可以成为另一个subpass的输入attachment。  
+因此，subpass需要控制执行的顺序。控制顺序的办法是Subpass Dependency。  
+
+通过构建不同的RenderPass，Vulkan定义了不同的渲染状态，允许开发者在渲染之前切换状态而不会导致性能下降。  
+
+# RenderProcess
+RenderProcess用来设置FrameBuffer格式?和Subpass?
+
+
 
 
 # Vulkan Platform结构

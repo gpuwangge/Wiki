@@ -63,7 +63,7 @@ Renderer也负责处理同步问题：fence, semaphore
 - Set Scissor  
 - Bind Descriptor Sets
 
-在一些传统图形API里，渲染器选择哪一个frambuffer资源是由Driver控制的。但在Vulkan API里，driver的一些功能被移到API层，因此图形开发人员可以自由调配。  
+在一些传统图形API里，渲染器选择哪一个framebuffer资源是由Driver控制的。但在Vulkan API里，driver的一些功能被移到API层，因此图形开发人员可以自由调配。  
 
 Vulkan Platform定义了四种渲染模式  
 ## 1 RENDER_GRAPHICS_Mode

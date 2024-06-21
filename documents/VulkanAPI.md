@@ -26,8 +26,8 @@ vkDestroySurfaceKHR(instance->getHandle(), surface, nullptr);
 
 Swapchain本身就是把一串VkImageView(以及相关联的VkImage)资源串起来，以供渲染器调用。  
 这些VkImageView/VkImage跟API使用者自己创建的VkImageView/VkImage本质上是一个东西。  
-只不过Swapchain里面的image大小跟窗口大小一致。并且这些资源在创建完成后，使用权就交到Driver或开发者手里了。  
-Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者借用)，并在一定时间内把这个资源呈现出来。  
+只不过Swapchain里面的image大小跟窗口大小一致。并且这些资源在创建完成后，使用权就交到Driver或API开发者手里了。  
+Driver/API开发者负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者借用)，并在一定时间内把这个资源呈现出来。  
 
 另外，通常我们不是仅仅想把一幅画显示出来，我们还需要对其做各种处理，这里就涉及到多幅画的融合。  
 首先介绍如下概念：  

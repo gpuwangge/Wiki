@@ -68,7 +68,9 @@ RenderProcess同时创建Pipeline。
 # Texture
 
 # Renderer
-Renderer在Vulkan Platform里进行各种渲染的准备工作，包括准备vertex buffer，command buffer，获得swapchain image id（就是acquire那个swapchain image是available的）  
+Renderer在Vulkan Platform里进行各种渲染的准备工作，包括准备vertex buffer，command buffer，获得swapchain image id
+（就是acquire哪个swapchain image是available的）  
+Renderer跟RenderPass的区别是：后者定义了渲染流程，前者使用这个定义好的流程，并且配合其他必要的资源进行渲染  
 Renderer也处理compute buffer/command的内容，虽然严格来说这不是“渲染”  
 Renderer也负责处理同步问题：fence, semaphore  
 在Render过程中最重要的Record过程留给Sample实现，但Renderer会做一些前后准备工作，包括但不仅限于：  

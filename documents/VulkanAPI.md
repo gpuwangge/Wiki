@@ -113,10 +113,10 @@ Pipeline的本质就是各种shader组合在一起。
 
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
-# Buffer, Image and Texture
+# Buffer
 在Vulkan里，描述GPU内存的变量有两个：
-- buffer: 保存内存的信息  
-- deviceMemory: 实际的GPU内存空间  
+- VkBuffer buffer: 保存内存的信息  
+- VkDeviceMemory deviceMemory: 实际的GPU内存空间  
 
 给buffer分配GPU内存分为如下几步：  
 - 确定需要的内存大小size，确定使用的方式VkBufferUsageFlags  
@@ -132,7 +132,27 @@ Pipeline的本质就是各种shader组合在一起。
 这个过程也叫fill deviceMemory。
 
 至此，完成了内存空间的初始化。  
-别忘了在结束程序前，要使用vkDestroyBUffer(buffer)和vkFreeMemory(deviceMemory)清理内存资源。  
+别忘了在结束程序前，要使用vkDestroyBuffer(buffer)和vkFreeMemory(deviceMemory)清理内存资源。  
+
+# Image Buffer
+与GPU Buffer类似，在Vulkan里，描述GPU Image Buffer内存的变量也有两个：  
+- VkImage image: 保存Image内存的信息  
+- VkDeviceMemory deviceMemory: 实际的GPU Image内存空间  
+
+另外，在创建image buffer的时候，一般也会创建imageview做资源配套  
+- VkImageVIew view  
+
+创建和销毁Image Buffer跟Buffer也差不多  
+- vkCreateImage()  
+- vkGetImageMemoryRequirements()  
+- vkAllocateMemory()  
+- vkBindImageMemory()  
+- vkDestroyImage()  
+- vkFreeMemory()  
+
+# Texture
+创建Texture的第一步，就是创建上述的Image Buffer。另外还需要制定一些其他参数，比如texture的长和高，图像格式，mipmap参数等。  
+
 
 
 # Vulkan Platform结构

@@ -53,7 +53,7 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 Renderer在Vulkan Platform里进行各种渲染的准备工作，包括准备vertex buffer，command buffer，获得swapchain image id
 （就是acquire哪个swapchain image是available的）  
 Renderer跟RenderPass的区别是：后者定义了渲染流程，前者使用这个定义好的流程，并且配合其他必要的资源（比如swapchain的framebuffer）进行渲染  
-(在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)   
+ 
 Renderer也处理compute buffer/command的内容，虽然严格来说这不是“渲染”  
 Renderer也负责处理同步问题：fence, semaphore  
 在Render过程中最重要的Record过程留给Sample实现，但Renderer会做一些前后准备工作，包括但不仅限于：  
@@ -94,6 +94,8 @@ RenderPass通过subpass来组织这些资源。
 
 通过构建不同的RenderPass，Vulkan定义了不同的渲染状态，允许开发者在渲染之前切换状态而不会导致性能下降。  
 
+(在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
+
 # Buffer
 
 # Texture
@@ -105,7 +107,7 @@ RenderPass通过subpass来组织这些资源。
 # Descriptor
 
 # Pipeline
-
+(在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
 
 

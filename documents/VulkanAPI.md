@@ -78,7 +78,7 @@ Vulkan Platform定义了四种渲染模式
 一般来讲会通过compute shader做一些并行计算，然后把结果通过graphics pipeline画出来  
 
 # RenderPass
-RenderPass描述了GPU如何进行渲染流程，它定义了渲染步骤和使用的资源。  
+RenderPass描述了GPU如何进行渲染流程，它定义了渲染步骤和使用的资源描述。  
 RenderPass通过subpass来组织这些资源。  
 一个RenderPass里可以有多个subpass。  
 每个subpass可以设置输入attachment和输出attachment。  

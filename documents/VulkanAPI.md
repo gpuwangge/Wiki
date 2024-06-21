@@ -68,6 +68,19 @@ RenderProcess同时创建Pipeline。
 # Texture
 
 # Renderer
+Vulkan Platform定义了一些渲染模式  
+## RENDER_GRAPHICS_Mode
+正常的图形渲染，走graphics pipeline  
+## RENDER_COMPUTE_Mode
+仅计算，走compute pipeline  
+(虽然这个模式严格来说不是“渲染”)  
+## RENDER_COMPUTE_SWAPCHAIN_Mode
+走compute pipeline,但是最后画在swapchain上  
+(Sample: textureCompute)  
+这种情况不需要submit graphics command queue  
+## RENDER_COMPUTE_GRAPHICS_Mode
+同时有graphics和compute pipeline  
+一般来讲会通过compute shader做一些并行计算，然后把结果通过graphics pipeline画出来  
 
 # Shader
 

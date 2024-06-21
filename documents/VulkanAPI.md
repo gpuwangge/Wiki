@@ -99,12 +99,6 @@ subpass设计的目的是为了实现TBR/TBDR，除此之外也没啥其他用�
 
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
-# Buffer
-
-# Texture
-
-
-
 # Shader
 
 # Descriptor
@@ -119,6 +113,25 @@ Pipeline的本质就是各种shader组合在一起。
 
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
+# Buffer, Image and Texture
+在Vulkan里，描述GPU内存的变量有两个：
+- buffer: 保存内存的信息  
+- deviceMemory: 实际的GPU内存空间  
+
+给buffer分配GPU内存分为如下几步：  
+- 确定需要的内存大小size，确定使用的方式VkBufferUsageFlags  
+- 根据以上信息，调用vkCreateBuffer()函数获得buffer  
+- 调用vkGetBufferMemoryRequirements()函数, 结果被存到vmr(VkMemoryRequirements)里。因为内存对齐的缘故，vmr的size一般比需要的内存更大一些。  
+这个过程也叫做fill vmr。  
+- 分配真正的内存空间。使用vkAllocateMemory()函数，结果存到deviceMemory里。并且该buffer也绑定到了deviceMemory上。此时deviceMemory里面并没有数据。  
+- 把数据从CPU内存数据(data)拷贝到devicememory里。
+首先API是run在CPU里的，并不能直接访问GPU内存，需要使用一些API函数来进行拷贝。
+第一步vkMapMemory()函数可以在deviceMemory上建立一个映射。映射名字叫什么无所谓。我就叫它pGpuMemory，是一个指向GPU内存的指针。
+第二步使用memcpy()函数把data拷贝到pGpuMemory上(就如同我们常常在CPU上的操作一样)
+第三步使用vkUnMapMemory()函数解除deviceMemory上的内存映射。但假如以后还需要从CPU访问这段内存，不解除也是可以的。  
+这个过程也叫fill deviceMemory。  
+至此，完成了内存空间的初始化。  
+别忘了在结束程序前，要使用vkDestroyBUffer(buffer)和vkFreeMemory(deviceMemory)清理资源。  
 
 
 # Vulkan Platform结构

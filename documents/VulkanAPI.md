@@ -45,6 +45,8 @@ Driver负责查询哪一组VkImageView/VkImage处于空闲(可以被API使用者
 Driver在把Framebuffer挂在Swapchain的时候，就能够正确呈现两张图片的遮蔽关系了。  
 
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
+因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  
+我们将在随后的步骤中建立attachment/framebuffer。  
 
 # RenderPass
 一个RenderPass里可以有多个subpass。  

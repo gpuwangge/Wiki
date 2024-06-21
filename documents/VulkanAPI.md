@@ -75,9 +75,10 @@ Vulkan Platform定义了一些渲染模式
 仅计算，走compute pipeline  
 (虽然这个模式严格来说不是“渲染”)  
 ## RENDER_COMPUTE_SWAPCHAIN_Mode
-走compute pipeline,但是最后画在swapchain上  
+主要走compute pipeline,但是最后画在swapchain上  
 (Sample: textureCompute)  
 这种情况不需要submit graphics command queue  
+原理是通过compute shader把数据写到texture buffer上，再让graphics pipeline显示这个texture  
 ## RENDER_COMPUTE_GRAPHICS_Mode
 同时有graphics和compute pipeline  
 一般来讲会通过compute shader做一些并行计算，然后把结果通过graphics pipeline画出来  

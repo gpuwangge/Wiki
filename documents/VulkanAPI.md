@@ -49,6 +49,8 @@ Driver在把Framebuffer挂在Swapchain的时候，就能够正确呈现两张图
 我们将在随后的步骤中建立attachment/framebuffer。  
 
 # RenderPass
+RenderPass描述了GPU如何进行渲染流程，它定义了渲染步骤和使用的资源。  
+RenderPass通过subpass来组织这些资源。  
 一个RenderPass里可以有多个subpass。  
 每个subpass可以设置输入attachment和输出attachment(通过Framebuffer?)。  
 每个subpass都必须有至少一个attachment作为输出。  
@@ -59,7 +61,7 @@ Driver在把Framebuffer挂在Swapchain的时候，就能够正确呈现两张图
 通过构建不同的RenderPass，Vulkan定义了不同的渲染状态，允许开发者在渲染之前切换状态而不会导致性能下降。  
 
 # RenderProcess
-RenderProcess用来设置FrameBuffer格式?和Subpass?
+RenderProcess用来设置RenderPass的类。(FrameBuffer格式?Subpass?)
 
 
 

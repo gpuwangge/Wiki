@@ -67,16 +67,16 @@ Renderer也负责处理同步问题：fence, semaphore
 在一些传统图形API里，渲染器选择哪一个framebuffer资源是由Driver控制的。但在Vulkan API里，driver的一些功能被移到API层，因此图形开发人员可以自由调配。  
 
 Vulkan Platform定义了四种渲染模式  
-## 1 RENDER_GRAPHICS_Mode
+- RENDER_GRAPHICS_Mode
 正常的图形渲染，走graphics pipeline  
-## 2 RENDER_COMPUTE_Mode
+- RENDER_COMPUTE_Mode
 仅计算，走compute pipeline  
-## 3 RENDER_COMPUTE_SWAPCHAIN_Mode
+- RENDER_COMPUTE_SWAPCHAIN_Mode
 主要走compute pipeline,但是最后画在swapchain上  
 (Sample: textureCompute)  
 这种情况不需要submit graphics command queue  
 原理是通过compute shader把数据写到texture buffer上，再让graphics pipeline显示这个texture  
-## 4 RENDER_COMPUTE_GRAPHICS_Mode
+- RENDER_COMPUTE_GRAPHICS_Mode
 同时有graphics和compute pipeline，且各自都会提交command queue    
 一般来讲会通过compute shader做一些并行计算，然后把结果通过graphics pipeline画出来  
 

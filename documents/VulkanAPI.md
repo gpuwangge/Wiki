@@ -316,7 +316,6 @@ vkQueuePresentKHR()只需要提供1个semaphore信息。
   
 另外有Timeline Semaphore技巧，区别是增加了64-bit integer来指示payload。   
 
-
 ## 举例
 在simple_triangle这个实例中，使用了2个frame(每个frame都对应于CPU内的一组控制资源)，Semaphore四个，Fence两个  
 imageAvailableSemaphore x2 被pWaitSemaphores指向  
@@ -350,6 +349,32 @@ vkResetFences(logicalDevice, 1, &inFlightFences[currentFrame]);
 对于Semaphore  
 两个Semaphore合起来表示的逻辑就是render完成后，通知image可用了。  
 vkAcquireNextImageKHR()的执行依赖image是否可用。  
+
+## Compute Command Queue
+如果创建Compute Pipeline，仅使用Computer Shader，那么是不使用Swapchain image的。  
+换句话说，从Swapchain里提取image id的vkAcquireNextImageKHR()函数以及把image还回swapchain的函数vkQueuePresentKHR()都不需要使用。  
+也不需要使用信号灯。当然也不需要RenderPass和FrameBuffer。  
+```vulkan
+vkWaitForFences(CContext::GetHandle().GetLogicalDevice(), 1, &computeInFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+vkResetCommandBuffer(renderer.commandBuffers[renderer.computeCmdId][renderer.currentFrame], /*VkCommandBufferResetFlagBits*/ 0);
+
+BeginCommandBuffer(computeCmdId);
+BindPipeline(pipeline, VK_PIPELINE_BIND_POINT_COMPUTE, computeCmdId);
+renderer.Dispatch(1, 1, 1);
+BindDescriptorSets(pipelineLayout, descriptorSets, VK_PIPELINE_BIND_POINT_COMPUTE, computeCmdId);
+EndCommandBuffer(computeCmdId);
+
+VkSubmitInfo submitInfo{};
+submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+submitInfo.commandBufferCount = 1;
+submitInfo.pCommandBuffers = &commandBuffers[computeCmdId][currentFrame];
+vkResetFences(CContext::GetHandle().GetLogicalDevice(), 1, &computeInFlightFences[currentFrame]);
+if (vkQueueSubmit(CContext::GetHandle().GetComputeQueue(), 1, &submitInfo, computeInFlightFences[currentFrame]) != VK_SUCCESS) {
+  throw std::runtime_error("failed to submit draw command buffer!");
+}
+```
+
+
 
 ## Links
 https://www.youtube.com/watch?v=GiKbGWI4M-Y  

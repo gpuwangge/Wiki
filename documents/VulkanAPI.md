@@ -268,11 +268,29 @@ Vulkan下GPU的执行顺序：
 renderpass and subpass?  
 
 ## Fence
-Fence配合vkQueueSubmit(Fence)使用。这时候Fence处于被设置状态。  
-vkResetFence会把Fence恢复。   
-vkWaitForFences会在Fence恢复之前阻塞CPU。这个函数可以理解成一个状态查询，它可能返回VK_TIMEOUT或VK_SUCCESS。  
+一开始Fence是未设置的（相当于Fence打开），CPU命令可以通向GPU  
+vkWaitForFences会在Fence恢复之前阻塞CPU。这个函数可以理解成一个状态查询，它可能返回VK_TIMEOUT或VK_SUCCESS。第一次运行到这里都是未设置状态。 
+vkQueueSubmit(Fence)这个指令会把Fence更改为被设置状态（就是相当于Fence关闭了）。
+并且，当GPU还没有处理完毕这个队列的时候，vkWaitForFence()总是会返回阻塞CPU的结果。  
+只有当GPU完成了该次submit的命令队列的所有命令之后，才会把Fence更新为未设置。  
+因此，Fence可以看成是以GPU为主导，阻塞CPU的一种消息机制。  
+另外，在submit命令队列之前，一般会调用vkResetFence()把Fence手动重置一下(已确保它是未设置的)，vkAcquireNextImageKHR()函数才能获得可以用的image id。     
+  
+ 
 
 ## Semaphore
+Semaphore(信号灯)跟Fence的一个区别是，Semaphore没办法用vkWaitForFences()这样的的函数来查询信号状态。  
+Semaphore也有两种状态：singaled(激活)，unsignaled(未激活)  
+Semaphore可以指向GPU运行的某个阶段，如果Semaphore被激活，则说明此阶段之前的所有GPU内存均已结束。  
+
+实际操作中，一般采用两个信号灯配合使用(Binary Semaphore)  
+Semaphore1：指向一个预设的阶段，一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT，这一步是GPU处理命令队列的几乎最后一步。表示当此命令队列做完就激活。
+Semaphore2: 指向渲染完成的阶段。表示当此swap chain image可以重新使用的时候就激活。  
+为什么要分这两个阶段，暂停两次呢？  
+GPU处理每个命令队列的时候，要先执行所有命令才能Present。但Present不代表就结束了，因为GPU还需要处理一些其他指令才能把结果渲染到屏幕上。  
+信号灯的位置分别就卡在Present命令和Render命令的位置。  
+同时我们也知道，只有Semaphore2(指向Render渲染完成阶段)被激活之后，才是真正的完成，其资源才能够真正释放给下一帧
+
 Semaphore也是配合vkQueueSubmit(VksubmitInfo)使用，只不过它是在VksubmitInfo结构中。  
 在VksubmitInfo结构中有三个参数：  
 pWaitSemaphores: 指向一些Semaphore。队列的指令会等待这些Semaphre被通知了之后才开始执行。  
@@ -286,10 +304,10 @@ pSignalSemaphores: 此次提交的命令全部接收后，本指针指向的所�
 
 ## 结论
 Fence用于阻塞CPU直到Queue中的命令执行结束(GPU、CPU之间同步)。  
-Semaphre用于不同的命令提交之间的同步(GPU、GPU之间同步)。  
+Semaphore用于不同的命令提交之间的同步(GPU、GPU之间同步)。  
 
 ## 举例
-在simple_triangle这个实例中，使用了2个frame，Semaphore四个，Fence两个  
+在simple_triangle这个实例中，使用了2个frame(每个frame都对应于CPU内的一组控制资源)，Semaphore四个，Fence两个  
 imageAvailableSemaphore x2 被pWaitSemaphores指向  
 renderFinishedSemaphore x2 被pSignalSemaphores指向(两个合起来表示的逻辑就是render完成后，通知image可用了。)  
 inFlightFence x2 赋值是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT  
@@ -315,7 +333,7 @@ vkResetFences(logicalDevice, 1, &inFlightFences[currentFrame]);
 ```
 解读：  
 对于Fence  
-一开始vkWaitForFences(fence)试图把CPU挡住，但这时候fence没设置，所以挡不住。  
+一开始vkWaitForFences(fence)试图把CPU挡住，但这时候fence未设置（初始状态），所以挡不住。  
 然后vkResetFence(Fence)会把Fence恢复。  
 最后vkQueueSubmit(Fence)设置Fence。  
 下一次运行到drawFrame()的相同frame index的时候，vkWaitForFences(fence)有可能挡住CPU(取决于GPU是否已经执行完毕了上一个command queue里的commands)  

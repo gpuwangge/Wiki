@@ -285,21 +285,26 @@ Semaphore也有两种状态：singaled(激活)，unsignaled(未激活)
 Semaphore可以指向GPU运行的某个阶段，如果Semaphore被激活，则说明此阶段之前的所有GPU内存均已结束。  
 
 实际操作中，一般采用两个信号灯配合使用(Binary Semaphore)  
-Semaphore1：指向一个预设的阶段，一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT，这一步是GPU处理命令队列的几乎最后一步。表示当此命令队列做完就激活。  
-Semaphore2: 指向渲染完成的阶段。表示当此swap chain image可以重新使用的时候就激活。  
+Semaphore1(imageAvailableSemaphore)：指向一个预设的阶段，一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT，这一步是GPU处理命令队列的几乎最后一步。表示当此signal激活的时候，命令队列做完了，图像也已经用完了。  
+Semaphore2(renderFinishedSemaphore): 指向渲染完成的阶段。表示此时命令队列已经处理完毕。    
 为什么要分这两个阶段，暂停两次呢？  
-GPU处理每个命令队列的时候，要先执行所有命令才能Present。但Present不代表就结束了，因为GPU还需要处理一些其他指令才能把结果渲染到屏幕上。  
-两个信号灯分别就卡在Present命令和Render命令的位置。激活则表示Present完成和Render完成。  
-同时我们也知道，只有Semaphore2(指向Render渲染完成阶段)被激活之后，才是真正的完成，其资源才能够真正释放给下一帧。vkAcquireNextImageKHR()也才能返回可用的image id。  
+
+这里就要介绍GPU画每一帧都有三个步骤：  
+1、从Swap chain获得可用的image资源；这里会检查Semaphore1，只有Semaphore1的信号被激活才能进行下一步。（vkAcquireNextImageKHR()也才能返回可用的image id）    
+2、submit command buffer，执行命令队列，进行绘制工作。这里提交的时候要提供Semaphore1, Sempahore2，和fence；表示这一步完成之后会打开Fence和激活Semaphore2。  
+3、将绘制完成的图像返回给Swap chain，并提交Present。提交的时候要设置Semaphore2，表示必须等待Semaphore2的信号被激活才能执行第三步。  
+这三个步骤的每一步，都依赖于上一步的完成。  
 
 ## Submit
 从上述讨论我们也可以知道，在Render阶段，CPU要向GPU submit两次指令：  
 vkQueueSubmit(CContext::GetHandle().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame])  
 submitInfo信息包括：
 - pCommandBuffers  
-- pWaitSemaphores：这里给的是present complete semaphore  
-- pWaitDstStageMask：一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT这个阶段     
-- pSignalSemaphores: 这里给的是render finish semaphore  
+- pWaitSemaphores：这里给的是imageAvailableSemaphore(队列的指令会等待这些Semaphre被通知了之后才开始执行)  
+- pWaitDstStageMask：一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT这个阶段(表示提交的所有命令在执行到本指针指向的位置时停下。需要等待pWaitSemaphores所指向的所有Semaphore恢复)     
+- pSignalSemaphores: 这里给的是renderFinishSemaphore（此次提交的命令全部接收后，本指针指向的所有Semapore都会被通知）  
+
+可见vkQueueSubmit()需要提供1个fence和2个semaphore信息。  
 
 vkQueuePresentKHR(CContext::GetHandle().GetPresentQueue(), &presentInfo)  
 presentInfo信息包括：  
@@ -307,17 +312,8 @@ presentInfo信息包括：
 - pImageIndices  
 - pWaitSemaphores：这里给的是render finish semaphore  
 
-
-
-Semaphore也是配合vkQueueSubmit(VksubmitInfo)使用，只不过它是在VksubmitInfo结构中。  
-在VksubmitInfo结构中有三个参数：  
-pWaitSemaphores: 指向一些Semaphore。队列的指令会等待这些Semaphre被通知了之后才开始执行。  
-pWaitDstStageMask: 表示提交的所有命令在执行到本指针指向的位置时停下。需要等待pWaitSemaphores所指向的所有Semaphore恢复。   
-pSignalSemaphores: 此次提交的命令全部接收后，本指针指向的所有Semapore都会被通知。  
-首先，我们确定一个Stage，比如VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT，因为这一步是Graphics Queue的几乎是最后一步，到这一步就说明本frame的image render好了。  
-然后，pSignalSemaphores指向renderFinishedSemaphores，表示render finish的信号灯变更成绿灯。  
-最后，pWaitSemaphores指向的imageAvailableSemaphores收到了通知，表示Presentation Queue的image可以present了。  
-以上Semaphore技巧也叫Binary Semaphore。  
+vkQueuePresentKHR()只需要提供1个semaphore信息。
+  
 另外有Timeline Semaphore技巧，区别是增加了64-bit integer来指示payload。   
 
 
@@ -348,9 +344,8 @@ vkResetFences(logicalDevice, 1, &inFlightFences[currentFrame]);
 ```
 解读：  
 对于Fence  
-一开始vkWaitForFences(fence)试图把CPU挡住，但这时候fence未设置（初始状态），所以挡不住。  
-然后vkResetFence(Fence)会把Fence恢复。  
-最后vkQueueSubmit(Fence)设置Fence。  
+一开始vkWaitForFences(fence)试图把CPU挡住，但这时候fence未设置（初始状态），所以挡不住。   
+然后vkQueueSubmit(Fence)设置Fence。  
 下一次运行到drawFrame()的相同frame index的时候，vkWaitForFences(fence)有可能挡住CPU(取决于GPU是否已经执行完毕了上一个command queue里的commands)  
 对于Semaphore  
 两个Semaphore合起来表示的逻辑就是render完成后，通知image可用了。  

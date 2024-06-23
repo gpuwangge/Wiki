@@ -259,6 +259,9 @@ Queue1 signals Semaphore，并且Queue2 waits on Semaphore。
 结果就是Queue1的command batch执行完毕后，Queue2的command才开始execute。  
 Fence: 用于同步GPU-CPU之间的任务。比如如果需要用swap buffer展示下一帧，就可以用fence莱霍智什么时候去做swap操作。  
 
+Fence用于阻塞CPU直到Queue中的命令执行结束(GPU、CPU之间同步)。  
+Semaphore用于不同的命令提交之间的同步(GPU、GPU之间同步)。 
+
 在Vulkan中，资源读写的同步由app程序员负责。  
 Vulkan在record command buffer后，需要调用vkQueueSubmit()函数(分别对graphics and compute queue调用)，这时候GPU才会开始执行传入的命令。  
 Vulkan下GPU的执行顺序：  
@@ -274,9 +277,7 @@ vkQueueSubmit(Fence)这个指令会把Fence更改为被设置状态（就是相�
 并且，当GPU还没有处理完毕这个队列的时候，vkWaitForFence()总是会返回阻塞CPU的结果。  
 只有当GPU完成了该次submit的命令队列的所有命令之后，才会把Fence更新为未设置。  
 因此，Fence可以看成是以GPU为主导，阻塞CPU的一种消息机制。  
-另外，在submit命令队列之前，一般会调用vkResetFence()把Fence手动重置一下(已确保它是未设置的)，vkAcquireNextImageKHR()函数才能获得可以用的image id。     
-  
- 
+另外，在submit命令队列之前，一般会调用vkResetFence()把Fence手动重置一下(已确保它是未设置的)。       
 
 ## Semaphore
 Semaphore(信号灯)跟Fence的一个区别是，Semaphore没办法用vkWaitForFences()这样的的函数来查询信号状态。  
@@ -288,8 +289,25 @@ Semaphore1：指向一个预设的阶段，一般是VK_PIPELINE_STAGE_COLOR_ATTA
 Semaphore2: 指向渲染完成的阶段。表示当此swap chain image可以重新使用的时候就激活。  
 为什么要分这两个阶段，暂停两次呢？  
 GPU处理每个命令队列的时候，要先执行所有命令才能Present。但Present不代表就结束了，因为GPU还需要处理一些其他指令才能把结果渲染到屏幕上。  
-信号灯的位置分别就卡在Present命令和Render命令的位置。  
+两个信号灯分别就卡在Present命令和Render命令的位置。激活则表示Present完成和Render完成。  
 同时我们也知道，只有Semaphore2(指向Render渲染完成阶段)被激活之后，才是真正的完成，其资源才能够真正释放给下一帧。vkAcquireNextImageKHR()也才能返回可用的image id。  
+
+## Submit
+从上述讨论我们也可以知道，在Render阶段，CPU要向GPU submit两次指令：  
+vkQueueSubmit(CContext::GetHandle().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame])  
+submitInfo信息包括：
+- pCommandBuffers  
+- pWaitSemaphores：这里给的是present complete semaphore  
+- pWaitDstStageMask：一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT这个阶段     
+- pSignalSemaphores: 这里给的是render finish semaphore  
+
+vkQueuePresentKHR(CContext::GetHandle().GetPresentQueue(), &presentInfo)  
+presentInfo信息包括：  
+- pSwapchains  
+- pImageIndices  
+- pWaitSemaphores：这里给的是render finish semaphore  
+
+
 
 Semaphore也是配合vkQueueSubmit(VksubmitInfo)使用，只不过它是在VksubmitInfo结构中。  
 在VksubmitInfo结构中有三个参数：  
@@ -302,9 +320,6 @@ pSignalSemaphores: 此次提交的命令全部接收后，本指针指向的所�
 以上Semaphore技巧也叫Binary Semaphore。  
 另外有Timeline Semaphore技巧，区别是增加了64-bit integer来指示payload。   
 
-## 结论
-Fence用于阻塞CPU直到Queue中的命令执行结束(GPU、CPU之间同步)。  
-Semaphore用于不同的命令提交之间的同步(GPU、GPU之间同步)。  
 
 ## 举例
 在simple_triangle这个实例中，使用了2个frame(每个frame都对应于CPU内的一组控制资源)，Semaphore四个，Fence两个  

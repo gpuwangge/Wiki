@@ -295,7 +295,7 @@ Semaphore2(renderFinishedSemaphore): 指向渲染完成的阶段。表示此时�
 3、将绘制完成的图像返回给Swap chain，并提交Present。提交的时候要设置Semaphore2，表示必须等待Semaphore2的信号被激活才能执行第三步。  
 这三个步骤的每一步，都依赖于上一步的完成。  
 
-## Submit
+## Submit Command Queue
 从上述讨论我们也可以知道，在Render阶段，CPU要向GPU submit两次指令：  
 vkQueueSubmit(CContext::GetHandle().GetGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame])  
 submitInfo信息包括：

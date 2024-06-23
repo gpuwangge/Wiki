@@ -270,7 +270,7 @@ renderpass and subpass?
 ## Fence
 一开始Fence是未设置的（相当于Fence打开），CPU命令可以通向GPU  
 vkWaitForFences会在Fence恢复之前阻塞CPU。这个函数可以理解成一个状态查询，它可能返回VK_TIMEOUT或VK_SUCCESS。第一次运行到这里都是未设置状态。 
-vkQueueSubmit(Fence)这个指令会把Fence更改为被设置状态（就是相当于Fence关闭了）。
+vkQueueSubmit(Fence)这个指令会把Fence更改为被设置状态（就是相当于Fence关闭了）。  
 并且，当GPU还没有处理完毕这个队列的时候，vkWaitForFence()总是会返回阻塞CPU的结果。  
 只有当GPU完成了该次submit的命令队列的所有命令之后，才会把Fence更新为未设置。  
 因此，Fence可以看成是以GPU为主导，阻塞CPU的一种消息机制。  
@@ -284,12 +284,12 @@ Semaphore也有两种状态：singaled(激活)，unsignaled(未激活)
 Semaphore可以指向GPU运行的某个阶段，如果Semaphore被激活，则说明此阶段之前的所有GPU内存均已结束。  
 
 实际操作中，一般采用两个信号灯配合使用(Binary Semaphore)  
-Semaphore1：指向一个预设的阶段，一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT，这一步是GPU处理命令队列的几乎最后一步。表示当此命令队列做完就激活。
+Semaphore1：指向一个预设的阶段，一般是VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT，这一步是GPU处理命令队列的几乎最后一步。表示当此命令队列做完就激活。  
 Semaphore2: 指向渲染完成的阶段。表示当此swap chain image可以重新使用的时候就激活。  
 为什么要分这两个阶段，暂停两次呢？  
 GPU处理每个命令队列的时候，要先执行所有命令才能Present。但Present不代表就结束了，因为GPU还需要处理一些其他指令才能把结果渲染到屏幕上。  
 信号灯的位置分别就卡在Present命令和Render命令的位置。  
-同时我们也知道，只有Semaphore2(指向Render渲染完成阶段)被激活之后，才是真正的完成，其资源才能够真正释放给下一帧
+同时我们也知道，只有Semaphore2(指向Render渲染完成阶段)被激活之后，才是真正的完成，其资源才能够真正释放给下一帧。vkAcquireNextImageKHR()也才能返回可用的image id。  
 
 Semaphore也是配合vkQueueSubmit(VksubmitInfo)使用，只不过它是在VksubmitInfo结构中。  
 在VksubmitInfo结构中有三个参数：  

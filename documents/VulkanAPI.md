@@ -541,6 +541,7 @@ CPU submit graphics command queue，注意此时waitSemaphores里面有两个信
 既然Swapchain Image也是vk image，可以不需要走Graphics Pipeline直接画在swapchain image上。  
 Swapchain Image是有独立的内存空间的，正式名称为Color Image。使用Vulkan规则API创建。    
 
+代码(来自VulkanSingleExamples/VulkanComputeImageExample)：  
 ```vulkan
 void drawFrame() {
         vkWaitForFences(device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
@@ -609,6 +610,27 @@ void drawFrame() {
     }
 
 ```
+跟simple triangle的draw函数相比，额外有一个fence：  
+vkWaitForFences(device, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);  
+
+imageInFlight: size = swapChainImages.size(). 也就是它的大小跟swapchain image的数量一致(而不是像其他的fence一样大小跟MAX_FLRAMES_IN_FLIGHT一致)  
+```vulkan
+std::vector<VkFence> imagesInFlight;
+```
+但他的作用跟其他的fence一样，也是阻塞CPU。  
+重点是以下这一段(位于submit compute tree之前)：
+```vulkan
+if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+    vkWaitForFences(device, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+}
+imagesInFlight[imageIndex] = inFlightFences[currentFrame];
+```
+解读：imageIndex是从Swapchain申请的资源，currentFrame是CPU当前使用的资源组。  
+每次提交compute queue之前，先把当前frame的InFlightFence[currentFrame]保存到imagesInFlight[imageIndex](一个临时fence容器)上。  
+然后在下几帧，如果刚好又轮到同样的imageIndex,这时候之前那个currentFrame fence没打开的话，就会阻塞住。  
+这种双重阻塞的目的是，既保证了GPU已经准备好接受compute command buffer(通过InFlightFences)，又保证了GPU上imageIndex对应的swapchain image是可用的(通过imagesInFlight)。  
+如果不加上imagesInFlight，有可能发生的情况是，CPU acuire到一个"空闲"的swapchain image，但实际上之前的某一帧正在往上面写东西。  
+在Simple Triangle这个例子里，因为我们不会直接向swapchain image写东西，CPU acuire到的就是真的空闲的swapchain image  
 
 ## Vulkan同步Reference
 https://www.youtube.com/watch?v=GiKbGWI4M-Y  

@@ -60,7 +60,7 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 随后如果用到depth image的时候需要手动allocate memory。  
 相关创建代码：  
 ```vulkan
- std::vector<VkImage> images;  
+std::vector<VkImage> images;  
 result = vkGetSwapchainImagesKHR(CContext::GetHandle().GetLogicalDevice(), handle, &imageSize, nullptr);
 images.resize(imageSize);
 result = vkGetSwapchainImagesKHR(CContext::GetHandle().GetLogicalDevice(), handle, &imageSize, images.data());
@@ -137,6 +137,12 @@ Pipeline的本质就是各种shader组合在一起。
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
 # Buffer
+Vulkan里的资源分为两种：  
+- Image: 用在创建swapchain,以及创建attachment和texture  
+texture是一类特别的image。  
+The (Texture) image is used as a descriptor interface and shared at the shader stage (fragment shader) in the form of samplers。"  
+- Buffer: 应用广泛。用在创建uniform, storage buffer, vertex data buffer或staging buffer等  
+
 在Vulkan里，描述GPU内存的变量有两个：
 - VkBuffer buffer: 保存内存的信息  
 - VkDeviceMemory deviceMemory: 实际的GPU内存空间  
@@ -490,7 +496,7 @@ CPU submit graphics command queue，注意此时waitSemaphores里面有两个信
 
 ## 使用Compute计算，但是把结果画在Swapchain上
 既然Swapchain Image也是vk image，可以不需要走Graphics Pipeline直接画在swapchain image上。  
-问题：Swapchain Image有独立的内存空间吗？  
+Swapchain Image是有独立的内存空间的，正式名称为Color Image。使用Vulkan规则API创建。    
 
 ```vulkan
 void drawFrame() {

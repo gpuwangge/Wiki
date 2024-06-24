@@ -58,6 +58,19 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 (图片取自Learning Vulkan)  
 可以看出来, swapchain 一开始创建的是color image和相应的imageview。  
 随后如果用到depth image的时候需要手动allocate memory。  
+相关创建代码：  
+```vulkan
+ std::vector<VkImage> images;  
+result = vkGetSwapchainImagesKHR(CContext::GetHandle().GetLogicalDevice(), handle, &imageSize, nullptr);
+images.resize(imageSize);
+result = vkGetSwapchainImagesKHR(CContext::GetHandle().GetLogicalDevice(), handle, &imageSize, images.data());
+```
+```vulkan
+VkImageView imageView;
+if (vkCreateImageView(CContext::GetHandle().GetLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+  throw std::runtime_error("failed to create texture image view!");
+}
+```
 
 
 # Renderer

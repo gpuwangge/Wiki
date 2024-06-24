@@ -50,7 +50,10 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  
 
-https://github.com/gpuwangge/Wiki/blob/main/images/swapchain.png  
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/swapchain.png " alt="alt text" width="400" height="400">  
+</p> 
+ 
 
 (图片取自Learning Vulkan)  
 可以看出来, swapchain 一开始创建的是color image和相应的imageview。  

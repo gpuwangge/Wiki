@@ -123,8 +123,10 @@ subpass设计的目的是为了实现TBR/TBDR，除此之外也没啥其他用�
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
 # Shader
+施工中  
 
 # Descriptor
+施工中  
 
 # Pipeline
 Pipeline的本质就是各种shader组合在一起。  
@@ -181,10 +183,24 @@ The (Texture) image is used as a descriptor interface and shared at the shader s
 
 # Texture
 创建Texture的第一步，就是创建上述的Image Buffer。另外还需要制定一些其他参数，比如texture的长和高，图像格式，mipmap参数等。  
+总的来说，texture有三个要素分别为：  
+- Image: 保存一些创建memory需要的metadata。
+- Image Layout：texture数据通过grid coordinate representation in image memory。根据texture用途的不同(color attachment, sparse texture等)设定不同的layout。  
+- Image View: 跟普通的image view是一样的作用。Image View也作为操作texture的接口。  
 
+
+在vulkan platform的实现里，当调用textureImageBuffer.createImage()的时候就会分配内存。  
+```vulkan
+CWxjImageBuffer textureImageBuffer;
+```
+创建image view也可以通过textureImageBuffer.createImageView()  
+
+## 创建texture image的具体过程
+施工中
 
 
 # Vulkan Platform结构
+施工中：需要更新最新版本  
 ## application.cpp
 Sample需要实现以下函数：  
 ```cpp
@@ -495,6 +511,7 @@ CPU submit graphics command queue，注意此时waitSemaphores里面有两个信
 ```
 
 ## 使用Compute计算，但是把结果画在Swapchain上
+施工中  
 既然Swapchain Image也是vk image，可以不需要走Graphics Pipeline直接画在swapchain image上。  
 Swapchain Image是有独立的内存空间的，正式名称为Color Image。使用Vulkan规则API创建。    
 

@@ -584,7 +584,7 @@ void drawFrame() {
 
 ```
 
-## Links
+## Vulkan同步Reference
 https://www.youtube.com/watch?v=GiKbGWI4M-Y  
 https://zhuanlan.zhihu.com/p/449222522  
 

@@ -94,7 +94,9 @@ Store Unit: 含有数据和它的机械地址。进行Store/Load操作之前，�
 (这个Store Unit就是Cache)  
 
 Cache分为L1, L2, L3等等级。CPU读取的时候依次从L1, L2, L3中获取，找不到采取内存读取。  
-(其实cache不一定非要三级，但是现代CPU架构一般采取三级，L1在CPU内部接近CPU核心，L2在CPU外部接近CPU，L3也在CPU外部但接近内存)  
+其实cache不一定非要三级，但是现代CPU架构一般采取三级，L1在CPU内部供每个CPU核心使用，L2也在CPU内部供所有CPU核心使用，L3在CPU外部但接近内存。  
+(也有L1和L2同时供CPU核心使用的设计)  
+从L3到L1，速度变快，成本也变高。  
 
 写读相关(write/read dependency)：对同一内存地址进行先写后读，那么读就必须等待写完成之后。所以必须尽量避免写读相关的出现。  
 

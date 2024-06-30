@@ -126,13 +126,8 @@ return new_address_hi+address_lo
 通常用union来定义node，因为node指针如果指向其他node，page指针就应该是空的(即这个node是枝干节点) ；若有page指针不空则说明它的node指针是空的(即这个node是叶子节点)  
 这个树的层数就是level+1  
 Walk的过程就是从root开始一层一层深度遍历(次数=level)，如果发现某一层的node是枝干，就调用CreateNode来生成它的下一层枝干节点（一个node数组）  
-等遍历结束后会到达一个叶子节点，如果这个叶子有page(一个char数组)，就返回page。如果这个叶子也是枝干(意味着它是刚刚生成的)，就为他创建page并返回。  
-
-
-
-
-每个node都有个函数，叫做CreatePage(uint64_t n),它的作用是生成size为2^n的table,其实就是一个size=2^n的char数组  
-
+等遍历结束后会到达一个叶子节点，如果这个叶子有page，就返回page。如果这个叶子也是枝干(意味着它是刚刚生成的)，就为他CreatePage并返回。  
+(CreatePage会生成一个size为2^n的char数组)  
 
 # Reference
 https://www.cnblogs.com/alantu2018/p/9000777.html  

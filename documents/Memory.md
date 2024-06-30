@@ -113,8 +113,14 @@ Output: a pointer (char*)
 page_offset_size: 页偏移的bit位数  
 total_address_size: 地址bit宽度，比如64  
 level: 地址非偏移部分(页表)被分成好几个级别  
-流程：
+## 流程
 首先把address分成address_hi和address_lo   
+address_lo就是offset，不动  
+address_hi向右移>>page_offset_size  
+对address_hi查快表(TLB)获得new_address_hi  
+return new_address_hi+address_lo  
+如果快表没有查到，则需要进行PageTableWalk获得new_address_hi
+### PageTableWalk
 
 
 

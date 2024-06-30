@@ -94,5 +94,31 @@ Code: 编译之后的可执行机械代码指令
 2^32=4294967296  
 2^40=1t  
 
+# MMU
+MMU = Memory Management Unit  
+MMU的主要作用是负责从CPU内核发出的虚拟地址(VA)到物理地址(PA)的映射，并提供硬件机制的内存访问权限检查。  
+MMU使得每个用户进程拥有自己的地址空间，并通过内存访问权限的检查保护每个进程所用的内存不被其他进程破坏。  
+
+# TLB
+TLB = Translation Lookaside Buffer  
+读取内存工作流程：输入是虚拟地址，首先查询页表获得物理地址，然后通过物理地址读取指令和数据。  
+为了减少MMU导致的性能下降，使用了TLB作为地址转换缓冲器，或称“快表”。其原理是建立关于表页的cache。  
+查询页表的时候，如果发现页表已经在TLB里面的时候，就可以省去做查询的那一步。  
+TLB里存的一般是最可能被访问的页表。  
+
+
+# Memory Model Design
+Input: uint64_t address  
+Output: a pointer (char*)  
+page_offset_size: 页偏移的bit位数  
+total_address_size: 地址bit宽度，比如64  
+level: 地址非偏移部分(页表)被分成好几个级别  
+流程：
+首先把address分成address_hi和address_lo   
+
+
+
+# Reference
+https://www.cnblogs.com/alantu2018/p/9000777.html  
 
 

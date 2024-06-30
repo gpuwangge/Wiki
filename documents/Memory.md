@@ -121,7 +121,17 @@ address_hi向右移>>page_offset_size
 return new_address_hi+address_lo  
 如果快表没有查到，则需要进行PageTableWalk获得new_address_hi
 ### PageTableWalk
+内存模型是一个树状结构，上面有很多node，其中第一个是root  
+每个node都有一个pNode指针可以指向任何一个node数组，还有一个page指针(一个page就是一块以字节char为单元的内存)  
+通常用union来定义node，因为node指针如果指向其他node，page指针就应该是空的(即这个node是枝干节点) ；若有page指针不空则说明它的node指针是空的(即这个node是叶子节点)  
+这个树的层数就是level+1  
+Walk的过程就是从root开始一层一层深度遍历(次数=level)，如果发现某一层的node是枝干，就调用CreateNode来生成它的下一层枝干节点（一个node数组）  
+等遍历结束后会到达一个叶子节点，如果这个叶子有page(一个char数组)，就返回page。如果这个叶子也是枝干(意味着它是刚刚生成的)，就为他创建page并返回。  
 
+
+
+
+每个node都有个函数，叫做CreatePage(uint64_t n),它的作用是生成size为2^n的table,其实就是一个size=2^n的char数组  
 
 
 # Reference

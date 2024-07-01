@@ -125,9 +125,6 @@ subpass设计的目的是为了实现TBR/TBDR，除此之外也没啥其他用�
 # Shader
 施工中  
 
-# Descriptor
-施工中  
-
 # Pipeline
 Pipeline的本质就是各种shader组合在一起。  
 每次走完一遍pipeline，就相当于一次renderPass。   
@@ -185,7 +182,8 @@ void main() {
 Image用在创建swapchain,以及创建attachment和texture  
 Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
 Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。  
-Storage Image使用方法案例(Compute Shader)  
+Image可以脱离Graphics Pipeline，仅跟Compute Shader搭配使用。这时候Image仅作为Compute输入/输出的数据，并不需要sampler和一般image需要的哪些属性。这种Image一般称为Storage Image。这种用法还有个好处就是可以直接挂载在swapchain上，以实现不需要graphics pipeline，仅用compute shader就画出图像的效果。  
+Image使用方法案例(Compute Shader)  
 需要创建VK_DESCRIPTOR_TYPE_STORAGE_IMAGE类型的Descriptor  
 ```vulkan
 layout (local_size_x = 2, local_size_y = 1, local_size_z = 1) in;
@@ -256,6 +254,26 @@ CWxjImageBuffer textureImageBuffer;
 
 ## 创建texture image的具体过程
 施工中
+
+# Descriptor
+Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout  
+所谓Uniform变量，就是所有shader invocation共同可见的变量。需要为每一个Uniform创建其Descriptor，不然GPU会不知道如何使用  
+常见的Uniform变量包括  
+- MVP矩阵: 类型为VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
+- Image Sampler: 类型为VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+- Storage Buffer: 类型为VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
+- Texture/Image: 类型都是VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+
+创建Descriptor分为三个步骤  
+- Create Descriptor Pool: Descriptor不能直接创建，它们必须从描述符池中分配(就如同Command的创建必须从命令缓冲池中分配一样)。在这里我们定义我们的程序需要哪些种类的Descriptor和它们的数量。  
+- Create Descriptor Set Layout：对于每一个具体的Descritpor，需要指定一些参数，比如类型和这个uniform会在哪个shader里可见  
+- Create Descriptor Sets: 在完成了以上两步后，我们有了descriptorPool和descriptorSetLayout，我们就可以据此分配真正的Descriptor了。  
+这里面还有些需要注意的细节，比如需要为HOST端每一组资源创建一个单独了descritper set(MAX_FRAMES_IN_FLIGHT)  
+再比如还要指出这个uniform所需要的资源(buffer)在哪里(叫什么名字)。  
+ex1: 如果使用了MVP Uniform，需要为其allocate memory space，然后把这个信息update到descritor上面  
+ex2: 如果使用的是texture，要把texture的imageView(不是image)挂到descriptor上  
+ex3: 如果想让shader直接画到swapchain image上，这时候就要把swapchain ImageView挂上去  
+总而言之，这里需要用什么就挂什么，最后GPU真正进行读写操作的就是这个区域  
 
 
 # Vulkan Platform结构

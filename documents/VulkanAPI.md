@@ -138,12 +138,30 @@ Pipeline的本质就是各种shader组合在一起。
 
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
-# Buffer
-Vulkan里的资源分为两种：  
-- Image: 用在创建swapchain,以及创建attachment和texture  
-texture是一类特别的image。  
-The (Texture) image is used as a descriptor interface and shared at the shader stage (fragment shader) in the form of samplers。"  
-- Buffer: 应用广泛。用在创建uniform, storage buffer, vertex data buffer或staging buffer等  
+# Vulkan资源概论
+Vulkan里的资源分为三种：buffer, image和texture  
+
+## Buffer
+Buffer应用广泛。用在创建uniform, storage buffer, vertex data buffer或staging buffer等  
+- Vertex Buffer: 专供vertex shader使用  
+- Index Buffer: 专供vertex shader使用  
+- Uniform Buffer：给所有shader公共的专门用于读取的数据。比如所有顶点都需要的颜色，或者transform matrix  
+- Storage Buffer: 提供给compute shader使用的既可读又可写的数据。它的用法跟uniform差不多。区别是Storage Buffer可以提供非常大(~128 Mb)的空间，支持原子(Atomic)操作，支持可变存储(ex: int arr[])。缺点是Storage Buffer的访问会慢一些。  
+
+## Texture
+与Buffer相似，texture也持有一段GPU上的内存。并且它还包含一些额外特征：Format, Sample Count, Flags。  
+为了将图像映射到几何图形上，几何顶点上必须有纹理坐标(texture coordinate)  
+为了跟顶点坐标xyz区分，纹理坐标一般表示为uvw。又因为texture一般是2d的，简写做uv  
+另外，texture的尺寸跟屏幕的尺寸一般不一致，为了显示在屏幕上，需要使用采样技术(区别于显示几何所需的光栅化技术)  
+既然要采样，就要定义采样器(Sampler): The (Texture) image is used as a descriptor interface and shared at the shader stage (fragment shader) in the form of samplers。
+
+## Image
+Image用在创建swapchain,以及创建attachment和texture  
+Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
+Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。
+- Storage Image:   
+
+# Buffer的创建和使用
 
 在Vulkan里，描述GPU内存的变量有两个：
 - VkBuffer buffer: 保存内存的信息  
@@ -181,7 +199,7 @@ The (Texture) image is used as a descriptor interface and shared at the shader s
 - vkDestroyImage()  
 - vkFreeMemory()  
 
-# Texture
+# Texture的创建和使用
 创建Texture的第一步，就是创建上述的Image Buffer。另外还需要制定一些其他参数，比如texture的长和高，图像格式，mipmap参数等。  
 总的来说，texture有三个要素分别为：  
 - Image: 保存一些创建memory需要的metadata。
@@ -536,10 +554,10 @@ CPU submit graphics command queue，注意此时waitSemaphores里面有两个信
         currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 ```
 
-## 使用Compute计算，但是把结果画在Swapchain上
-施工中  
+## 使用Compute计算，但是把结果画在Swapchain上  
 既然Swapchain Image也是vk image，可以不需要走Graphics Pipeline直接画在swapchain image上。  
-Swapchain Image是有独立的内存空间的，正式名称为Color Image。使用Vulkan规则API创建。    
+Swapchain Image是有独立的内存空间的，正式名称为Color Image。使用Vulkan规则API创建。  
+虽然不用Graphics Pipeline了，但还是需要shader的。这里直接用compute shader画在swapchain的image上。  
 
 代码(来自VulkanSingleExamples/VulkanComputeImageExample)：  
 ```vulkan

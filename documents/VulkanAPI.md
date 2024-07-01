@@ -268,7 +268,7 @@ Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout
 - Create Descriptor Pool: Descriptor不能直接创建，它们必须从描述符池中分配(就如同Command的创建必须从命令缓冲池中分配一样)。在这里我们定义我们的程序需要哪些种类的Descriptor和它们的数量。  
 - Create Descriptor Set Layout：对于每一个具体的Descritpor，需要指定一些参数，比如类型和这个uniform会在哪个shader里可见  
 - Create Descriptor Sets: 在完成了以上两步后，我们有了descriptorPool和descriptorSetLayout，我们就可以据此分配真正的Descriptor了。  
-这里面还有些需要注意的细节，比如需要为HOST端每一组资源创建一个单独了descritper set(MAX_FRAMES_IN_FLIGHT)  
+这里面还有些需要注意的细节，比如需要为HOST端每一组资源创建一个单独的descritper set(MAX_FRAMES_IN_FLIGHT)  
 再比如还要指出这个uniform所需要的资源(buffer)在哪里(叫什么名字)。  
 ex1: 如果使用了MVP Uniform，需要为其allocate memory space，然后把这个信息update到descritor上面  
 ex2: 如果使用的是texture，要把texture的imageView(不是image)挂到descriptor上  

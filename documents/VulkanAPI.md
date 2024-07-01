@@ -151,6 +151,7 @@ Buffer应用广泛。用在创建uniform, storage buffer, vertex data buffer或s
 Storage Buffer使用方法案例(Compute Shader)  
 (注意本例中GPU并没有对其进行读写，读写指令通过Host端完成)  
 (可以看出Storage Buffer在shader里实际是通过一个普通buffer和readonly buffer实现的)  
+需要创建VK_DESCRIPTOR_TYPE_STORAGE_BUFFER类型的Descriptor  
 ```vulkan
 layout (local_size_x = 4, local_size_y = 1, local_size_z = 1) in; //workgroup size
 layout(std140, binding = 0) readonly buffer SBOIn {
@@ -185,12 +186,20 @@ Image用在创建swapchain,以及创建attachment和texture
 Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
 Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。  
 Storage Image使用方法案例(Compute Shader)  
+需要创建VK_DESCRIPTOR_TYPE_STORAGE_IMAGE类型的Descriptor  
 ```vulkan
 layout (local_size_x = 2, local_size_y = 1, local_size_z = 1) in;
 layout (binding = 0, rgba8 ) uniform writeonly image2D resultImage;
 void main(){
     imageStore( resultImage,ivec2(gl_GlobalInvocationID.xy),vec4(1.0,0.0,1.0,1.0));
 }
+```
+如果需要可读写的image2D，可以使用如下代码  
+```vulkan
+layout (binding = 0, rgba8) uniform readonly image2D inputImage; 
+layout (binding = 1, rgba8) uniform writeonly image2D outputImage;
+vec3 pixel = imageLoad(inputImage, ivec2(gl_GlobalInvocationID.xy)).rgb;
+imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), pixel);
 ```
 
 # Buffer的创建和使用

@@ -147,6 +147,20 @@ Buffer应用广泛。用在创建uniform, storage buffer, vertex data buffer或s
 - Index Buffer: 专供vertex shader使用  
 - Uniform Buffer：给所有shader公共的专门用于读取的数据。比如所有顶点都需要的颜色，或者transform matrix  
 - Storage Buffer: 提供给compute shader使用的既可读又可写的数据。它的用法跟uniform差不多。区别是Storage Buffer可以提供非常大(~128 Mb)的空间，支持原子(Atomic)操作，支持可变存储(ex: int arr[])。缺点是Storage Buffer的访问会慢一些。  
+Storage Buffer使用方法案例(Compute Shader)  
+(注意本例中GPU并没有对其进行读写，读写指令通过Host端完成)  
+(可以看出Storage Buffer在shader里实际是通过一个普通buffer和readonly buffer实现的)  
+```vulkan
+layout (local_size_x = 4, local_size_y = 1, local_size_z = 1) in; //workgroup size
+layout(std140, binding = 0) readonly buffer SBOIn {
+   vec4 dataIn;
+};
+layout(std140, binding = 1) buffer SBOOut {
+   vec4 dataOut;
+};
+void main(){
+}
+```
 
 ## Texture
 与Buffer相似，texture也持有一段GPU上的内存。并且它还包含一些额外特征：Format, Sample Count, Flags。  
@@ -159,7 +173,14 @@ Buffer应用广泛。用在创建uniform, storage buffer, vertex data buffer或s
 Image用在创建swapchain,以及创建attachment和texture  
 Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
 Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。
-- Storage Image:   
+Storage Image使用方法案例(Compute Shader)      
+```vulkan
+layout (local_size_x = 2, local_size_y = 1, local_size_z = 1) in;
+layout (binding = 0, rgba8 ) uniform writeonly image2D resultImage;
+void main(){
+    imageStore( resultImage,ivec2(gl_GlobalInvocationID.xy),vec4(1.0,0.0,1.0,1.0));
+}
+```
 
 # Buffer的创建和使用
 

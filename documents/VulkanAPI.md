@@ -147,6 +147,7 @@ Buffer应用广泛。用在创建uniform, storage buffer, vertex data buffer或s
 - Index Buffer: 专供vertex shader使用  
 - Uniform Buffer：给所有shader公共的专门用于读取的数据。比如所有顶点都需要的颜色，或者transform matrix  
 - Storage Buffer: 提供给compute shader使用的既可读又可写的数据。它的用法跟uniform差不多。区别是Storage Buffer可以提供非常大(~128 Mb)的空间，支持原子(Atomic)操作，支持可变存储(ex: int arr[])。缺点是Storage Buffer的访问会慢一些。  
+
 Storage Buffer使用方法案例(Compute Shader)  
 (注意本例中GPU并没有对其进行读写，读写指令通过Host端完成)  
 (可以看出Storage Buffer在shader里实际是通过一个普通buffer和readonly buffer实现的)  
@@ -168,6 +169,16 @@ void main(){
 为了跟顶点坐标xyz区分，纹理坐标一般表示为uvw。又因为texture一般是2d的，简写做uv  
 另外，texture的尺寸跟屏幕的尺寸一般不一致，为了显示在屏幕上，需要使用采样技术(区别于显示几何所需的光栅化技术)  
 既然要采样，就要定义采样器(Sampler): The (Texture) image is used as a descriptor interface and shared at the shader stage (fragment shader) in the form of samplers。
+Texture使用方法案例(Fragment Shader)
+```vulkan
+layout(binding = 1) uniform sampler2D texSampler;
+layout(location = 0) in vec3 fragColor;
+layout(location = 1) in vec2 fragTexCoord;
+layout(location = 0) out vec4 outColor;
+void main() {
+	outColor = texture(texSampler, fragTexCoord);
+}
+```
 
 ## Image
 Image用在创建swapchain,以及创建attachment和texture  

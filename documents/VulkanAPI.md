@@ -183,8 +183,8 @@ void main() {
 ## Image
 Image用在创建swapchain,以及创建attachment和texture  
 Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
-Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。
-Storage Image使用方法案例(Compute Shader)      
+Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。  
+Storage Image使用方法案例(Compute Shader)  
 ```vulkan
 layout (local_size_x = 2, local_size_y = 1, local_size_z = 1) in;
 layout (binding = 0, rgba8 ) uniform writeonly image2D resultImage;

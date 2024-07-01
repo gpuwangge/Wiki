@@ -280,7 +280,49 @@ VkImageView CWxjImageBuffer::createImageView(VkImage image, VkFormat format, VkI
     return imageView;
 }
 ```
-### 2.
+### 2.创建Texture
+首先按照#1的做法准备好textureImageBuffer(就是上述结构和createImage和createImageView这两个函数)  
+然后读取图像资源，一般会放入名字为texels的结构中。这个texel概念跟pixel很像，只不过前者是图片上的基本元素，后者是显示的基本元素。  
+第三步就是真正创建textureImage了  
+```vulkan
+void CTextureImage::CreateTextureImage(void* texels, CWxjImageBuffer &imageBuffer) {
+	VkDeviceSize imageSize = texWidth * texHeight * texChannels * texBptpc/8; 
+
+	mipLevels = bEnableMipMap ? (static_cast<uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1) : 1;
+
+	//Step 1: prepare staging buffer with texture pixels inside
+	CWxjBuffer stagingBuffer;
+	VkResult result = stagingBuffer.init(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
+	stagingBuffer.fill(texels);
+
+	stbi_image_free(texels);
+
+	//Step 2: create(allocate) image buffer
+	imageBuffer.createImage(texWidth, texHeight, mipLevels, VK_SAMPLE_COUNT_1_BIT, imageFormat, VK_IMAGE_TILING_OPTIMAL, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+	//Step 3: copy stagingBuffer(pixels) to imageBuffer(empty)
+	//To perform the copy, need change imageBuffer's layout: undefined->transferDST->shader-read-only 
+	//If the image is mipmap enabled, keep the transferDST layout (it will be mipmaped anyway)
+	//(transfer image in non-DST layout is not optimal???)
+	if(mipLevels == 1){
+		transitionImageLayout(imageBuffer.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+ 		copyBufferToImage(stagingBuffer.buffer, imageBuffer.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+      		transitionImageLayout(imageBuffer.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_GENERAL);//VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL ///!!!!
+	}else{
+		transitionImageLayout(imageBuffer.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+		copyBufferToImage(stagingBuffer.buffer, imageBuffer.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
+	}
+
+	stagingBuffer.DestroyAndFree();
+}
+```
+解释细节  
+- stagingBuffer
+- imageBuffer的Layout
+- transitionImageLayout函数
+- CopyBufferToImage函数
+- beginSingleTimeCommands/endSingleTimeCommands函数
+
 
 # Descriptor
 Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout  

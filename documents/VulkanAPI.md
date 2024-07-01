@@ -240,12 +240,11 @@ imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), pixel);
 - vkFreeMemory()  
 
 # Texture的创建和使用
-创建Texture的第一步，就是创建上述的Image Buffer。另外还需要制定一些其他参数，比如texture的长和高，图像格式，mipmap参数等。  
+前面说过，texture是一类特殊的image。创建Texture的第一步，就是创建上述的Image Buffer。另外还需要制定一些其他参数，比如texture的长和高，图像格式，mipmap参数等。  
 总的来说，texture有三个要素分别为：  
 - Image: 保存一些创建memory需要的metadata。
 - Image Layout：texture数据通过grid coordinate representation in image memory。根据texture用途的不同(color attachment, sparse texture等)设定不同的layout。  
 - Image View: 跟普通的image view是一样的作用。Image View也作为操作texture的接口。  
-
 
 在vulkan platform的实现里，当调用textureImageBuffer.createImage()的时候就会分配内存。  
 ```vulkan
@@ -254,7 +253,34 @@ CWxjImageBuffer textureImageBuffer;
 创建image view也可以通过textureImageBuffer.createImageView()  
 
 ## 创建texture image的具体过程
-施工中
+### 1.创建Image Buffer
+```vulkan
+class CWxjImageBuffer final{
+public:
+	VkImage	image;
+	VkDeviceMemory deviceMemory;
+	VkDeviceSize size;
+	VkImageView view;
+}
+void CWxjImageBuffer::createImage(...) {
+    if (vkCreateImage(CContext::GetHandle().GetLogicalDevice(), &imageInfo, nullptr, &image) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create image!");
+    }
+    if (vkAllocateMemory(CContext::GetHandle().GetLogicalDevice(), &allocInfo, nullptr, &deviceMemory) != VK_SUCCESS) {
+        throw std::runtime_error("failed to allocate image memory!");
+    }
+    vkBindImageMemory(CContext::GetHandle().GetLogicalDevice(), image, deviceMemory, 0);
+}
+
+VkImageView CWxjImageBuffer::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels){
+    VkImageView imageView;
+    if (vkCreateImageView(CContext::GetHandle().GetLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create texture image view!");
+    }
+    return imageView;
+}
+```
+### 2.
 
 # Descriptor
 Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout  

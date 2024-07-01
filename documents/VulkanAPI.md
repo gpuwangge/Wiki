@@ -123,7 +123,8 @@ subpass设计的目的是为了实现TBR/TBDR，除此之外也没啥其他用�
 (在Vulkan Platform里，RenderPass和pipelines都在Renderprocess里创建)  
 
 # Shader
-施工中  
+值得一提的是，Vulkan Shader Code使用的格式是SPIV-V，它需要使用单独的Shader Compiler编译   
+这样做的好处是可以保护shader源代码，毕竟真正交付给用户的是spv文件。  
 
 # Pipeline
 Pipeline的本质就是各种shader组合在一起。  

@@ -202,7 +202,6 @@ imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), pixel);
 ```
 
 # Buffer的创建和使用
-
 在Vulkan里，描述GPU内存的变量有两个：
 - VkBuffer buffer: 保存内存的信息  
 - VkDeviceMemory deviceMemory: 实际的GPU内存空间  

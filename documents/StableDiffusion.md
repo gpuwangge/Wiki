@@ -179,12 +179,12 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia6.png" alt="alt text" width="150" height="225">  
 </p> 
 
-```
-1girl, [Jauny Doey], ((dressed in detailed rusty silver armor)), upper body, studio light, medieval age armor, angry, black hair, brown eyes, high quality, ((battlefield background)), blurry background,
-Negative prompt: helmet
-Steps: 30, Sampler: Euler a, CFG scale: 10, Seed: 1151986892, Face restoration: CodeFormer, Size: 768x512, Model hash: 9aba26abdf, Model: deliberate_v2, Clip skip: 2, ENSD: 31337
-```
 
+# 文生图测试
+如果发现如下错误：  
+**A tensor with all NaNs was produced in Unet**  
+用记事本打开webui-user.bat这个文件，补齐如下参数：  
+**set COMMANDLINE_ARGS= --medvram --xformers --no-half**  
 
 # Reference
 https://foresightnews.pro/article/detail/18576  

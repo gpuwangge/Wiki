@@ -315,8 +315,13 @@ void CTextureImage::CreateTextureImage(void* texels, CWxjImageBuffer &imageBuffe
 	stagingBuffer.DestroyAndFree();
 }
 ```
-解释细节  
-- stagingBuffer
+过程解释  
+- stagingBuffer: 在Host/Device系统中，两者有各自的Memory。即使是Mobile平台，只有一块统一的物理memory，Host/Device也独立使用各自的部分。各自也看不见对方的memory。  
+在任务运行的过程中，一般需要尽可能使用Device Memory以提高效率。  
+这时候的一个问题就是数据常常是在Host段由CPU准备，所以它一开始只存在一块Host可见的memory区域，随后我们才会把它拷贝到Device Memory上。  
+这一块仅Host可见，随后会被转移到device的memory区域成为Staging Buffer。  
+在本例中，要转移的数据是texels，它被放到stagingBuffer里面，用途设置为TRANSFER_SRC。为接下来转移到Device做好准备。
+  
 - imageBuffer的Layout
 - transitionImageLayout函数
 - CopyBufferToImage函数

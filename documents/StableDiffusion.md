@@ -180,7 +180,7 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
 </p> 
 
 
-# 文生图测试
+# 图生图测试
 如果发现如下错误：  
 **A tensor with all NaNs was produced in Unet**  
 用记事本打开webui-user.bat这个文件，补齐如下参数：  

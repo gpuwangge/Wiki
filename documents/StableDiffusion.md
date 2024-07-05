@@ -1,4 +1,4 @@
-# stability.ai
+5# stability.ai
 stability.ai是推出Stable Diffusion的公司， 于2020年创办, 致力于像Open AI一样构建开源AI项目。  
 Stable Diffusion是其首个开源产品。  
 Midjourney是Stable Diffusion的主要竞争对手。OpenAI的DALLE也是竞品，但实力稍逊。  
@@ -179,8 +179,9 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia6.png" alt="alt text" width="150" height="225">  
 </p> 
 
+如果要修改默认UI设置可以更改ui-config.json这个文件  
 
-# 图生图测试
+# 图生图
 如果发现如下错误：  
 **A tensor with all NaNs was produced in Unet**  
 用记事本打开webui-user.bat这个文件，补齐如下参数：  

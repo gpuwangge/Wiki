@@ -316,34 +316,38 @@ void CTextureImage::CreateTextureImage(void* texels, CWxjImageBuffer &imageBuffe
 }
 ```
 过程解释  
-- stagingBuffer: 在Host/Device系统中，两者有各自的Memory。即使是Mobile平台，只有一块统一的物理memory，Host/Device也独立使用各自的部分。各自也看不见对方的memory。  
+- stagingBuffer  
+在Host/Device系统中，两者有各自的Memory。即使是Mobile平台，只有一块统一的物理memory，Host/Device也独立使用各自的部分。各自也看不见对方的memory。  
 在任务运行的过程中，一般需要尽可能使用Device Memory以提高效率。  
 这时候的一个问题就是数据常常是在Host段由CPU准备，所以它一开始只存在一块Host可见的memory区域，随后我们才会把它拷贝到Device Memory上。  
 这一块仅Host可见，随后会被转移到device的memory区域成为Staging Buffer。  
 在本例中，要转移的数据是texels，它被放到stagingBuffer里面，用途设置为TRANSFER_SRC。为接下来转移到Device做好准备。
   
-- imageBuffer的Layout
+- imageBuffer的Layout  
 Layout是image(buffer)的一个属性，代表像素在内存中的组织形式  
-在创建image的时候(vkCreateImage)，需要指定initialLayout，一般会指定为VK_IMAGE_LAYOUT_UNDEFINED
+在创建image的时候(vkCreateImage)，需要指定initialLayout，一般会指定为VK_IMAGE_LAYOUT_UNDEFINED  
 之所以给image设定不同的layout，主要是因应不同的使用需求。使用合适的layout能提升性能  
 (具体如何实现这些Layout对于使用者而言是黑盒，即不同的GPU有不同的实现形式)  
 比如，一个作为color attachment使用的image，应当设置为VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL  
 如果要作为传输使用，需要设置为VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL或VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL  
 其他常见的Layout还包括VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL，VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL等   
 
-- transitionImageLayout函数
+- transitionImageLayout函数  
 此函数用于Layout Transition，这个动作会改变image的layout，该动作也会对内存进行读写  
-回忆当我们CreateImage的时候，需要调用一系列vk开头的函数(vkCreateBuffer, vkGetBufferMemoryRequirements, vkAllocateMemory, vkBindBufferMemory)
+回忆当我们CreateImage的时候，需要调用一系列vk开头的函数(vkCreateBuffer, vkGetBufferMemoryRequirements, vkAllocateMemory, vkBindBufferMemory)  
 注意这些函数的作用是在device上开辟一块内存区域，然后用memcpy把数据从host拷贝到device memory里  
-因此，当进行Layout Transition动作时，实际上是Host命令Device进行转换，这条命令是通过一个command buffer来实现的
+因此，当进行Layout Transition动作时，实际上是Host命令Device进行转换，这条命令是通过一个command queue来实现的  
 再回忆Host和Device是异步工作的，对于Device上资源的操作，需要注意的是要防止资源读取乱序  
 Barrier的作用是在同一个command queue里，在一堆command之间立一个barrier，以确立barrier之前的commands肯定比之后的commands先执行  
 
+- CopyBufferToImage函数  
+该函数的作用就是把stagingBuffer里的数据从Host拷贝到Device Memory上  
+同样因为是Host对Device下指令工作，需要使用command queue(但是不需要barrier)  
 
-
-- CopyBufferToImage函数
-- beginSingleTimeCommands/endSingleTimeCommands函数
-
+- beginSingleTimeCommands/endSingleTimeCommands函数  
+第一个函数负责准备command buffer  
+第二个函数负责submit queue  
+这两个函数之间需要fill command buffer  
 
 # Descriptor
 Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout  

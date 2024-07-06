@@ -486,6 +486,42 @@ ex2: 如果使用的是texture，要把texture的imageView(不是image)挂到des
 ex3: 如果想让shader直接画到swapchain image上，这时候就要把swapchain ImageView挂上去  
 总而言之，这里需要用什么就挂什么，最后GPU真正进行读写操作的就是这个区域  
 
+# Command Buffer工作流程
+Command Buffer是Host向Device进行命令提交的缓冲区。  
+Graphics和Compute使用不同的Command Buffer(在Platform里统一放入commandBuffers这个vector里，用graphicsCmdId和computeCmdId分别记录它们在commandBuffers里的id)  
+Command Buffer自己也是一个VkCommandBuffer的vector(因此commandBuffers是二维数组, a vector of vectors), 每一个VkCommandBuffer对应Host端的一组资源(MAX_FRAMES_IN_FLIGHT)
+Command Buffer在initialize的时候创建，但这时候里面是空的。在command buffer里添加command的过程称为record。  
+不管是Graphics还是Compute, 它们的command buffer创建过程是一样的，都是生成command pool，然后调用vkAllocateCommandBuffers函数创建  
+Command Buffer的record过程，对于graphics是vkCmdDraw或vkCmdDrawIndexed；对于Compute, 该命令函数是vkCmdDispatch  
+Record结束后，还需要将command buffer submit到Device，两者的函数都是vkQueueSubmit，只有下达了该命令，device才会开始工作。    
+
+## Render流程(Graphics Pipeline)  
+- vkWaitForFences
+- vkAcquireNextImageKHR
+- vkBeginCommandBuffer(vkCommandBuffer)  
+- vkCmdBeginRenderPass(vkCommandBuffer)  
+- vkCmdBindPipeline(vkCommandBuffer, pipeline)  
+- vkCmdSetViewport(vkCommandBuffer)  
+- vkCmdSetScissor(vkCommandBuffer)  
+- vkCmdBindDescriptorSets(vkCommandBuffer, pipelineLayout, descriptorSets)  
+(到这里开始Record)  
+- vkCmdDraw(vkCommandBuffer)  
+(到这里Record结束)  
+- vkCmdEndRenderPass(vkCommandBuffer)  
+- vkEndCommandBuffer(vkCommandBuffer)  
+- vkQueueSubmit  
+- vkQueuePresentKHR  
+
+## Render流程(Compute Pipeline)  
+- vkWaitForFences  
+- vkBeginCommandBuffer(vkCommandBuffer)  
+- vkCmdBindPipeline(vkCommandBuffer, pipeline)  
+- vkCmdBindDescriptorSets(vkCommandBuffer, pipelineLayout, descriptorSets)  
+(到这里开始Record)  
+- vkCmdDispatch(vkCommandBuffer)  
+(到这里Record结束)  
+- vkEndCommandBuffer(vkCommandBuffer)  
+- vkQueueSubmit  
 
 # Vulkan Platform结构
 施工中：需要更新最新版本  

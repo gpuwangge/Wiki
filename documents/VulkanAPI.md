@@ -493,7 +493,10 @@ Command Buffer自己也是一个VkCommandBuffer的vector(因此commandBuffers是
 Command Buffer在initialize的时候创建，但这时候里面是空的。在command buffer里添加command的过程称为record。  
 不管是Graphics还是Compute, 它们的command buffer创建过程是一样的，都是生成command pool，然后调用vkAllocateCommandBuffers函数创建  
 Command Buffer的record过程，对于graphics是vkCmdDraw或vkCmdDrawIndexed；对于Compute, 该命令函数是vkCmdDispatch  
+Command Buffer一旦record录制好，就可以反复提交。但在实践中，一般都会在每个Frame重新录制一次。  
+原因首先是因为实际GPU的行为是动态的，并且record这个动作消耗的资源极少。  
 Record结束后，还需要将command buffer submit到Device，两者的函数都是vkQueueSubmit，只有下达了该命令，device才会开始工作。    
+当Host端Submit动作完成后，Driver将会接管下面的事情。Driver会验证command的有效性(validate)，并翻译成真正的GPU commands。  
 
 ## Render流程(Graphics Pipeline)  
 - vkWaitForFences

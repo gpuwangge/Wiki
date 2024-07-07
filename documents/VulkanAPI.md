@@ -988,22 +988,106 @@ VkSampleCountFlagBits msaaSamples = VK_SAMPLE_COUNT_1_BIT;
 简单起见，选择使用(硬件支持的)最大available的sample count：getMaxUsableSampleCount()  
 (大部分GPU支持至少8 samples)  
 VK_SAMPLE_COUNT_1_BIT相当于没开MSAA  
+swapchain.h/swapchain.cpp  
+```vulkan
+VkSampleCountFlagBits msaaSamples;
+msaaSamples = CContext::GetHandle().physicalDevice->get()->getMaxUsableSampleCount();
+```
 
 2. 设置Render Target (RT就是一个image buffer)  
 原本的image buffer一个像素只有一个sample，所以需要额外的color buffer。  
-MyImageBuffer colorImageBuffer_msaa;  
-VkImageView colorImageView_msaa;  
-使用以下两个函数分别新的buffer：  
-createColorResources();  
-MSAA必须开DepthBuffer。  
-因为在model depthTest 也用到，因此不用重复  
+创建msaaColorImageBuffer，里面包含了image和view    
+MSAA必须开DepthBuffer(因为在model depthTest 也用到，因此不赘述)  
+swapchain.h/swapchain.cpp  
+```vulkan
+CWxjImageBuffer msaaColorImageBuffer;
+msaaColorImageBuffer.createImage(swapChainExtent.width,swapChainExtent.height, 1, msaaSamples, swapChainImageFormat, tiling, usage, properties);
+msaaColorImageBuffer.createImageView(swapChainImageFormat, aspectFlags, 1);
+```
 
 3. 增添Attachment(colorAttachmentResolve到RenderPass)  
-并设置color/depth attachment的msaaSamples数量  
+并设置color/depth attachment的msaaSamples数量
+```vulkan
+void CRenderProcess::addColorAttachmentResolve(){  
+	bUseColorAttachmentResolve = true;
 
-4. createFramebuffers的时候swapChainFramebuffers带上colorImageView  
+	//added for MSAA
+	colorAttachmentResolve.format = m_swapChainImageFormat;
+	colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+	colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+}
+```
+```vulkan
+void CRenderProcess::createSubpass(){ 
+	if(bUseColorAttachmentResolve){
+		//added for MSAA
+		colorAttachmentResolveRef.attachment = attachmentCount++;
+		colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		subpass.pResolveAttachments = &colorAttachmentResolveRef; //added for MSAA
+	}
+}
+```
+```vulkan
+void CRenderProcess::createRenderPass(){ 
+	if(bUseColorAttachmentResolve) attachments.push_back(colorAttachmentResolve);
+	renderPassInfo.pAttachments = attachments.data(); //1
+	result = vkCreateRenderPass(CContext::GetHandle().GetLogicalDevice(), &renderPassInfo, nullptr, &renderPass);	 
+}
+```
 
-5. GraphicsPipeline创建的时候设置msaaSamples数量  
+5. createFramebuffers的时候swapChainFramebuffers带上msaaColorImageBuffer.view
+```vulkan
+void CSwapchain::CreateFramebuffers(VkRenderPass &renderPass){
+	VkResult result = VK_SUCCESS;
+
+	swapChainFramebuffers.resize(views.size());
+
+	for (size_t i = 0; i < imageSize; i++) {
+		std::vector<VkImageView> imageViews_to_attach; 
+		 if (bEnableDepthTest && bEnableMSAA) {//Renderpass attachment(render target) order: Color, Depth, ColorResolve
+		    	imageViews_to_attach.push_back(msaaColorImageBuffer.view);
+		    	imageViews_to_attach.push_back(depthImageBuffer.view);
+			imageViews_to_attach.push_back(views[i]);
+		 }else if(bEnableDepthTest){//Renderpass attachment(render target) order: Color, Depth
+			imageViews_to_attach.push_back(views[i]);
+			imageViews_to_attach.push_back(depthImageBuffer.view);
+		}else{ //Renderpass attachment(render target) order: Color
+			imageViews_to_attach.push_back(views[i]);
+		}
+
+		VkFramebufferCreateInfo framebufferInfo{};
+		framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		framebufferInfo.renderPass = renderPass;
+		framebufferInfo.attachmentCount = static_cast<uint32_t>(imageViews_to_attach.size());
+		framebufferInfo.pAttachments = imageViews_to_attach.data();
+		framebufferInfo.width = swapChainExtent.width;
+		framebufferInfo.height = swapChainExtent.height;
+		framebufferInfo.layers = 1;
+
+		result = vkCreateFramebuffer(CContext::GetHandle().GetLogicalDevice(), &framebufferInfo, nullptr, &swapChainFramebuffers[i]);
+		if (result != VK_SUCCESS) throw std::runtime_error("failed to create framebuffer!");
+		//REPORT("vkCreateFrameBuffer");
+	}	
+}
+```
+
+6. GraphicsPipeline创建的时候设置msaaSamples数量
+renderProcess.h   
+```vulkan
+void createGraphicsPipeline(VkPrimitiveTopology topology, VkShaderModule &vertShaderModule, VkShaderModule &fragShaderModule, bool bUseVertexBuffer = true){
+        VkPipelineMultisampleStateCreateInfo multisampling{};
+        multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+        multisampling.sampleShadingEnable = VK_FALSE;
+        multisampling.rasterizationSamples = m_msaaSamples;
+        pipelineInfo.pMultisampleState = &multisampling; 
+}
+```
+
 
 
 ## Links

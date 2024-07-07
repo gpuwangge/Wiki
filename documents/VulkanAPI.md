@@ -1281,6 +1281,33 @@ void CTextureImage::generateMipmaps(VkImage image, bool bMix, std::array<CWxjIma
 ```vulkan
 textureImages[0].generateMipmaps("checkerboard", usage_texture);
 ```
+```vulkan
+void CTextureImage::generateMipmaps(std::string rainbowCheckerboardTexturePath, VkImageUsageFlags usage){ //rainbow mipmaps case
+	if(mipLevels <= 1) return;
+
+	//这里建立的一组新的texture image用来暂时存储不同颜色的texture
+	std::array<CWxjImageBuffer, MIPMAP_TEXTURE_COUNT> tmpTextureBufferForRainbowMipmaps;//create temp mipmaps
+	for (int i = 0; i < MIPMAP_TEXTURE_COUNT; i++) {//fill temp mipmaps
+		int texChannels;
+
+		std::string fullTexturePath = TEXTURE_PATH + rainbowCheckerboardTexturePath + std::to_string(i) + ".png";
+		void* texels = stbi_load(fullTexturePath.c_str(), &texWidth, &texHeight, &texChannels, dstTexChannels);
+
+		CreateTextureImage(texels, usage, tmpTextureBufferForRainbowMipmaps[i], dstTexChannels, 8);
+        	generateMipmaps(tmpTextureBufferForRainbowMipmaps[i].image);
+	}
+
+	//真正的mipmap在这里生成
+	//Generate mipmaps for image, using tmpTextureBufferForRainbowMipmaps
+	generateMipmaps(textureImageBuffer.image, true, &tmpTextureBufferForRainbowMipmaps);
+
+	//Clean up
+	for (int i = 0; i < MIPMAP_TEXTURE_COUNT; i++) {
+        	tmpTextureBufferForRainbowMipmaps[i].destroy();
+	}
+}
+```
+
 
 ## Links
 https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/01%20Depth%20testing/  

@@ -1130,10 +1130,11 @@ vkCmdBlitImage(commandBuffer,
 注意到vkCmdBlitImage()操作的第3和第5个参数是image layout。  
 通常用VK_IMAGE_LAYOUT_GENERAL也行，但是运行速度就会比较慢  
 因此这里的建议是设成VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL/VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL  
-在调用vkCmdBlitImage之前，也需要整体对image layout进行转换(transitionImageLayout(), 也就是vkCmdPipelineBarrier())  
+在调用vkCmdBlitImage之前和之后，也需要整体对image layout进行转换(transitionImageLayout(), 也就是vkCmdPipelineBarrier())  
 简略过程如下：  
 texture.cpp  
 ```vulkan
+barrier.image = image;
 for (uint32_t i = 1; i < mipLevels; i++) {
 	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 	barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;

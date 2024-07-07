@@ -1090,24 +1090,86 @@ void createGraphicsPipeline(VkPrimitiveTopology topology, VkShaderModule &vertSh
 
 # Mipmap教程
 VulkanPlatform设立的mipmap参数：  
+```vulkan
 uint32_t mipLevels = 1; //1 means no mipmap  
-VulkanPlatform设立的三个mipmap函数：  
-void generateMipmaps();  //正常调用  
-void generateMipmaps(VkImage image, bool bMix = false, std::array<CWxjImageBuffer, MIPMAP_TEXTURE_COUNT> *textureImageBuffers_mipmaps = NULL);  //真正的mipmap生成函数  
-void generateMipmaps(std::string rainbowCheckerboardTexturePath, VkImageUsageFlags usage);  //彩虹状mipmap  
+```
 
-调用方法：  
+在使用Mipmap之前需要设定texture image/view资源。    
+跟普通的texture不同的就是多了个mipLevels参数  
+如果指定了大于1的数字，就会在创建texture buffer的时候额外留出一部分空间来保存不同LOD的图像  
 ```vulkan
 VkImageUsageFlags usage_texture = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 textureImages[0].CreateTextureImage("checkerboard_marble.jpg", usage_texture, renderer.commandPool);
 textureImages[0].CreateImageView(VK_IMAGE_ASPECT_COLOR_BIT);
 ```
-
-正常的Mipmap:  
+imageBuffer.h
 ```vulkan
-textureImages[0].generateMipmaps();  
+imageInfo.mipLevels = mipLevels;
+vkCreateImage(CContext::GetHandle().GetLogicalDevice(), &imageInfo, nullptr, &image)
 ```
-调用此函数会导向第二个函数  
+每一个级别的LOD图像都是前一个级别的宽度和高度的一半  
+远离相机的物体将从较小的mip图样中采样纹理，以提高渲染速度和避免锯齿 
+
+预留了memory之后，下一步就是生成真正的贴图。Vulkan Platform设立的三个mipmap函数：  
+```vulkan
+void generateMipmaps();  //正常调用,调用此函数会导向第二个函数  
+void generateMipmaps(VkImage image, bool bMix = false, std::array<CWxjImageBuffer, MIPMAP_TEXTURE_COUNT> *textureImageBuffers_mipmaps = NULL);  //真正的mipmap生成函数  
+void generateMipmaps(std::string rainbowCheckerboardTexturePath, VkImageUsageFlags usage);  //彩虹状mipmap  
+```
+mipmap的生成函数使用了vkCmdBlitImage()命令  
+这个命令会造成一个名字叫blit的动作，该动作就是把赋值、缩放和筛选操作打包在一起了  
+每一个LOD级别的生成都对应一次blit动作  
+(因为blit操作也是从host端操作device memory，因此涉及command queue和barrier)  
+```vulkan
+vkCmdBlitImage(commandBuffer,
+	image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+	image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+	1, &blit,
+	VK_FILTER_LINEAR);
+```
+注意到vkCmdBlitImage()操作的第3和第5个参数是image layout。  
+通常用VK_IMAGE_LAYOUT_GENERAL也行，但是运行速度就会比较慢  
+因此这里的建议是设成VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL/VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL  
+在调用vkCmdBlitImage之前，也需要整体对image layout进行转换(transitionImageLayout(), 也就是vkCmdPipelineBarrier())  
+简略过程如下：  
+texture.cpp  
+```vulkan
+for (uint32_t i = 1; i < mipLevels; i++) {
+	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+	barrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	vkCmdPipelineBarrier(commandBuffer,
+		VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0,
+		0, nullptr,
+		0, nullptr,
+		1, &barrier);
+	vkCmdBlitImage(commandBuffer,
+		image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		1, &blit,
+		VK_FILTER_LINEAR);
+	barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+	barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	vkCmdPipelineBarrier(commandBuffer,
+		VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+		0, nullptr,
+		0, nullptr,
+		1, &barrier);
+}
+barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+vkCmdPipelineBarrier(commandBuffer,
+	VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0,
+	0, nullptr,
+	0, nullptr,
+	1, &barrier);
+```
+
+
+完整函数如下：  
+texture.cpp  
 ```vulkan
 void CTextureImage::generateMipmaps(VkImage image, bool bMix, std::array<CWxjImageBuffer, MIPMAP_TEXTURE_COUNT> *textureImageBuffers_mipmaps) {
 	//bMix: default is false

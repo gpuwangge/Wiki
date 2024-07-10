@@ -153,9 +153,12 @@ rwx-rwx-rwx
 以下指令将全部权限设置给ugo
 > chmod 777 file.txt
 
-说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x  
+说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x; 4是r--    
 以上指令也等价于以下指令  
 > chmod a=rwx file.txt
+
+常见的情况，某个文件我希望owner拥有rw权限, 其他人只能r，则设置成644  
+> chmod 644 file.txt  
 
 
 ## gcc和安装的g++是啥架构

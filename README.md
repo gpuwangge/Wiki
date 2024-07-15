@@ -31,7 +31,7 @@
 ## [Computer Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArchitecture.md)  
 ## [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  
 ## [Assembly Language](https://github.com/gpuwangge/Wiki/blob/main/documents/AssemblyLanguage.md) 
-## [Hardware Infrastructure](https://github.com/gpuwangge/Wiki/blob/main/documents/HardwareInfrastructure.md)   
+## [IT Infrastructure](https://github.com/gpuwangge/Wiki/blob/main/documents/ITInfrastructure.md)   
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 ## [MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md) 
 ## [SSL](https://github.com/gpuwangge/Wiki/blob/main/documents/SSL.md)   

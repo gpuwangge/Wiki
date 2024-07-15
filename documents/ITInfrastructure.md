@@ -11,7 +11,20 @@
 10、需要连接的设备搜索Router名字和密码（一般印在Router背面）连接wifi  
 11、有时候会出现Router找不到Moderm，这时候需要手动查询Moderm的MAC地址，然后拿一个电脑手动登录到Router上(IP一般是192.168.1.1，不要用公司电脑尝试)，手动更改MAC地址，之后Router就可以找到Moderm了。（建议这一步打电话给Router客服根据指示操作）  
 
-
+# 开启Remote Desktop (Windows 10)  
+1. 开启remote desk  
+Start->Setting->Remote Desktop: Enable Remote Desktop  
+2. 选择User  
+默认是没有user的  
+Select users that can remotely access this PC  
+Click Add  
+在下方方框中，输入本机的某个用户名A，点击Check Names，会显示A的完整名字  
+点击OK就成功添加了。此时设置完成  
+3. 如何连接  
+在刚才的Select Users界面中  
+From this location: 这个是远程连接的Computer名字  
+添加的用户名：远程连接的User name  
+密码：就是User A的登陆密码  
 
 
 

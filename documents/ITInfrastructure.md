@@ -20,11 +20,16 @@ Select users that can remotely access this PC
 Click Add  
 在下方方框中，输入本机的某个用户名A，点击Check Names，会显示A的完整名字  
 点击OK就成功添加了。此时设置完成  
-3. 如何连接  
+3. 同一局域网内如何连接  
 在刚才的Select Users界面中  
 From this location: 这个是远程连接的Computer名字  
+(此名字即为[Device name]，可以通过PC About页面查看)  
+(通过ipconfig，可以在本机查看IPv6 Address)  
+(Remote端也可以通过ping [Device name]命令获得IPv6 Address)  
 添加的用户名：远程连接的User name  
 密码：就是User A的登陆密码  
+4. 通过Remote PC如何连接  
+
 
 
 

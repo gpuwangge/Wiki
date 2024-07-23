@@ -179,6 +179,17 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/uxia6.png" alt="alt text" width="150" height="225">  
 </p> 
 
+通过调整提示词可以创建不同场景，服饰和道具的角色。  
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/SD1.gif" alt="alt text" width="225" height="225">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/SD2.gif" alt="alt text" width="225" height="225">  
+</p> 
+
+
+
+
+
 如果要修改默认UI设置可以更改ui-config.json这个文件  
 
 # 图生图

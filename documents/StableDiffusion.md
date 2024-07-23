@@ -1,4 +1,4 @@
-5# stability.ai
+# stability.ai
 stability.ai是推出Stable Diffusion的公司， 于2020年创办, 致力于像Open AI一样构建开源AI项目。  
 Stable Diffusion是其首个开源产品。  
 Midjourney是Stable Diffusion的主要竞争对手。OpenAI的DALLE也是竞品，但实力稍逊。  

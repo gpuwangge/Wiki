@@ -170,10 +170,10 @@ file命令可以查看一个程序是否strip
 查看当前用户  
 > whoami
 
+## df
 Linux df(全称: disk free)命令用于显示目前在Linux系统上的文件系统磁盘使用情况  
 >df
 
-## df
 使用人类可读的格式输出disk free  
 >df -h
 

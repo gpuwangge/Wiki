@@ -196,12 +196,14 @@ Linux下压缩和解压缩用
 如上所述，环境变量可以用env或printenv查看  
 可以用env | grep xxxxx来查看含有某个关键字的环境变量  
 如果知道变量名字，也可以直接用echo $xxxxx来查看其变量的值  
+如果要更改变量的值，可以使用setenv xxxxx yyyyy命令，比如：  
+> setenv DISPLAY abc12345:0  
 
 ## DISPLAY
 如名字所暗示的，这个变量保存了有关显示设备的编号  
 所有的图形程序都把结果显示在该编号的设备上  
 当使用  
->echo $DISPLAY  
+> echo $DISPLAY  
 
 后，会显示如下格式的结果  
 xxx:yyy.zzz  

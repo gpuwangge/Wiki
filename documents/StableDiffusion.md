@@ -182,6 +182,7 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
 通过调整提示词可以创建不同场景，服饰和道具的角色。  
 
 <p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/SD3.gif" alt="alt text" width="225" height="225">  
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/SD1.gif" alt="alt text" width="225" height="225">  
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/SD2.gif" alt="alt text" width="225" height="225">  
 </p> 

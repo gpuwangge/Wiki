@@ -523,6 +523,7 @@ if (mipLevels > 1) {
 
 VkResult result = vkCreateSampler(CContext::GetHandle().GetLogicalDevice(), &samplerInfo, nullptr, &textureSamplers[textureSamplerCount++]);
 ```
+Sampler的作用是定义材质采样器的行为。  
 
 ### 2 Descriptor Pool
 ```vulkan
@@ -543,6 +544,7 @@ poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
 VkResult result = vkCreateDescriptorPool(CContext::GetHandle().GetLogicalDevice(), &poolInfo, nullptr, &descriptorPool);
 ```
+Descriptor Pool的作用是：提供Uniform的资源池，任何使用的uniform都应该先在pool里声明。  
 Pool的size，等于独立的uniform的类型。  
 在本例中，用了多少个sampler，就要allocate相应的pool数量。  
 事实上，如果一个sampler就够用的话，不管场景中有多少个不同的mesh或texture，都可以使用size为1的pool。  
@@ -566,12 +568,22 @@ layoutInfo.pBindings = bindings.data();
 
 VkResult result = vkCreateDescriptorSetLayout(CContext::GetHandle().GetLogicalDevice(), &layoutInfo, nullptr, OUT &descriptorSetLayout);
 ```
+Descriptor Layout的作用就是告诉GPU：这个uniform是一个采样器。  
 跟上一节一样，有几个采样器，就创建binding size为几的Layout。  
 注意不同的采用器使用不同的binding编号。在实现fragment shader的时候，通过选用不同的binding编号就可以使用不同的采样器。  
 如果使用了不止一个Layout，在实现fragment shader的时候，通过选用不同的set编号就可以使用不同的Layout(以及对应的Descriptor Set)  
-比如，Layout编号0的位置给了Transform Uniform，Layout编号1给Texture Sampler，使用一个Sampler, Fragment Shader代码如下  
+比如，Layout编号0的位置给了Transform Uniform，Layout编号1给Texture Sampler，使用一个Sampler, 相应的Fragment Shader代码如下  
 ```vulkan
 layout(set = 1, binding = 0) uniform sampler2D texSampler;
+
+layout(location = 0) in vec3 fragColor;
+layout(location = 1) in vec2 fragTexCoord;
+
+layout(location = 0) out vec4 outColor;
+
+void main() {
+	outColor = texture(texSampler, fragTexCoord);
+}
 ```
 
 ### 4 Descriptor Set
@@ -609,9 +621,20 @@ for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 	vkUpdateDescriptorSets(CContext::GetHandle().GetLogicalDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 ```
-创建Descriptor Set的过程就是把上述#1,#2,#3的资源拼在一起。另外还要指定Texture Image资源，这样GPU才能够在内存里找到材质的具体位置。  
-
-
+Descriptor Set的作用是把上述#1,#2,#3的资源拼在一起。另外还要指定Texture Image资源，这样GPU才能够在内存里找到材质的具体位置。  
+与上述#1,#2,#3所不同的是，Descriptor Set在实践中通常定义很多份。  
+比如，要为不同的物体赋予不同的材质。这些物体都可以共享同样的sampler, descriptor pool或descriptor layout。  
+但是，它们都应用不同的descriptor set。这些set通过在record command queue的时候，bind不同的descritor set实现：  
+```vulkan
+unsigned int setCount = descriptorSets.size();
+VkDescriptorSet sets[setCount];
+for(unsigned int i = 0; i < setCount; i++) sets[i] = descriptorSets[i][currentFrame];
+vkCmdBindDescriptorSets(commandBuffers[commandBufferIndex][currentFrame], pipelineBindPoint, pipelineLayout, 0, 
+	setCount, sets,  
+	1, //dynamicOffsetCount, 
+	offsets 
+);
+```
 
 
 # Command Buffer工作流程

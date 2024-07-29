@@ -605,7 +605,7 @@ for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 
 	imageInfo.resize(textureSamplers.size());
 	for(int j = 0; j < textureSamplers.size(); j++){
-		imageInfo[j].imageLayout = VK_IMAGE_LAYOUT_GENERAL; //test compute storage image: ?need figure this out. VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		imageInfo[j].imageLayout = VK_IMAGE_LAYOUT_GENERAL; 
 		imageInfo[j].imageView = (*textureImages)[j].textureImageBuffer.view; //这里需要设置texture image资源
 		imageInfo[j].sampler = textureSamplers[j]; //把#1资源设置在这里
 		descriptorWrites[counter].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

@@ -489,13 +489,13 @@ ex3: 如果想让shader直接画到swapchain image上，这时候就要把swapch
 ## Descriptor for Texture 举例
 ### Descriptor 资源
 ```vulkan
-std::vector<VkSampler> textureSamplers;
-VkDescriptorPool descriptorPool;
-VkDescriptorSetLayout descriptorSetLayout;
-std::vector<VkDescriptorSet> descriptorSets;
+std::vector<VkSampler> textureSamplers; //#1
+VkDescriptorPool descriptorPool; //#2
+VkDescriptorSetLayout descriptorSetLayout; //#3
+std::vector<VkDescriptorSet> descriptorSets; //#4
 ```
 
-### Sampler
+### 1 Sampler
 ```vulkan
 VkPhysicalDeviceProperties properties{};
 vkGetPhysicalDeviceProperties(CContext::GetHandle().GetPhysicalDevice(), &properties);
@@ -524,7 +524,7 @@ if (mipLevels > 1) {
 VkResult result = vkCreateSampler(CContext::GetHandle().GetLogicalDevice(), &samplerInfo, nullptr, &textureSamplers[textureSamplerCount++]);
 ```
 
-### Descriptor Pool
+### 2 Descriptor Pool
 ```vulkan
 poolSizes.resize(getDescriptorSize());
 
@@ -547,7 +547,7 @@ Pool的size，等于独立的uniform的类型。
 在本例中，用了多少个sampler，就要allocate相应的pool数量。  
 事实上，如果一个sampler就够用的话，不管场景中有多少个不同的mesh或texture，都可以使用size为1的pool。  
 
-### Descriptor Layout
+### 3 Descriptor Layout
 ```vulkan
 int counter = 0;
 for(int i = 0; i < textureSamplers.size(); i++){
@@ -566,15 +566,21 @@ layoutInfo.pBindings = bindings.data();
 
 VkResult result = vkCreateDescriptorSetLayout(CContext::GetHandle().GetLogicalDevice(), &layoutInfo, nullptr, OUT &descriptorSetLayout);
 ```
-
-
-### Descriptor Set
+跟上一节一样，有几个采样器，就创建binding size为几的Layout。  
+注意不同的采用器使用不同的binding编号。在实现fragment shader的时候，通过选用不同的binding编号就可以使用不同的采样器。  
+如果使用了不止一个Layout，在实现fragment shader的时候，通过选用不同的set编号就可以使用不同的Layout(以及对应的Descriptor Set)  
+比如，Layout编号0的位置给了Transform Uniform，Layout编号1给Texture Sampler，使用一个Sampler, Fragment Shader代码如下  
 ```vulkan
-std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
+layout(set = 1, binding = 0) uniform sampler2D texSampler;
+```
+
+### 4 Descriptor Set
+```vulkan
+std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout); //把#3资源设置在这里
 VkDescriptorSetAllocateInfo allocInfo{};
 allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-allocInfo.descriptorPool = descriptorPool;
-allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);///!!!
+allocInfo.descriptorPool = descriptorPool; //把#2资源设置在这里
+allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 allocInfo.pSetLayouts = layouts.data();
 
 descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
@@ -588,8 +594,8 @@ for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 	imageInfo.resize(textureSamplers.size());
 	for(int j = 0; j < textureSamplers.size(); j++){
 		imageInfo[j].imageLayout = VK_IMAGE_LAYOUT_GENERAL; //test compute storage image: ?need figure this out. VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-		imageInfo[j].imageView = (*textureImages)[j].textureImageBuffer.view;
-		imageInfo[j].sampler = textureSamplers[j];
+		imageInfo[j].imageView = (*textureImages)[j].textureImageBuffer.view; //这里需要设置texture image资源
+		imageInfo[j].sampler = textureSamplers[j]; //把#1资源设置在这里
 		descriptorWrites[counter].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		descriptorWrites[counter].dstSet = descriptorSets[i];
 		descriptorWrites[counter].dstBinding = counter;
@@ -603,6 +609,9 @@ for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 	vkUpdateDescriptorSets(CContext::GetHandle().GetLogicalDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
 }
 ```
+创建Descriptor Set的过程就是把上述#1,#2,#3的资源拼在一起。另外还要指定Texture Image资源，这样GPU才能够在内存里找到材质的具体位置。  
+
+
 
 
 # Command Buffer工作流程

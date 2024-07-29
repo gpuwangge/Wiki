@@ -625,6 +625,7 @@ Descriptor Set的作用是把上述#1,#2,#3的资源拼在一起。另外还要�
 与上述#1,#2,#3所不同的是，Descriptor Set在实践中通常定义很多份。  
 比如，要为不同的物体赋予不同的材质。这些物体都可以共享同样的sampler, descriptor pool或descriptor layout。  
 但是，它们都应用不同的descriptor set（有多少个不同的材质，就要设置多少个descriptor set）。  
+(注：有一些进阶技巧可以在同一个descriptor set下设置不同的材质，比如多重材质，这里不赘述)  
 这些set通过在record command queue的时候，bind不同的descritor set实现：  
 ```vulkan
 unsigned int setCount = descriptorSets.size();

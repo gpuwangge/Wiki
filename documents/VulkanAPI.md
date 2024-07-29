@@ -486,8 +486,8 @@ ex2: 如果使用的是texture，要把texture的imageView(不是image)挂到des
 ex3: 如果想让shader直接画到swapchain image上，这时候就要把swapchain ImageView挂上去  
 总而言之，这里需要用什么就挂什么，最后GPU真正进行读写操作的就是这个区域
 
-## Descriptor for Texture
-### Descriptor资源
+## Descriptor for Texture 举例
+### Descriptor 资源
 ```vulkan
 std::vector<VkSampler> textureSamplers;
 VkDescriptorPool descriptorPool;
@@ -495,8 +495,39 @@ VkDescriptorSetLayout descriptorSetLayout;
 std::vector<VkDescriptorSet> descriptorSets;
 ```
 
+### Sampler
+```vulkan
+VkPhysicalDeviceProperties properties{};
+vkGetPhysicalDeviceProperties(CContext::GetHandle().GetPhysicalDevice(), &properties);
+
+VkSamplerCreateInfo samplerInfo{};
+samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+samplerInfo.magFilter = VK_FILTER_LINEAR;
+samplerInfo.minFilter = VK_FILTER_LINEAR;
+samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+samplerInfo.anisotropyEnable = VK_TRUE;
+samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+samplerInfo.unnormalizedCoordinates = VK_FALSE;
+samplerInfo.compareEnable = VK_FALSE;
+samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+if (mipLevels > 1) {
+	samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;// VK_SAMPLER_MIPMAP_MODE_NEAREST;
+	samplerInfo.minLod = 0.0f;
+	samplerInfo.maxLod = static_cast<float>(mipLevels / 2);
+	samplerInfo.mipLodBias = 0.0f;
+}
+
+VkResult result = vkCreateSampler(CContext::GetHandle().GetLogicalDevice(), &samplerInfo, nullptr, &textureSamplers[textureSamplerCount++]);
+```
+
 ### Descriptor Pool
 ```vulkan
+poolSizes.resize(getDescriptorSize());
+
 int counter = 0;
 for(int i = 0; i < textureSamplers.size(); i++){
 	poolSizes[counter].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -512,7 +543,9 @@ poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
 VkResult result = vkCreateDescriptorPool(CContext::GetHandle().GetLogicalDevice(), &poolInfo, nullptr, &descriptorPool);
 ```
-
+Pool的size，等于独立的uniform的类型。  
+在本例中，用了多少个sampler，就要allocate相应的pool数量。  
+事实上，如果一个sampler就够用的话，不管场景中有多少个不同的mesh或texture，都可以使用size为1的pool。  
 
 ### Descriptor Layout
 ```vulkan

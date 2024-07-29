@@ -484,7 +484,93 @@ Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout
 ex1: 如果使用了MVP Uniform，需要为其allocate memory space，然后把这个信息update到descritor上面  
 ex2: 如果使用的是texture，要把texture的imageView(不是image)挂到descriptor上  
 ex3: 如果想让shader直接画到swapchain image上，这时候就要把swapchain ImageView挂上去  
-总而言之，这里需要用什么就挂什么，最后GPU真正进行读写操作的就是这个区域  
+总而言之，这里需要用什么就挂什么，最后GPU真正进行读写操作的就是这个区域
+
+## Descriptor for Texture
+### Descriptor资源
+```vulkan
+std::vector<VkSampler> textureSamplers;
+VkDescriptorPool descriptorPool;
+VkDescriptorSetLayout descriptorSetLayout;
+std::vector<VkDescriptorSet> descriptorSets;
+```
+
+### Descriptor Pool
+```vulkan
+int counter = 0;
+for(int i = 0; i < textureSamplers.size(); i++){
+	poolSizes[counter].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	poolSizes[counter].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+	counter++;
+}
+
+VkDescriptorPoolCreateInfo poolInfo{};
+poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+poolInfo.pPoolSizes = poolSizes.data();
+poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+VkResult result = vkCreateDescriptorPool(CContext::GetHandle().GetLogicalDevice(), &poolInfo, nullptr, &descriptorPool);
+```
+
+
+### Descriptor Layout
+```vulkan
+int counter = 0;
+for(int i = 0; i < textureSamplers.size(); i++){
+	bindings[counter].binding = counter;
+	bindings[counter].descriptorCount = 1;
+	bindings[counter].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	bindings[counter].pImmutableSamplers = nullptr;
+	bindings[counter].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	counter++;
+}
+
+VkDescriptorSetLayoutCreateInfo layoutInfo{};
+layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
+layoutInfo.pBindings = bindings.data();
+
+VkResult result = vkCreateDescriptorSetLayout(CContext::GetHandle().GetLogicalDevice(), &layoutInfo, nullptr, OUT &descriptorSetLayout);
+```
+
+
+### Descriptor Set
+```vulkan
+std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT, descriptorSetLayout);
+VkDescriptorSetAllocateInfo allocInfo{};
+allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+allocInfo.descriptorPool = descriptorPool;
+allocInfo.descriptorSetCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);///!!!
+allocInfo.pSetLayouts = layouts.data();
+
+descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+result = vkAllocateDescriptorSets(CContext::GetHandle().GetLogicalDevice(), &allocInfo, descriptorSets.data());
+
+for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+	std::vector<VkWriteDescriptorSet> descriptorWrites;
+	descriptorWrites.resize(descriptorSize);
+        int counter = 0;
+
+	imageInfo.resize(textureSamplers.size());
+	for(int j = 0; j < textureSamplers.size(); j++){
+		imageInfo[j].imageLayout = VK_IMAGE_LAYOUT_GENERAL; //test compute storage image: ?need figure this out. VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		imageInfo[j].imageView = (*textureImages)[j].textureImageBuffer.view;
+		imageInfo[j].sampler = textureSamplers[j];
+		descriptorWrites[counter].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		descriptorWrites[counter].dstSet = descriptorSets[i];
+		descriptorWrites[counter].dstBinding = counter;
+		descriptorWrites[counter].dstArrayElement = 0;
+		descriptorWrites[counter].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		descriptorWrites[counter].descriptorCount = 1;
+		descriptorWrites[counter].pImageInfo = &imageInfo[j];
+		counter++;
+	}
+
+	vkUpdateDescriptorSets(CContext::GetHandle().GetLogicalDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+}
+```
+
 
 # Command Buffer工作流程
 Command Buffer是Host向Device进行命令提交的缓冲区。  

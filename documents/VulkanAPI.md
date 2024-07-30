@@ -585,6 +585,8 @@ void main() {
 	outColor = texture(texSampler, fragTexCoord);
 }
 ```
+同样要注意的是，虽然创建descript layout的数量跟创建的descript set的数量可以不一致(后者一般数量更多)  
+但是bind的时候，set的数量是需要跟layout一致的  
 
 ### 4 Descriptor Set
 ```vulkan

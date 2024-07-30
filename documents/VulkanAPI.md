@@ -548,6 +548,7 @@ Descriptor Pool的作用是：提供Uniform的资源池，任何使用的uniform
 Pool的size，等于独立的uniform的类型。  
 在本例中，用了多少个sampler，就要allocate相应的pool数量。  
 事实上，如果一个sampler就够用的话，不管场景中有多少个不同的mesh或texture，都可以使用size为1的pool。  
+注意poolInfo.maxSets这个参数，它是本pool允许的最大descriptor set的数量。  
 
 ### 3 Descriptor Layout
 ```vulkan

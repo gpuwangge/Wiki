@@ -571,7 +571,8 @@ VkResult result = vkCreateDescriptorSetLayout(CContext::GetHandle().GetLogicalDe
 ```
 Descriptor Layout的作用就是告诉GPU：这个uniform是一个采样器。  
 跟上一节一样，有几个采样器，就创建binding size为几的Layout。  
-注意不同的采用器使用不同的binding编号。在实现fragment shader的时候，通过选用不同的binding编号就可以使用不同的采样器。  
+注意不同的采样器使用不同的binding编号。在实现fragment shader的时候，通过选用不同的binding编号就可以使用不同的采样器。  
+也可以在同一个Descriptor Layout中使用不同种类的uniform（比如一个采样器和一个常规MVP uniform），它们也可以通过不同的binding区分。  
 如果使用了不止一个Layout，在实现fragment shader的时候，通过选用不同的set编号就可以使用不同的Layout(以及对应的Descriptor Set)  
 比如，Layout编号0的位置给了Transform Uniform，Layout编号1给Texture Sampler，使用一个Sampler, 相应的Fragment Shader代码如下  
 ```vulkan

@@ -32,7 +32,7 @@ gflops = numOps * 2 / time / 1e9
 
 How to know if a fma test is running at peak  
 减压法  
-写一段program，numOps总量是知道的  
+一段shader program计算fma，numOps总量是知道的  
 运行完毕后统计时间time，就可以算出gflops_1  
 这个值有可能是极限算力(peak)的结果，也可能不是(还有多余算力)  
 现在把fma换成fmul，运算量降低一半，重新计算gflops_2  

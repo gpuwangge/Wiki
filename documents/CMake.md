@@ -321,6 +321,14 @@ https://www.redhat.com/en/blog/position-independent-executables-pie
 以下参数用于并行编译，一般用在服务器上发挥多核性能优势。该参数不需要把参数写死  
 > make -j  
 
+编译VulkanPlatform测试  
+1、CPU: 11th Gen Intel Core i5-1145G7 @ 2.60GHz (x8核)  
+make: 4'43"  
+make -j: 1'32"  
+2、CPU: Intel Core i7-8700K CPU @ 3.70GHz (x12核)  
+make: 1'59"  
+make -j: 24"  
+
 ## -C
 指定一个目录。在读取Makefile之前，先进入到目录DIR中，用法如下：  
 > -C DIR  

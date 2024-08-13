@@ -39,6 +39,15 @@ How to know if a fma test is running at peak
 如果之前是peak，那么time也降低一半，gflops_2==gflops_1  
 如果本来就不是peak，time不变，gflops_2明显比gflops_1低  
 
+# Concurrency and Parallelism  
+两种都是并行策略。区别是Concurrency是交替进行，Parallelism是同时进行。  
+Concurrency: Two or more tasks can start, run, and complete in overlapping time periods. It doesn't necessarily mean they'll ever both be running at the same instant. For example, multitasking on a single-core machine.  
+Parallelism: Parallelism is when tasks literally run at the same time, e.g., on a multicore processor.  
+
+## ILP and DLP
+指令级并行（ILP, Instruction Level Parallelism）是指利用流水级并行和多指令发射等方式提高程序执行的并行度；   
+数据级并行（DLP, Data Level Parallelism）是指处理器能够同时处理多条数据的并行方式，即SIMD。  
+
 
 
 

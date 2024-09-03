@@ -51,7 +51,7 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  
 
 <p float="left">
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/swapchain.png " alt="alt text" width="600" height="500">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/swapchain.png " alt="alt text" width="700" height="500">  
 </p> 
  
 

@@ -11,7 +11,7 @@
 ## [Stable Diffusion](https://github.com/gpuwangge/Wiki/blob/main/documents/StableDiffusion.md)   
 
 # Graphics
-## [Stable Diffusion](https://github.com/gpuwangge/Wiki/blob/main/documents/StableDiffusion.md)   
+## [Global illumination](https://github.com/gpuwangge/Wiki/blob/main/documents/Globalillumination.md)   
 
 # GPU
 ## [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUDriver.md)  

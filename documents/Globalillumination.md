@@ -91,7 +91,7 @@ Radiosity模型的求解可以转化成矩阵方程组。
 另外，根据光线距离，Lumen采取了不同的计算方案。  
 
 # Reference
-https://www.bilibili.com/video/BV1yS421X7z6/
+https://www.bilibili.com/video/BV1yS421X7z6  
 https://www.bilibili.com/video/BV1Hk4y1q7Rz
 
 

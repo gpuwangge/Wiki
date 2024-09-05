@@ -272,6 +272,37 @@ Reset是比较强的命令，它可以强制让本地repo更新为某一个remot
 reset还有一个--mixed参数，作用是除了修改HEAD，还修改了index。  
 (index就是暂存区，add之后还没commit的东西就放在这里)  
 
+一个详细说明--soft, --hard和--mixed参数的区别：  
+https://stackoverflow.com/questions/3528245/whats-the-difference-between-git-reset-mixed-soft-and-hard  
+要分清三者的区别，首先要复习一下git本地的三个分区：
+基本原理：在修改了local repo后，change一开始是unstage的。checkin之前首先要add to stage(从工作区(work/change)移动到暂存区(stage/index))。然后再commit to commit区。  
+之所有要专门分一个stage/index区，是希望在checkout remote repo的时候，有个区域可以暂时存放remote repo的资料，而仍旧保留本地work区的文件不被改变。  
+HEAD指针在git里指向的是当前checkout的commit。HEAD指向的branch称为current branch。  
+
+--soft和--mixed的区别是是否改变stage/index区的内容。  
+比如，给定以下的commit链：  
+- A - B - C
+HEAD指向C。当前Index/Stage的内容跟C保持一致。
+>git reset --soft B
+
+所做的事情是让HEAD指向B，但Index/Stage里的内容还是C。  
+这时候git status会显示C diff的内容出现在Index/Stage区。  
+这时候git commit就会生成一个新的commit内容到commit区，其跟C的内容完全相同。  
+
+再看--mixed的情况。假如使用--mixed参数而不是--soft参数(或者不加任何参数，默认就是--mixed)。
+结果就是不仅HEAD指向了B，连Index/Stage区的内容也更新为B了。  
+这时候git status不会出现新内容，git commit也不会生成任何新的commit内容。  
+(如果之前work区有改动的话，git status仍会标识这些为unstage内容)
+
+最后是看--hard的情况。它不但修改了HEAD和Index/Stage区，还把Work区也改成B了。  
+因此可以看出，如果你在本地做了任何修改，--hard将把它们立刻抹去，因此使用这个命令需要特别小心。  
+在做--hard之前，建议先用git status检查有没有unstaged的改动。  
+
+总结就是，--soft discard last commit。  
+--mixed discard last commit and add。  
+--hard discard last commit, last ladd and any changes in the work area。  
+
+
 # Revert相关
 git revert也有回退版本的作用。举例：  
 以下指令回退到最近的第4个提交状态  

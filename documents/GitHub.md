@@ -286,6 +286,17 @@ git revert也有回退版本的作用。举例：
 網上有些指令可以瘦身。但也可以重建一個repo（這樣會丟失所有的歷史記錄）  
 如果僅僅是把.git/objects裏面的大文件刪除，則會造成無法commit的結果  
 
+>git log  
+
+会把changelist的log记录打印出来  
+log里每一条changelist记录包含一串40个hex字母组成的commit号码  
+作者名字和邮箱  
+日期  
+文字说明  
+Change-Id：一串41个hex字母组成的号码  
+这些changelist会按日期降序排列(最顶上的是最新的changelist)  
+
+
 
 ## MD Color Solution
 GitHub目前不支持颜色文字，下面是一个替代方案  

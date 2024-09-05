@@ -279,6 +279,7 @@ git revert也有回退版本的作用。举例：
 
 
 # 其他有用的GitHub指令
+## count
 查看项目仓库大小可以使用命令:  
 > git count-objects -vH   
 
@@ -286,15 +287,25 @@ git revert也有回退版本的作用。举例：
 網上有些指令可以瘦身。但也可以重建一個repo（這樣會丟失所有的歷史記錄）  
 如果僅僅是把.git/objects裏面的大文件刪除，則會造成無法commit的結果  
 
+
+## log
 >git log  
 
 会把changelist的log记录打印出来  
-log里每一条changelist记录包含一串40个hex字母组成的commit号码  
+log里每一条changelist记录包含一串40个hex字母组成的commit号码(也叫commit hash值，是此次提交的专门id)  
 作者名字和邮箱  
 日期  
 文字说明  
 Change-Id：一串41个hex字母组成的号码  
 这些changelist会按日期降序排列(最顶上的是最新的changelist)  
+
+## show
+> git show
+
+查看当前HEAD指向的提交记录的详细信息。该命令会显示提交的commit hash值、作者、提交日期和提交的变更内容等信息。
+
+
+
 
 
 

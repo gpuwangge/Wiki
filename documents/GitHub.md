@@ -281,12 +281,13 @@ HEAD指针在git里指向的是当前checkout的commit。HEAD指向的branch称�
 
 --soft和--mixed的区别是是否改变stage/index区的内容。  
 比如，给定以下的commit链：  
-- A - B - C
+\- A - B - C
 HEAD指向C。当前Index/Stage的内容跟C保持一致。
 >git reset --soft B
 
 所做的事情是让HEAD指向B，但Index/Stage里的内容还是C。  
 这时候git status会显示C diff的内容出现在Index/Stage区。  
+(同时会提示your branch is behind 'xxxx' by 1 commit。这时候用git pull会把最新的repo抓下来。相当于fast-forward。也就相当于回滚--soft的操作)
 这时候git commit就会生成一个新的commit内容到commit区，其跟C的内容完全相同。  
 
 再看--mixed的情况。假如使用--mixed参数而不是--soft参数(或者不加任何参数，默认就是--mixed)。

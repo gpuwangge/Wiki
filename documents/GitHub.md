@@ -292,7 +292,7 @@ git revert也有回退版本的作用。举例：
 >git log  
 
 会把changelist的log记录打印出来  
-log里每一条changelist记录包含一串40个hex字母组成的commit号码(也叫commit hash值，是此次提交的专门id)  
+log里每一条changelist记录包含一串40个hex字母组成的commit号码(也叫commit hash值，是此次提交的专门id. HEAD指针指向的就是commit hash值)  
 作者名字和邮箱  
 日期  
 文字说明  
@@ -300,11 +300,28 @@ Change-Id：一串41个hex字母组成的号码
 这些changelist会按日期降序排列(最顶上的是最新的changelist)  
 
 ## show
-> git show
+> git show HEAD
 
-查看当前HEAD指向的提交记录的详细信息。该命令会显示提交的commit hash值、作者、提交日期和提交的变更内容等信息。
+查看当前HEAD指向的提交记录的详细信息。该命令会显示提交的commit hash值、作者、提交日期和提交的变更内容等信息。  
+
+如果不指定参数，默认是show HEAD，因此如下指令等价：  
+
+> git show  
 
 
+
+## symbolic-ref
+> git symbolic-ref HEAD
+
+显示HEAD的引用名称。默认情况下，HEAD引用的是当前所在的分支。  
+比如可能获得的结果是：  
+```
+refs/heads/develop
+```
+如果打开./git/HEAD文件，可以看到一样的引用：  
+```
+ref: refs/heads/develop
+```
 
 
 

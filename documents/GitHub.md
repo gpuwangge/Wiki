@@ -295,6 +295,7 @@ HEAD指向C。当前Index/Stage的内容跟C保持一致。
 (如果之前work区有改动的话，git status仍会标识这些为unstage内容)
 
 最后是看--hard的情况。它不但修改了HEAD和Index/Stage区，还把Work区也改成B了。  
+(注意如果work里面有untrack的新文件，需要手动删除)  
 因此可以看出，如果你在本地做了任何修改，--hard将把它们立刻抹去，因此使用这个命令需要特别小心。  
 在做--hard之前，建议先用git status检查有没有unstaged的改动。  
 

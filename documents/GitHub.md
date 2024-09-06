@@ -272,8 +272,7 @@ Reset是比较强的命令，它可以强制让本地repo更新为某一个remot
 reset还有一个--mixed参数，作用是除了修改HEAD，还修改了index。  
 (index就是暂存区，add之后还没commit的东西就放在这里)  
 
-一个详细说明--soft, --hard和--mixed参数的区别：  
-https://stackoverflow.com/questions/3528245/whats-the-difference-between-git-reset-mixed-soft-and-hard  
+一个例子详细说明--soft, --hard和--mixed参数的区别：  
 要分清三者的区别，首先要复习一下git本地的三个分区：
 基本原理：在修改了local repo后，change一开始是unstage的。checkin之前首先要add to stage(从工作区(work/change)移动到暂存区(stage/index))。然后再commit to commit区。  
 之所有要专门分一个stage/index区，是希望在checkout remote repo的时候，有个区域可以暂时存放remote repo的资料，而仍旧保留本地work区的文件不被改变。  
@@ -287,7 +286,7 @@ HEAD指向C。当前Index/Stage的内容跟C保持一致。
 
 所做的事情是让HEAD指向B，但Index/Stage里的内容还是C。  
 这时候git status会显示C diff的内容出现在Index/Stage区。  
-(同时会提示your branch is behind 'xxxx' by 1 commit。这时候用git pull会把最新的repo抓下来。相当于fast-forward。也就相当于回滚--soft的操作)
+(同时会提示your branch is behind 'xxxx' by 1 commit)  
 这时候git commit就会生成一个新的commit内容到commit区，其跟C的内容完全相同。  
 
 再看--mixed的情况。假如使用--mixed参数而不是--soft参数(或者不加任何参数，默认就是--mixed)。
@@ -302,6 +301,10 @@ HEAD指向C。当前Index/Stage的内容跟C保持一致。
 总结就是，--soft discard last commit。  
 --mixed discard last commit and add。  
 --hard discard last commit, last ladd and any changes in the work area。  
+
+
+## reference
+https://stackoverflow.com/questions/3528245/whats-the-difference-between-git-reset-mixed-soft-and-hard  
 
 
 # Revert相关

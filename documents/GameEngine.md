@@ -11,7 +11,7 @@ exe就会变成数据加载入内存当中
 国内的游戏引擎程序员都是做系统这块的, 因此游戏开发也是系统级别的开发  
 
 综上所述，要进行游戏开发有两个部分：系统API和图形API  
-如果选择使用系统API，需要熟练掌握windows api的用法。包含windows.h头文件，使用int WINAPI WinMain(...)作为入口函数  
+如果选择使用Windows系统，需要熟练掌握windows api的用法。包含windows.h头文件，使用int WINAPI WinMain(...)作为入口函数  
 也可以使用glfw等包装好的库  
 图形API一般可以选用跨平台的Vulkan。如果仅限于windows系统，也可以选direct  
 

@@ -15,6 +15,9 @@ exe就会变成数据加载入内存当中
 也可以使用glfw等包装好的库  
 图形API一般可以选用跨平台的Vulkan。如果仅限于windows系统，也可以选direct  
 
+# Windows编程小技巧
+Handle句柄：用处是找内存  
+
 # Reference
-https://www.bilibili.com/video/BV1er4y1r7QK/  
-毛星云<<逐梦旅程:Windows游戏编程之从零开始>>  
+- https://www.bilibili.com/video/BV1er4y1r7QK/  
+- 毛星云<<逐梦旅程:Windows游戏编程之从零开始>>  

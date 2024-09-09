@@ -5,8 +5,13 @@
 然后会找程序入口main函数  
 exe就会变成数据加载入内存当中  
 如果要看到图片，就要去内存中找到存图片的数据拿出来  
+早期游戏开发需要操作硬件，比如驱动、控制显存，但现在不需要了  
+举例：Unity的Input.GetKeyDown或UE的BindAxis本质都是使用windows的键盘消息WM_KEYDOWN和WM_KEYUP  
+所以，只要能自己封装API(Windows, Vulkan)，就能自己做游戏引擎
+国内的游戏引擎程序员都是做系统这块的  
+
 
 
 # Reference
 https://www.bilibili.com/video/BV1er4y1r7QK/  
-
+毛星云<<逐梦旅程:Windows游戏编程之从零开始>>  

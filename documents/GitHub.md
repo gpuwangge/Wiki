@@ -303,6 +303,8 @@ HEAD指向C。当前Index/Stage的内容跟C保持一致。
 --mixed discard last commit and add。  
 --hard discard last commit, last ladd and any changes in the work area。  
 
+注意1: 当使用reset在各个commit版本之间切换的时候，如果是每个版本都有的文件都会变动；但若是该commit版本没有的文件，不会被删除，而是会被mark成"Untracked files"  
+注意2：当使用reset切回旧的commit版本后，再pull的话，只会pull到该branch最新的版本。如果还没有merge的commit版本不能被pull到  
 
 ## reference
 https://stackoverflow.com/questions/3528245/whats-the-difference-between-git-reset-mixed-soft-and-hard  

@@ -8,7 +8,7 @@ exe就会变成数据加载入内存当中
 早期游戏开发需要操作硬件，比如驱动、控制显存，但现在不需要了  
 举例：Unity的Input.GetKeyDown或UE的BindAxis本质都是使用windows的键盘消息WM_KEYDOWN和WM_KEYUP  
 所以，只要能自己封装API(Windows, Vulkan)，就能自己做游戏引擎
-国内的游戏引擎程序员都是做系统这块的  
+国内的游戏引擎程序员都是做系统这块的, 因此游戏开发也是系统级别的开发  
 
 
 

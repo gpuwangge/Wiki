@@ -23,7 +23,7 @@ exe就会变成数据加载入内存当中
 高端的玩法是自动注射，就是自己写注射工具  
 - .dll, .lib, .exe本质都是一样的：存翻译好的机器代码和数据。其主要区别是用法不同。.exe可以直接启动, .dll不能单独启动，需要依附其他程序，其他程序会记录dll函数的地址。  
 .lib存粹是代码库，在编译的时候就嵌入.exe了。  
-- Windows内核(kernel)、用户(User)和GDI，是Windows内部三个主要.dll。
+- Windows内核(kernel)、用户(User)和GDI，是Windows内部三个主要.dll。  
 Kernel: 负责内存管理、文件输入输出和任务管理。ex: kernel32.dll  
 User: 负责用户界面和窗口管理  
 GDI: 负责图形设备接口或在打印机上显示文本和图形  

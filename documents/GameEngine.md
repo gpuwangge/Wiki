@@ -42,13 +42,17 @@ GDI: WINGDI.H, 负责图形设备接口或在打印机上显示文本和图形
 - 资源：比如菜单和文件。windows使用rc文件描绘资源。rc文件使用rc.exe生成。  
 - JDI: Windows可以用JDI画图，比如:
 ```
-PAINTSTRUCT ps = {0}; //创建一个画刷
-HDC hdc = BeginPaint(hWnd, &ps); //create hardware device context  
+PAINTSTRUCT ps = {0}; //创建画刷结构
+HDC hdc = BeginPaint(hWnd, &ps); //创建画刷句柄   
 SetPixel(hdc, 500, 500, RGB(255,0,0)); //画点
 MoveToEx(hdc, 100, 100, NULL); //设置起点
 LineTo(hdc, 500, 500); //画线
 Rectanble(hdc, 0, 0, 100, 100); //画正方形，是一个封闭图形。如果用LineTo画的图形不能封闭。
-Ecclipse(hdc, 0, 0, 100, 100); //画圆⚪
+HBRUSH hBrush=CreateSolidBrush(RGB(255,0,0)); //创建一个实心画刷，设置为红色
+HDGIOBJ defaultBrush=SelectObject(hdc, hBrush);//将画刷hBrush应用到话刷句柄hdc中
+Ecclipse(hdc, 0, 0, 100, 100); //画圆⚪，红色
+SelectObject(hdc, defaultBrush); //把红色画刷换回默认普通白色画刷
+DeleteObject(hBrush); //把红色画刷销毁
 EndPaint(hWnd, &ps); //释放画笔
 ``` 
 

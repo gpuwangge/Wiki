@@ -265,6 +265,9 @@ Reset是比较强的命令，它可以强制让本地repo更新为某一个remot
 如果只需要修改HEAD，可以用soft参数  
 > git reset --soft origin/some_branch
 
+如果要更新到某一个特定的commit，需要知道其commit id(一个40位hex)  
+> git reset --hard xxxxxx...xxx  
+
 举例：  
 如果commit之後後悔了怎么回退：  
 > git reset --soft HEAD^1  

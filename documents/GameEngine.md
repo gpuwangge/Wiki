@@ -15,6 +15,11 @@ exe就会变成数据加载入内存当中
 也可以使用glfw、sdl等包装好的库  
 图形API一般可以选用跨平台的Vulkan。如果仅限于windows系统，也可以选directX  
 
+另外，即使掌握了计算机图形学，也做不出来一个游戏引擎(只能做一个渲染模块)。  
+游戏引擎可不止是一个渲染模块，还有输入输出，内存管理，消息循环等。  
+
+
+
 # Windows编程小技巧
 - Handle句柄：用处是找内存。比如，窗口句柄可以用来找窗口。    
 - 黑客注射玩法：首先不能用.exe方式，而应该生成.dll文件。入口函数要修改(或者不需要入口函数)。  
@@ -37,10 +42,14 @@ GDI: WINGDI.H, 负责图形设备接口或在打印机上显示文本和图形
 - 资源：比如菜单和文件。windows使用rc文件描绘资源。rc文件使用rc.exe生成。  
 - JDI: Windows可以用JDI画图，比如:
 ```
-PAINTSTRUCT ps = {0};
-HDC hdc = BeginPaint(hWnd, &ps);
-SetPixel(hdc, 500, 500, RGB(255,0,0));
-EndPaint(hWnd, &ps);
+PAINTSTRUCT ps = {0}; //创建一个画刷
+HDC hdc = BeginPaint(hWnd, &ps); //create hardware device context  
+SetPixel(hdc, 500, 500, RGB(255,0,0)); //画点
+MoveToEx(hdc, 100, 100, NULL); //设置起点
+LineTo(hdc, 500, 500); //画线
+Rectanble(hdc, 0, 0, 100, 100); //画正方形，是一个封闭图形。如果用LineTo画的图形不能封闭。
+Ecclipse(hdc, 0, 0, 100, 100); //画圆⚪
+EndPaint(hWnd, &ps); //释放画笔
 ``` 
 
 

@@ -162,6 +162,8 @@ rwx-rwx-rwx
 
 需要注意的是，chomod不但能该文件的permission，文件夹的也可以改。并且文件夹的permission也影响里面的文件。  
 比如，文件有w权限，但文件夹没有w，那么这个文件也是无法删除的。  
+以下命令可以把包括某个folder在内的的所有文件都改变权限：  
+> chmod -R 777 folder/*  
 
 
 ## gcc和安装的g++是啥架构

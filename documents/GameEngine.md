@@ -82,7 +82,7 @@ HAL：硬件抽象层，其实就是Driver
 - 交换链是双缓冲的进阶版。有点类似接力赛。  
 - 深度缓存：为了解决前后遮挡问题，把被遮挡的线或面进行消隐。  
 深度缓存的算法：Z-Buffer算法  
-
+- Vertex/Index Buffer: 使用Vertex/Index Buffer的好处是它可以存放在显存中，速度快。  
   
 
 # Reference

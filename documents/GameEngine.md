@@ -72,7 +72,9 @@ y_i+1 = k(x_i + 1) + b = y_i + k
 
 # DirectX
 - DirectX和应用程序的关系：Application->DirectX->HAL->Device  
-HAL：硬件抽象层，其实就是Driver  
+HAL：硬件抽象层，其实就是Driver
+- 表面(Surface)：表面是个跟屏幕不同的概念。分为离屏表面和显示表面。计算图形的时候先是在离屏表面上绘制，然后以极高的速度将图像转入显示表面。
+这样的好处是对用户隐藏了擦除图像，生成显示等事情。  
 
 
 # Reference

@@ -70,7 +70,9 @@ y_i+1 = k(x_i + 1) + b = y_i + k
 如果k小于1，没问题；如果k大于1，可能出现y的值跳过好几个像素，视觉上不好看。一个解决方案是交换x，y的位置，把k变到1以下。  
 因为y=kx+b无法表示一些直线，所以使用一般直线方程是Ax+By+C=0  
 
-
+# DirectX
+- DirectX和应用程序的关系：Application->DirectX->HAL->Device  
+HAL：硬件抽象层，其实就是Driver  
 
 
 # Reference

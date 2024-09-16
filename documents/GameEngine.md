@@ -72,10 +72,18 @@ y_i+1 = k(x_i + 1) + b = y_i + k
 
 # DirectX
 - DirectX和应用程序的关系：Application->DirectX->HAL->Device  
-HAL：硬件抽象层，其实就是Driver
-- 表面(Surface)：表面是个跟屏幕不同的概念。分为离屏表面和显示表面。计算图形的时候先是在离屏表面上绘制，然后以极高的速度将图像转入显示表面。
+HAL：硬件抽象层，其实就是Driver  
+- 表面(Surface)：表面是个跟屏幕不同的概念。分为离屏表面和显示表面。计算图形的时候先是在离屏表面上绘制，然后以极高的速度将图像转入显示表面。  
 这样的好处是对用户隐藏了擦除图像，生成显示等事情。  
+一般把离屏表面(off-screen surface)称为后台缓存(back buffer)   
+表面本质上是个数组。  
+- 刷新频率：application的刷新频率f0未必跟显示器的刷新频率f1一致。  
+如果f0<f1，并且不用surface，就会发现画面断断续续，画面一节一节出现。  
+- 交换链是双缓冲的进阶版。有点类似接力赛。  
+- 深度缓存：为了解决前后遮挡问题，把被遮挡的线或面进行消隐。  
 
+
+  
 
 # Reference
 - https://www.bilibili.com/video/BV1er4y1r7QK/  

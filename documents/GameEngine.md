@@ -40,7 +40,7 @@ GDI: WINGDI.H, 负责图形设备接口或在打印机上显示文本和图形
 系统级消息处理：A先把消息发给系统，系统把消息写入消息队列，B从消息队列中获得消息，再把消息Dispatch给系统，系统再执行消息。执行消息的具体做法由B通过回调函数定义。  
 总而言之，系统不允许B直接处理A的消息。消息机制必须通过系统来调配。(系统扮演一个垂帘听政的角色)  
 - 资源：比如菜单和文件。windows使用rc文件描绘资源。rc文件使用rc.exe生成。  
-- JDI: Windows可以用GDI画图，比如:
+- GDI: Windows可以用GDI画图，比如:
 ```
 PAINTSTRUCT ps = {0}; //创建画刷结构
 HDC hdc = BeginPaint(hWnd, &ps); //创建画刷句柄   
@@ -72,7 +72,9 @@ y_i+1 = k(x_i + 1) + b = y_i + k
 
 # DirectX
 - DirectX和应用程序的关系：Application->DirectX->HAL->Device  
-HAL：硬件抽象层，其实就是Driver  
+HAL(Hardware Abstract Layer)：硬件抽象层。系统Kernel只实现最底层的比如register读写操作，复杂的硬件相关的逻辑都放进了HAL里面，属于用户层，代码可以封闭。这样的好处是HAL的程序和参数可以保密。  
+(系统内核代码，比如Linux内核，都是必须公开的)   
+Driver和HAL的区别：Driver可以写在系统Kernel里，也可以写在HAL里，也可以跨两层。一般为了闭源保密会选择把逻辑写在HAL里，简单的open/read/write等操作写在kernel里。    
 - 表面(Surface)：表面是个跟屏幕不同的概念。分为离屏表面和显示表面。计算图形的时候先是在离屏表面上绘制，然后以极高的速度将图像转入显示表面。  
 这样的好处是对用户隐藏了擦除图像，生成显示等事情。  
 一般把离屏表面(off-screen surface)称为后台缓存(back buffer)   

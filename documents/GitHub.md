@@ -334,7 +334,7 @@ Revert和Reset的区别
 
 
 ## log
->git log  
+> git log  
 
 会把changelist的log记录打印出来  
 log里每一条changelist记录包含一串40个hex字母组成的commit号码(也叫commit hash值，是此次提交的专门id. HEAD指针指向的就是commit hash值)  
@@ -344,6 +344,11 @@ log里每一条changelist记录包含一串40个hex字母组成的commit号码(�
 文字说明  
 Change-Id：一串41个hex字母组成的号码  
 这些changelist会按日期降序排列(最顶上的是最新的changelist)  
+
+> git reflog
+
+会显示pull, reset等改变HEAD的行为的log  
+
 
 ## show
 > git show HEAD

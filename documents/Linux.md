@@ -258,10 +258,44 @@ zzz是显示器(screen)编号。比如一台机器连接了两台显示器，就
 使用如下命令可以测试图形被显示在哪里：  
 > xclock
 
+# Shell脚本
+Shell 是一个用 C 语言编写的程序，它是用户使用 Linux 的桥梁。Shell 既是一种命令语言，又是一种程序设计语言。 Shell 是指一种应用程序，这个应用程序提供了一个界面，用户通过这个界面访问操作系统内核的服务。  
+。Shell有很多种，比如sh, bash, csh, ksh等。sh是第一种Unix Shell。  
+Shell 脚本（shell script），是一种为 shell 编写的脚本程序。 业界所说的 shell 通常都是指 shell 脚本，但读者朋友要知道，shell 和 shell script 是两个不同的概念。  
+
+## 创建sh脚本的方法
+打开文本编辑器，新建一个文件命名为name.sh就可以了。  
+
+## 运行sh脚本的方法
+> ./name.sh  
+
+./的意思是去当前目录下找(否则Linux会去PATH下面找)  
+
+如果没有执行权限的话是不能运行的。没有权限的话可以按照如下操作。  
+> chmod +x ./name.sh  
+
+
+
+## 语法
+### #!  
+#!不是注释，它是告诉系统，其后路径所指定的程序是解释此脚本文件的shell程序。  
+举例：  
+> #!/bin/sh  
+> #!/bin/bash  
+
+如果不想写这一句，则需要运行解释器才能运行脚本，比如：  
+> /bin/sh name.sh  
+
+### echo
+echo相当于print  
+> echo "Hello World!"  
+
+
 
 
 
 # Reference
-https://zhuanlan.zhihu.com/p/431707034
+https://www.runoob.com/linux/linux-shell.html  
+https://zhuanlan.zhihu.com/p/431707034  
 
 

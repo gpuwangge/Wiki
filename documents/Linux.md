@@ -274,6 +274,15 @@ Shell 脚本（shell script），是一种为 shell 编写的脚本程序。 业
 如果没有执行权限的话是不能运行的。没有权限的话可以按照如下操作。  
 > chmod +x ./name.sh  
 
+翻译器错误：有时候新写的脚本运行出错，这时候把文件从Windows(CR LF)换成Unix(LF)就可以解决了。  
+CR LF是回车换行的缩写，表示将光标移动到下一行的行首，并插入一个新行。 而LF只是换行的意思，表示将光标移动到下一行的行首，不会插入新行。
+Dos和Windows采用回车+换行CR/LF表示下一行。  
+而UNIX/Linux采用换行符LF表示下一行。  
+苹果机(MAC OS系统)则采用回车符CR表示下一行。  
+CR用符号r表示，十进制ASCII代码是13，十六进制代码为0x0D  
+LF使用n符号表示，ASCII代码是10，十六制为0x0A  
+所以Windows平台上换行在文本文件中是使用0d 0a两个字节表示，而UNIX和苹果平台上换行则是使用0a或0d一个字节表示。  
+一般操作系统上的运行库会自动决定文本文件的换行格式。如一个程序在Windows上运行就生成CR/LF换行格式的文本文件，而在Linux上运行就生成LF格式换行的文本文件。在一个平台上使用另一种换行符的文件文件可能会带来意想不到的问题，特别是在编辑程序代码时。有时候代码在编辑器中显示正常，但在编辑时却会因为换行符问题而出错。很多文本/代码编辑器带有换行符转换功能，使用这个功能可以将文本文件中的换行符在不同格式单互换。  
 
 
 ## 语法
@@ -294,8 +303,10 @@ echo相当于print
 
 
 
+
 # Reference
 https://www.runoob.com/linux/linux-shell.html  
 https://zhuanlan.zhihu.com/p/431707034  
+https://blog.csdn.net/kxjrzyk/article/details/54944952  
 
 

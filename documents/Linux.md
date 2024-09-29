@@ -299,14 +299,23 @@ LF使用n符号表示，ASCII代码是10，十六制为0x0A
 echo相当于print  
 > echo "Hello World!"  
 
+### &
+默认情况下，进程是前台进程，这时就把Shell给占据了，我们无法进行其他操作，对于那些没有交互的进程，很多时候，我们希望将其在后台启动，可以在启动参数的时候加一个’&'实现这个目的。  
+&放在启动参数后面表示此进程为后台进程。  
+&链接的进程以多线程模式运行(如果硬件支持的话)。  
+> (./program1 -i arg) & (./program2 -i arg)
 
 
-
+### ;
+;符号跟&不同。以;分隔的命令会依照次序运行。就是说第一个command执行完之后才执行下一个command。  
+;符号在这里的作用其实只是让不同的命令写在同一行，并不会多线程并行。  
+> command1; command2; command3  
 
 
 # Reference
 https://www.runoob.com/linux/linux-shell.html  
 https://zhuanlan.zhihu.com/p/431707034  
 https://blog.csdn.net/kxjrzyk/article/details/54944952  
+https://blog.csdn.net/2402_86160522/article/details/140621527  
 
 

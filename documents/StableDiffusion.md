@@ -203,10 +203,12 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
 局部重绘是图生图的一个子功能。  
 如果对直接绘图的结果基本满意，但是其中有不理想的部分，可以使用这个功能。  
 点击img2img, 点击inpaint，上传图片，点击图片右上角的"Use Brush"按钮，就可以涂抹要修改的区域。  
-比较重要的参数有Mask mode: 选Inpaint masked  
+比较重要的参数有
+Inpaint area: 如果选Only masked，是生成一个包含Mask区域的矩形方框进行绘制，然后仅替换Mask区域。这个模式生成快，如果重绘区域比较独立可以选这个。    
+如果选Whole picture，则把全图画一遍，再替换掉Mask区域。  
 Denoising Strengh: 默认是0.75。这个值越接近1，重绘结果离原始图的差别就越大。  
 重绘的时候，最好在原图的Prompt的基础上稍作修改一下，不然容易生成风格完全不同的补丁。  
-重绘的原理似乎是生成一个包含Mask区域的矩形方框进行绘制，然后仅替换Mask区域。  
+  
 
 # Reference
 https://foresightnews.pro/article/detail/18576  

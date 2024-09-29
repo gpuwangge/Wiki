@@ -193,11 +193,19 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
 
 如果要修改默认UI设置可以更改ui-config.json这个文件  
 
-# 图生图
+# 图生图 (img2img)
 如果发现如下错误：  
 **A tensor with all NaNs was produced in Unet**  
 用记事本打开webui-user.bat这个文件，补齐如下参数：  
 **set COMMANDLINE_ARGS= --medvram --xformers --no-half**  
+
+## 局部重绘 (Inpaint)
+局部重绘是图生图的一个子功能。  
+如果对直接绘图的结果基本满意，但是其中有不理想的部分，可以使用这个功能。  
+点击img2img, 点击inpaint，上传图片，点击图片右上角的"Use Brush"按钮，就可以涂抹要修改的区域。  
+比较重要的参数有Mask mode: 选Inpaint masked  
+Denoising Strengh: 默认是0.75。这个值越接近1，重绘结果离原始图的差别就越大。  
+
 
 # Reference
 https://foresightnews.pro/article/detail/18576  

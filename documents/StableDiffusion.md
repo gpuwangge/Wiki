@@ -206,6 +206,7 @@ Steps: 30, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 27713
 比较重要的参数有Mask mode: 选Inpaint masked  
 Denoising Strengh: 默认是0.75。这个值越接近1，重绘结果离原始图的差别就越大。  
 重绘的时候，最好在原图的Prompt的基础上稍作修改一下，不然容易生成风格完全不同的补丁。  
+重绘的原理似乎是生成一个包含Mask区域的矩形方框进行绘制，然后仅替换Mask区域。  
 
 # Reference
 https://foresightnews.pro/article/detail/18576  

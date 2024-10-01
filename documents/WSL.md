@@ -140,10 +140,10 @@ rwx-rwx-rwx
 只有文件owner和超级用户root可以修改文件或目录的权限  
 
 常见权限列表：  
-- 644 rw- r-- r--
-- 744 rwx r-- r--
-- 755 rwx r-x r-x
-- 777 rwx rwx rwx
+- 644 rw- r-- r--  
+- 744 rwx r-- r--  
+- 755 rwx r-x r-x  
+- 777 rwx rwx rwx  
 说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x; 4是r--  
 
 其他使用方法举例  

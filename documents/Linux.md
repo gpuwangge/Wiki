@@ -234,6 +234,33 @@ cp -s效果似乎跟ln -s一样的(?待确认)
 如果两个文件是独立内容，它们的inode index肯定不一样。(对它们的修改是独立的)  
 如果两个inode index一样，那么它们就是硬链接。(改变一个会在另一个文件中反映出来)  
 
+## diff
+可以逐行比对两个文件的内容  
+> diff file1 file2
+
+如果命令之后没有任何输出，则表示两文件一样  
+如果两个文件不同，会逐行列出不一样的地方
+
+运行完上述命令后，还可以用$?命令来查看结果  
+> $?
+
+如果结果是0，则表示两文件一样。如果结果是1，则表示两文件不同。  
+这个功能特别适合放在shell script里面使用。  
+比如下面的script代码  
+```
+if [ $? -ne 0 ]; then
+    echo "Error: One or both of the files do not exist or are different."
+else
+    echo "The files are identical."
+fi
+```
+
+## cmp
+用法跟diff差不多。区别是，如果文件不一样，cmp只能返回第一个不同的行数。  
+> cmp file1 file2
+> $？
+
+
 
 # Linux常用环境变量
 如上所述，环境变量可以用env或printenv查看  

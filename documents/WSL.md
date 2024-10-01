@@ -139,6 +139,13 @@ Linux/Unix的文件调用分为三级：依次为Owner(u), Group(g), Other Users
 rwx-rwx-rwx  
 只有文件owner和超级用户root可以修改文件或目录的权限  
 
+常见权限列表：  
+- 644 rw- r-- r--
+- 744 rwx r-- r--
+- 755 rwx r-x r-x
+- 777 rwx rwx rwx
+说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x; 4是r--  
+
 其他使用方法举例  
 以下指令把文件file.txt设置为所有人可读
 > chmod ugo+r file.txt  
@@ -153,7 +160,6 @@ rwx-rwx-rwx
 以下指令将全部权限设置给ugo
 > chmod 777 file.txt
 
-说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x; 4是r--    
 以上指令也等价于以下指令  
 > chmod a=rwx file.txt
 

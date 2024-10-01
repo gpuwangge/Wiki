@@ -264,6 +264,16 @@ fi
 > cmp file1 file2  
 > $？
 
+## mv
+Linux mv（英文全拼：move file）命令用来为文件或目录改名、或将文件或目录移入其它位置。   
+将sourcefilename改名为destfilename  
+> mv sourcefilename destfilename
+
+将 info 目录放入 logs 目录中。注意，如果 logs 目录不存在，则该命令将 info 改名为 logs。  
+> mv info/ logs
+
+再如将 /usr/runoob 下的所有文件和目录移到当前目录下，命令行为：  
+> $ mv /usr/runoob/*  . 
 
 
 # Linux常用环境变量

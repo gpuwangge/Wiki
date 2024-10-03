@@ -1,9 +1,10 @@
 # 基础知识
-Git有三个状态区  
+## Git有三个状态区  
 - **`工作区`**(Working Directory，VS Code里叫Changes区)-直接编辑的地方，比如记事本打开的文件，肉眼可见，直接操作。add可以把文件增添到暂存区。  
 - **`暂存区`**(Stage/Index，VS Code里叫Stages Change区)-数据暂时存放的区域。暂存区的数据可以commit到版本区。  
 - **`版本区`**(Commit History)-存放已经commit的数据的区域。push的时候就是把这里的数发到remote repo。   
-一些Git的基本概念  
+
+## 一些Git的基本概念  
 - **`分支(Branch)`** 每个git仓库都有一个主代码库(Master或Main，也称作代码库的主分支。当第一次创建仓库的时候会选择Master或Main作为其默认名字)。从主代码库上可以分支，形成支线代码库。开发人员可以并行在不同的分支上工作，比如开发新功能、修复bug或进行试验。每个分支都代表一条独立开发线，并不会影响其他分支或主代码库。
 - **`提交(Commit)`** 当在某个分支上工作，比如修改了代码之后， 需要创建提交Commit来记录其更改。一系列Commit记录就组成了一个分支的历史记录。每条Commit记录也称作一个Commit对象。每个Commit对象都有唯一的标识符。作者或其他人可以查看或回滚到不同的Commit版本。  
 - **`推送(Push)`** 当完成了某一个提交Commit之后，可以通过推送Push来把修改应用到某一个分支Branch上。  
@@ -12,6 +13,8 @@ Git有三个状态区
 - **`Origin`** Origin是远程仓库，非本地仓库。Origin是个仓库的别名，它会被翻译成某个具体的仓库名字。比如，如下两个命令等价：  
 > git push origin main  
 > git push git@github.com:some-name/repo-name.git main  
+
+可以看到，使用origin别名可以省下很多打字和记忆时间。  
 
 
 # 从init开始(本地有一个工作中待上传的文件夹)  

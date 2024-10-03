@@ -48,6 +48,17 @@ commit #commit_id2
 - origin/develop是远程仓库的develop分支，它的最新版本也是commit_id0  
 - origin/HEAD是远程仓库origin/develop的别名，它的版本也是commit_id0  
 
+当使用git status命令查看状态的时候，会描述本地仓库的HEAD分支和远端仓库orign/HEAD分支的对比  
+> git status
+
+会获得如下结果  
+```
+On branch develop
+Your branch is up to date with 'origin/develop'
+```
+上述结果解析：  
+- 因为HEAD和origin/HEAD指向commit_id一致，所以develop和origin/develop一致  
+
 
 总结就是HEAD是指向分支的分支别名，它代表了当前正在工作的分支。除了本地的HEAD指针，在远程仓库还存在一个叫做origin/HEAD的指针。  
 

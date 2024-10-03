@@ -28,9 +28,25 @@
 上述结果解析：  
 - *号表示HEAD指向本地的develop分支  
 - 远端仓库有origin/develop和origin/master两个分支  
-- origin/HEAD指向的是origin/develop
-如果要从本地(HEAD指向的develop)往远端(origin/HEAD指向的origin/develop)推送commit，可以用如下指令：
+- origin/HEAD指向的是origin/develop  
+
+如果要从本地(HEAD指向的develop)往远端(origin/HEAD指向的origin/develop)推送commit，可以用如下指令： 
 - git push origin HEAD:/refs/for/develop  
+
+当使用git log指令后，会显示本地commit历史记录，同时也会显示分支信息。比如：  
+> git log
+
+```
+commit #commit_id0 (HEAD -> develop, origin/develop, origin/HEAD)
+commit #commit_id1
+commit #commit_id2
+...
+```
+上述结果解析：  
+- commit_id0是本地最新的commit  
+- HEAD -> develop表示本地HEAD指向develop分支，它跟commit_id0一致  
+- origin/develop是远程仓库的develop分支，它的最新版本也是commit_id0  
+- origin/HEAD是远程仓库origin/develop的别名，它的版本也是commit_id0  
 
 
 总结就是HEAD是指向分支的分支别名，它代表了当前正在工作的分支。除了本地的HEAD指针，在远程仓库还存在一个叫做origin/HEAD的指针。  

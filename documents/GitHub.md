@@ -59,6 +59,10 @@ Your branch is up to date with 'origin/develop'
 上述结果解析：  
 - 因为HEAD和origin/HEAD指向commit_id一致，所以develop和origin/develop一致  
 
+假设本地工作区有了更改，重新run以上命令。git branch -a和git log的结果不改变。git status会显示"changes not staged for commit"。  
+
+
+
 
 总结就是HEAD是指向分支的分支别名，它代表了当前正在工作的分支。除了本地的HEAD指针，在远程仓库还存在一个叫做origin/HEAD的指针。  
 

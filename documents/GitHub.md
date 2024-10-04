@@ -1,6 +1,6 @@
 # 基础知识
 ## Git有三个状态区  
-- **`工作区`**(Working Directory，VS Code里叫Changes区)-直接编辑的地方，比如记事本打开的文件，肉眼可见，直接操作。add可以把文件增添到暂存区。  
+- **`工作区`**(Working Directory，VS Code里叫Changes区)-直接编辑的地方，比如记事本打开的文件，肉眼可见，直接操作。add可以把文件增添(Add)到暂存区。  
 - **`暂存区`**(Stage/Index，VS Code里叫Stages Change区)-数据暂时存放的区域。暂存区的数据可以commit到版本区。  
 - **`版本区`**(Commit History)-存放已经commit的数据的区域。push的时候就是把这里的数发到remote repo。   
 
@@ -60,7 +60,9 @@ Your branch is up to date with 'origin/develop'
 - 因为HEAD和origin/HEAD指向commit_id一致，所以develop和origin/develop一致  
 
 假设本地工作区有了更改，重新run以上命令。git branch -a和git log的结果不改变。git status会显示"changes not staged for commit"。  
-
+Add文件之后，git branch -a和git log的结果也不改变。git status会显示文件已经stage了，"Changes to be committed"。  
+git commit之后，会生成新的commit_id。因此git branch -a不变。git log会显示HEAD->develop在最新的commit_id上；但origin/develop和origin/HEAD会指向另外的commit_id。git status显示"Your branch is ahead of 'origin/develop' by 1 commit"。这时候可以git push了。  
+假如之前使用的origin版本不是最新的，这时候会有divergent，log里不再会显示origin相关指针。这里需要注意一下。git status显示"Your branch and 'origin/develop' have diverged, and have 1 and 1 different commits each"。总之是不太妙。  
 
 
 

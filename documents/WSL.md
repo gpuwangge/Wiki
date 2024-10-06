@@ -126,53 +126,6 @@ WSL Ubuntu自带gcc，但没有g++，使用如下指令安装g++:
 在windows下打开VS Code, 点击左下角链接WSL  
 打开Terminal，运行binary  
 
-如果遇到Permission denied问题,使用如下方法改变文件权限
-> chmod u=rwx,g=r,o=r filename  
-
-Here, each letter has a meaning:  
-r gives read permissions  
-w gives write permissions  
-x gives execute permissions  
-
-Linux/Unix的文件调用分为三级：依次为Owner(u), Group(g), Other Users(o)，各自有rwx属性：  
- u   g   o  
-rwx-rwx-rwx  
-只有文件owner和超级用户root可以修改文件或目录的权限  
-
-常见权限列表：  
-- 644 rw- r-- r--  
-- 744 rwx r-- r--  
-- 755 rwx r-x r-x  
-- 777 rwx rwx rwx  
-
-说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x; 4是r--  
-
-其他使用方法举例  
-以下指令把文件file.txt设置为所有人可读
-> chmod ugo+r file.txt  
-> chmod a+r file.txt
-
-以下指令将目前目录下的所有文件与子目录皆设为任何人可读取
-> chmod -R a+r *
-
-以下指令将两个文件设置为ug科协，other user不可写  
-> chmod ug+w,o-w file1.txt file2.txt  
-
-以下指令将全部权限设置给ugo
-> chmod 777 file.txt
-
-以上指令也等价于以下指令  
-> chmod a=rwx file.txt
-
-常见的情况，某个文件我希望owner拥有rw权限, 其他人只能r，则设置成644  
-> chmod 644 file.txt  
-
-需要注意的是，chomod不但能该文件的permission，文件夹的也可以改。并且文件夹的permission也影响里面的文件。  
-比如，文件有w权限，但文件夹没有w，那么这个文件也是无法删除的。  
-以下命令可以把包括某个folder在内的的所有文件都改变权限：  
-> chmod -R 777 folder/*  
-
-
 ## gcc和安装的g++是啥架构
 x86_64：INTEL的64位指令集，常常简称x64。AMD64和它是一样的。这个构架也兼容32bit的软件。  
 AArch64: ARM的64位指令集。不支持32bit。常常简称为ARM64 

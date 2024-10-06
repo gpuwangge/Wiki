@@ -211,6 +211,18 @@ duration=$((end_time-start_time))
 echo "Duration in second: $duration"
 ```
 
+## 关键字：read
+读取文件信息    
+比如读取inputfile.txt并加入到数组中：  
+```
+test_array=()
+while IFS= read -r line; do
+  test_array+=(${line}
+done < inputfile.txt
+total_count=${#test_array[@]}
+```
+@表示全部元素  
+
 ## 关键字：$?
 用于显示最后命令的退出状态，一般用0表示没有错误，1或其他值表示有错误
 

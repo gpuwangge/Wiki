@@ -50,8 +50,43 @@ echo相当于print
 ;符号在这里的作用其实只是让不同的命令写在同一行，并不会多线程并行。  
 > command1; command2; command3  
 
+## for
+```
+for i in {2..10}
+do
+  echo "output: $i"
+done
+```
+```
+max=10
+for i in {2..$max}
+do
+  echo "output: $i"
+done
+```
+可以使用seq关键字  
+```
+for i in $(seq 1 10)
+do
+  echo "output: $i"
+done
+```
+
+
 ## 关键字：()
 单小括号在这里的作用是，把括号中的命令开做一个子shell顺序执行。俗称命令组。  
+
+()可以配合&产生并行的命令组  
+```
+for i in $(seq 1 10)
+do
+  (
+    echo "output: $i"
+    echo "This is a single thread run"
+  ) &
+done
+wait
+```
 
 ## 关键字：${}
 此关键字内带一个变量名，表示变量的值。在不引起歧义的情况下可以省略大括号。  

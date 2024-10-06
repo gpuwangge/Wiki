@@ -50,7 +50,7 @@ echo相当于print
 ;符号在这里的作用其实只是让不同的命令写在同一行，并不会多线程并行。  
 > command1; command2; command3  
 
-## for
+## 关键字：for
 ```
 for i in {2..10}
 do
@@ -88,6 +88,64 @@ done
 wait
 ```
 
+
+## 关键字: wait
+使用()&产生的并行命令组分别运行在不同的线程上。  
+wait指令使所有并行线程完成后再处理wait以下的指令。  
+
+
+## 关键字: (())
+在刚开始学习inux shell脚本编程时候，对于它的 四则运算以及逻辑运算。估计很多朋友都感觉比较难以接受。特变逻辑运算符”[]”使用时候，必须保证运算符与算数 之间有空格。 四则运算也只能借助：let,expr等命令完成。 今天讲的双括号”(())”结构语句，就是对shell中算数及赋值运算的扩展。  
+1、在双括号结构中，所有表达式可以像c语言一样，如：a++,b--等。  
+2、在双括号结构中，所有变量可以不加入：“$”符号前缀。  
+3、双括号可以进行逻辑运算，四则运算  
+4、双括号结构 扩展了for，while,if条件测试运算  
+5、支持多个表达式运算，各个表达式之间用“，”分开  
+
+
+## 关键字：flock
+但这仍有一个问题，就使各个线程使用独立的内存空间，并且不能共享内存。  
+在C语言里，可以在同一个进程中开启多个线程，并通过全局变量共享一些内存，在这里做不到。  
+如果要使各个线程更新同一个变量，需要使用特殊的技巧，做出全局变量的效果。
+- 方法1：使用环境变量  
+- 方法2：使用外部文件  
+先创建一个临时文件tmp.txt，将初始全局变量写入。  
+在每个线程里，当需要更新变量的时候，建立一个tmp.txt.lock文件锁，以实现原子操作。  
+```
+GLOGAL_VAR_FILE="tmp.txt"
+echo 0 > "$GLOBAL_VAR_FILE"
+increase_global_var(){
+  (
+    flock -x 200
+    global_var=$(cat "$GLOBAL_VAR_FILE")
+    global_var=$((global_var + 1))
+    echo "$global_var" > "$GLOBAL_VAR_FILE"
+  ) 200>"$GLOBAL_VAR_FILE.lock"
+}
+for i in $(seq 1 10)
+do
+  (
+    echo "output: $i"
+    increase_global_var
+  ) &
+done
+wait
+final_value=${cat "$GLOBAL_VAR_FILE"}
+echo ${final_value}
+rm "$GLOBAL_VAR_FILE"
+rm "$GLOBAL_VAR_FILE.lock"
+```
+flock -x参数的意思是产生独占(exclusive)锁。如果不加参数，默认使用独占锁。  
+200参数的意思是添加数字描述符(file descriptor number)。当把该描述符写入锁文件中的时候会释放(关闭)锁。  
+除此之外，另一个释放锁的办法是使用如下指令：  
+> flock -u 200
+
+
 ## 关键字：${}
 此关键字内带一个变量名，表示变量的值。在不引起歧义的情况下可以省略大括号。  
 > ${a}  
+
+# Reference
+https://www.cnblogs.com/chengmo/archive/2010/10/19/1855577.html  
+
+

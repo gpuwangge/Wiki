@@ -303,65 +303,52 @@ zzz是显示器(screen)编号。比如一台机器连接了两台显示器，就
 使用如下命令可以测试图形被显示在哪里：  
 > xclock
 
-# Shell脚本
-Shell 是一个用 C 语言编写的程序，它是用户使用 Linux 的桥梁。Shell 既是一种命令语言，又是一种程序设计语言。 Shell 是指一种应用程序，这个应用程序提供了一个界面，用户通过这个界面访问操作系统内核的服务。  
-。Shell有很多种，比如sh, bash, csh, ksh等。sh是第一种Unix Shell。  
-Shell 脚本（shell script），是一种为 shell 编写的脚本程序。 业界所说的 shell 通常都是指 shell 脚本，但读者朋友要知道，shell 和 shell script 是两个不同的概念。  
+# File Permission
+如果遇到Permission denied问题,使用如下方法改变文件权限
+> chmod u=rwx,g=r,o=r filename  
 
-## 创建sh脚本的方法
-打开文本编辑器，新建一个文件命名为name.sh就可以了。  
+Here, each letter has a meaning:  
+r gives read permissions  
+w gives write permissions  
+x gives execute permissions  
 
-## 运行sh脚本的方法
-> ./name.sh  
+Linux/Unix的文件调用分为三级：依次为Owner(u), Group(g), Other Users(o)，各自有rwx属性：  
+ u   g   o  
+rwx-rwx-rwx  
+只有文件owner和超级用户root可以修改文件或目录的权限  
 
-./的意思是去当前目录下找(否则Linux会去PATH下面找)  
+常见权限列表：  
+- 644 rw- r-- r--  
+- 744 rwx r-- r--  
+- 755 rwx r-x r-x  
+- 777 rwx rwx rwx  
 
-如果没有执行权限的话是不能运行的。没有权限的话可以按照如下操作。  
-> chmod +x ./name.sh  
+说明：r=4, w=2, x=1，所以7就是rwx; 同理6就是rw-; 5就是r-x; 4是r--  
 
-翻译器错误：有时候新写的脚本运行出错，这时候把文件从Windows(CR LF)换成Unix(LF)就可以解决了。  
-CR LF是回车换行的缩写，表示将光标移动到下一行的行首，并插入一个新行。 而LF只是换行的意思，表示将光标移动到下一行的行首，不会插入新行。
-Dos和Windows采用回车+换行CR/LF表示下一行。  
-而UNIX/Linux采用换行符LF表示下一行。  
-苹果机(MAC OS系统)则采用回车符CR表示下一行。  
-CR用符号r表示，十进制ASCII代码是13，十六进制代码为0x0D  
-LF使用n符号表示，ASCII代码是10，十六制为0x0A  
-所以Windows平台上换行在文本文件中是使用0d 0a两个字节表示，而UNIX和苹果平台上换行则是使用0a或0d一个字节表示。  
-一般操作系统上的运行库会自动决定文本文件的换行格式。如一个程序在Windows上运行就生成CR/LF换行格式的文本文件，而在Linux上运行就生成LF格式换行的文本文件。在一个平台上使用另一种换行符的文件文件可能会带来意想不到的问题，特别是在编辑程序代码时。有时候代码在编辑器中显示正常，但在编辑时却会因为换行符问题而出错。很多文本/代码编辑器带有换行符转换功能，使用这个功能可以将文本文件中的换行符在不同格式单互换。  
+其他使用方法举例  
+以下指令把文件file.txt设置为所有人可读
+> chmod ugo+r file.txt  
+> chmod a+r file.txt
 
+以下指令将目前目录下的所有文件与子目录皆设为任何人可读取
+> chmod -R a+r *
 
-## 语法
-### 关键字：#!  
-#!不是注释，它是告诉系统，其后路径所指定的程序是解释此脚本文件的shell程序。  
-举例：  
-> #!/bin/sh  
-> #!/bin/bash  
+以下指令将两个文件设置为ug科协，other user不可写  
+> chmod ug+w,o-w file1.txt file2.txt  
 
-如果不想写这一句，则需要运行解释器才能运行脚本，比如：  
-> /bin/sh name.sh  
+以下指令将全部权限设置给ugo
+> chmod 777 file.txt
 
-### 关键字：echo
-echo相当于print  
-> echo "Hello World!"  
+以上指令也等价于以下指令  
+> chmod a=rwx file.txt
 
-### 关键字：&
-默认情况下，进程是前台进程，这时就把Shell给占据了，我们无法进行其他操作，对于那些没有交互的进程，很多时候，我们希望将其在后台启动，可以在启动参数的时候加一个’&'实现这个目的。  
-&放在启动参数后面表示此进程为后台进程。  
-&链接的进程以多线程模式运行(如果硬件支持的话)。  
-> (./program1 -i arg) & (./program2 -i arg)
+常见的情况，某个文件我希望owner拥有rw权限, 其他人只能r，则设置成644  
+> chmod 644 file.txt  
 
-
-### 关键字：;
-;符号跟&不同。以;分隔的命令会依照次序运行。就是说第一个command执行完之后才执行下一个command。  
-;符号在这里的作用其实只是让不同的命令写在同一行，并不会多线程并行。  
-> command1; command2; command3  
-
-### 关键字：()
-单小括号在这里的作用是，把括号中的命令开做一个子shell顺序执行。俗称命令组。  
-
-### 关键字：${}
-此关键字内带一个变量名，表示变量的值。在不引起歧义的情况下可以省略大括号。  
-> ${a}  
+需要注意的是，chomod不但能该文件的permission，文件夹的也可以改。并且文件夹的permission也影响里面的文件。  
+比如，文件有w权限，但文件夹没有w，那么这个文件也是无法删除的。  
+以下命令可以把包括某个folder在内的的所有文件都改变权限：  
+> chmod -R 777 folder/*  
 
 
 # Reference

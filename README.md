@@ -29,6 +29,7 @@
 # LINUX
 ## [WSL](https://github.com/gpuwangge/Wiki/blob/main/documents/WSL.md)  
 ## [Linux](https://github.com/gpuwangge/Wiki/blob/main/documents/Linux.md)  
+## [Shell Script](https://github.com/gpuwangge/Wiki/blob/main/documents/ShellScript.md)  
 
 # MISC
 ## [Computer Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArchitecture.md)  

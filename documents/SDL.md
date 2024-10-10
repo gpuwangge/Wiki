@@ -8,7 +8,7 @@ SDL是跨平台(Linux, Windows, Mac)函数库
 SDL第一版发布于1998年，代表作为英雄无敌3(1999)，无冬之夜(2002)，雷神之锤4(2005)等  
 SDL第二版(SDL2.0.0)发布于2013年，SDL2不兼容SDL  
 
-# SDL和OpenGL/Vulkan等图形API的关系
+# SDL和OpenGL等图形API的关系
 SDL提供了创建窗口功能，图形API提供了绘图功能  
 所以可以用SDL创建窗口，再用图形API在该窗口中渲染  
 默认情况下，SDL在windows系统中使用Win32 API进行视频显示，Direct3D进行图形渲染，使用DirectSound和XAudio2播放声音  

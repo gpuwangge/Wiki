@@ -1,9 +1,12 @@
 # Introduction
-SDL = Simple DirectMedia Layer  
-SDL是提供宏和函数的库，十分贴近底层  
+SDL = Simple DirectMedia Layer，提供了控制图像、声音、输入输出控制的函数。  
+SDL用C语言写成，是提供宏和函数的库，十分贴近底层  
 SDL介于硬件层和软件层之间。SDL贴近硬件的那一部分是SDL_Renderer  
+SDL是跨平台(Linux, Windows, Mac)函数库  
 硬件的资源需要先加载到内存中，然后才能被软件访问  
 不需要的资源应该及时关闭，避免内存泄漏  
+SDL第一版发布于1998年，代表作为英雄无敌3(1999)，无冬之夜(2002)，雷神之锤4(2005)等  
+SDL第二版(SDL2.0.0)发布于2013年，SDL2不兼容SDL  
 
 # 使用方法
 include files  
@@ -49,8 +52,60 @@ SDL Render相当于画笔。这种渲染的方法有点像GDI。如果画个简�
 再通过surface create texture  
 还需要用SDL_RenderCopy把texture的内容传到渲染器(SDL Renderer)  
 
+# SDL Text
+需要SD2/SDL_ttf.h支持  
+先把字体存为ttf font类型，填入路径  
+再把字体加载成Surface  
+再使用Texture来呈现  
+```
+TTF_Init();
+TTF_Font *font_title = TTF_OpenFont("./res/oppo_sans.ttf", 64);
+SDL_Color color_title = {0xff, 0xff, 0xff, 0xff};
+SDL_Surface *surface_title = TTF_RenderText_Blended(font_title, "This is a title!", color_title);
+SDL_Texture *texture_title = SDL_CreateTextureFromSurface(renderer, surface_title);
+
+...
+
+TTF_CloseFont(font_title);
+SDL_DestroyTexture(texture_title);
+SDL_FreeSurface(surface_title);
+```
+
+# SDL Event
+用于用户交互  
+```
+while (SDL_PollEvent(&event)){
+  ...
+}
+
+```
+
+# SDL Sound
+需要SDL2/SDL_mixer.h支持  
+分为音效(chunk)和音乐(music)两种。区别是前者能同时播放多个。  
+```
+Mix_Chunk *sound = Mix_LoadWAV("./res/sound.mp3");
+Mix_music *bgm = Mix_loadMUS("./res/bgm.mp3")
+
+Mix_PlayChannel(-1, sound, 0); //channel(-1代表自动选择音轨)，chunk, loop
+Mix_PlayMusic(bgm, 0); //music, loop
+
+Mix_FreeChunk(sound);
+Mix_FreeMusic(bgm);
+```
+
+# SDL Timer
+用于计时，单位是millisecond  
+```
+unsigned int time = SDL_GetTicks();  
+```
+
+# SDL 错误处理
+如果上述指针对象生成的时候出错，会返回一个空对象  
+
 
 # Reference
+https://zh.wikipedia.org/zh-hans/SDL  
 https://wiki.libsdl.org/SDL2/FrontPage  
 https://www.bilibili.com/video/BV1gi4y1Y71f/?spm_id_from=333.337.search-card.all.click&vd_source=e9d9bc8892014008f20c4e4027b98036  
 

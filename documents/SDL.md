@@ -7,6 +7,7 @@ SDL是跨平台(Linux, Windows, Mac)函数库
 不需要的资源应该及时关闭，避免内存泄漏  
 SDL第一版发布于1998年，代表作为英雄无敌3(1999)，无冬之夜(2002)，雷神之锤4(2005)等  
 SDL第二版(SDL2.0.0)发布于2013年，SDL2不兼容SDL  
+SDL第三版(SDL3)发布于2024年 
 
 # SDL和OpenGL等图形API的关系
 SDL提供了创建窗口功能，图形API提供了绘图功能  
@@ -115,7 +116,9 @@ unsigned int time = SDL_GetTicks();
 https://zh.wikipedia.org/zh-hans/SDL  
 https://wiki.libsdl.org/SDL2/FrontPage  
 https://www.bilibili.com/video/BV1gi4y1Y71f/?spm_id_from=333.337.search-card.all.click&vd_source=e9d9bc8892014008f20c4e4027b98036  
-
+https://wiki.libsdl.org/SDL3/FrontPage  
+https://github.com/libsdl-org/SDL/releases/tag/preview-3.1.3  
+https://www.cnblogs.com/xrunning/p/18241082  
 
 
 

@@ -16,6 +16,22 @@ SDL提供了创建窗口功能，图形API提供了绘图功能
 在Mac OS X中使用COcoa进行视频显示，用OpenGL进行图形渲染，用Core Audio播放声音  
 在Linux中使用X11进行视频显示，OpenGL进行图形渲染，使用ALSA、OSS和PulseAudio API来处理声音  
 
+# SDL官方使用说明
+根据SDL3官方建议(https://wiki.libsdl.org/SDL3/README/dynapi)使用动态链接库(Dynamic API)的方式来使用SDL  
+也就是说，将SDL编译成动态Lib文件，然后外挂在游戏上，这样做是出于如下考虑：  
+- SDL需要根据系统更新。而游戏发布一段时间之后作者就会停止更新，导致游戏无法在更新的系统中使用  
+- 如果要在老游戏里面更新静态链接的SDL库是一项费时费力的活，还不一定能成功  
+- Steam Runtime里面会包含最新的SDL，但是如果玩家选择绕开Steam启动游戏，会导致缺乏dependency失败  
+- 如果开发者选择Steam以外的方式发布，比如说GOG，那么当然必须附带独立的SDL Lib  
+
+因此，SDL3不建议使用静态链接库，或把SDL代码直接嵌入你的项目中(https://wiki.libsdl.org/SDL3/Installation)  
+
+SDL3官方示范代码：  
+https://github.com/libsdl-org/SDL/tree/main/examples  
+
+
+
+
 # 使用方法
 include files  
 lib  

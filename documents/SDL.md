@@ -35,20 +35,22 @@ https://github.com/libsdl-org/SDL/releases/tag/preview-3.1.3
 下载  
 SDL3-3.1.3-win32-x64.zip  
 内容就是已经编译好的SDL3.dll
+此dll应该同app一起分发
+在开发过程中，也应该将SDL3.dll文件放置在bin/文件夹下
 
+同一网站中，下载  
+Source code (zip)
+将此文件中include/SDL3/文件夹拷贝至常用的系统目录中，比如C:/VulkanSDK  
+并保证INCLUDE环境变量中含有C:/VulkanSDK
 
+在CMakeLists.txt中添加
+include_directories($ENV{INCLUDE})
+add_executable(${PROJECT_NAME} ${SRC}) 
+link_libraries(SDL3)
 
-
-# 使用方法
-include files  
-lib  
-link lib  
-copy SDL2.dll, SDL2_image.dll, SDL2_mixer.dll, SDL2_ttf.dll  
-```
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_ttf.h>
+在源文件中添加需要的SDL头文件，比如： 
+```c++
+#include <SDL3/SDL.h>
 int main(int argc, char *argv[]){
   return 0;
 }

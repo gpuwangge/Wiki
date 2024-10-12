@@ -44,9 +44,11 @@ Source code (zip)
 并保证INCLUDE环境变量中含有C:/VulkanSDK  
 
 在CMakeLists.txt中添加  
+```
 include_directories($ENV{INCLUDE})  
-add_executable(${PROJECT_NAME} ${SRC})   
-link_libraries(SDL3)  
+  
+link_libraries(SDL3)
+```
 
 在源文件中添加需要的SDL头文件，比如： 
 ```c++

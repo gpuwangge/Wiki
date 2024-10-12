@@ -32,31 +32,35 @@ https://github.com/libsdl-org/SDL/tree/main/examples
 # SDL3(3.13 for windows)安装方法
 进入网站  
 https://github.com/libsdl-org/SDL/releases/tag/preview-3.1.3  
-下载  
-SDL3-3.1.3-win32-x64.zip  
-内容就是已经编译好的SDL3.dll  
-此dll应该同app一起分发  
-在开发过程中，也应该将SDL3.dll文件放置在bin/文件夹下  
-
-同一网站中，下载  
-Source code (zip)  
-将此文件中include/SDL3/文件夹拷贝至常用的系统目录中，比如C:/VulkanSDK  
-并保证INCLUDE环境变量中含有C:/VulkanSDK  
+如果选择使用windows下mingw编译的话，可以下载:  
+SDL3-devel-3.1.3-mingw.zip  
+解压后打开x86_64-w64-mingw32/这里面有安装需要的所有东西：   
+- bin/SDL3.dll：是编译和运行程序都需要的动态链接库。当app发布的时候，要连这个一起附上  
+- include/SDL3: 需要include到app源代码的头文件。可以放在常用的系统头文件目录下。我是简单扔进C:/VulkanSDK/底下，就不用额外设置环境变量了  
+ 
 
 在CMakeLists.txt中添加  
 ```
 include_directories($ENV{INCLUDE})  
-  
+link_directories(${PROJECT_SOURCE_DIR})
 link_libraries(SDL3)
 ```
+确保SDL3.dll存在${PROJECT_SOURCE_DIR}这个位置以供编译使用。  
+并且SDL3.dll需要存在binary的路径才能正确执行。  
 
-在源文件中添加需要的SDL头文件，比如： 
+在源文件中添加需要的SDL头文件，并编写测试代码，比如： 
 ```c++
 #include <SDL3/SDL.h>
-int main(int argc, char *argv[]){
-  return 0;
+#include <SDL3/SDL_main.h>
+
+int main(int argc, char* argv[])
+{
+    SDL_Log("Hello, SDL3!");
+    return 0;
 }
 ```
+看见console中出现"Hello, SDL3!"则表明系统配置成功。  
+
 
 # SDL系统函数
 ## SDL_CreateWindow(), SDL_DestroyWindow(window)

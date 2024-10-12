@@ -17,7 +17,7 @@ SDL提供了创建窗口功能，图形API提供了绘图功能
 在Linux中使用X11进行视频显示，OpenGL进行图形渲染，使用ALSA、OSS和PulseAudio API来处理声音  
 
 # SDL官方使用说明
-根据SDL3官方建议(https://wiki.libsdl.org/SDL3/README/dynapi)使用动态链接库(Dynamic API)的方式来使用SDL  
+根据SDL3官方建议(https://wiki.libsdl.org/SDL3/README/dynapi), 使用动态链接库(Dynamic API)的方式来使用SDL  
 也就是说，将SDL编译成动态Lib文件，然后外挂在游戏上，这样做是出于如下考虑：  
 - SDL需要根据系统更新。而游戏发布一段时间之后作者就会停止更新，导致游戏无法在更新的系统中使用  
 - 如果要在老游戏里面更新静态链接的SDL库是一项费时费力的活，还不一定能成功  

@@ -29,6 +29,13 @@ SDL提供了创建窗口功能，图形API提供了绘图功能
 SDL3官方示范代码：  
 https://github.com/libsdl-org/SDL/tree/main/examples  
 
+# SDL3(3.13 for windows)安装方法
+进入网站  
+https://github.com/libsdl-org/SDL/releases/tag/preview-3.1.3
+下载  
+SDL3-3.1.3-win32-x64.zip  
+内容就是已经编译好的SDL3.dll
+
 
 
 

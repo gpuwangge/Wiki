@@ -60,20 +60,21 @@ Ctrl + Shift + B: Run Build Task
 运行结果会显示在底下的TERMINAL窗口。  
 
 这时候注意到左侧自动建立了.vscode文件夹，里面有一些配置文件，包含了编译器和编译参数等信息。可以自行修改该文件改变编译效果。  
+使用VS Code的一个优点是使用intelliSenseMode来帮助定位代码，这里就需要这些配置文件了。  
 配置文件有时候不会自动生成，这样就需要手动添加。  
 主要的配置文件有如下几个：  
 - settings.json： 这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
-- tasks.json: 跟编译有关的文件设置
+- tasks.json: 跟编译有关的文件设置  
 如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
-- launch.json: 跟运行有关的文件设置. debugger settings。这个Json会自动生成不需要修改。这个文件也不一定会出现。
+- launch.json: 跟运行有关的文件设置. debugger settings。这个Json会自动生成不需要修改。这个文件也不一定会出现。  
 点击左侧“Run and Debug”按钮，可以配置相关jason文件（选择GDB）将生成launch.json文件。  
 在json页面打开的情况下，点击右下角Add Configuration可添加配置。选择C/C++: (gdb) Launch  
 (需要修改gdb定位，也就是之前MinGW的bin文件夹内)  
 (多文件项目，其实就是建立不同的文件夹。可以新建更多工作区来存放不同代码，不同工作区有不同的.vscode编译和调试配置)  
 第一次运行C++文件的时候，会提示选择g++编译器  
-- c_cpp_properties.json:存有c/c++相关compiler的信息
+- c_cpp_properties.json:存有c/c++相关compiler的信息  
 如果要添加c_cpp_properties.json，使用如下快捷键：Control+Shift+P，選擇C/C++: Edit Configurations (JSON)，这时候会生成c_cpp_properties.json。  
-添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：
+添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：  
 ```
 "configurations": [
      {
@@ -94,15 +95,8 @@ Ctrl + Shift + B: Run Build Task
      } 
 ],
 ```
-
-
-
-
-# VS Code配置文件
-
-
-## settings.json
-有时候这个文件并不出现，这时候直接修改c_cpp_properties.json即可。  
+这里的INCLUDE是一个环境变量，我测试的时候包含了VulkanSDK, GLM, GLFW, SDL等头文件。  
+如果不用环境变量INCLUDE，也可以直接展开，如下
 ```
   "C_Cpp_Runner.includePaths": [
     	"C:/VulkanSDK",
@@ -112,6 +106,22 @@ Ctrl + Shift + B: Run Build Task
     	"${VULKAN_SDK}/Include"
   ],
 ```
+
+# VS Code配置Run功能
+缺省情况下，VS Code支持打开terminal后通过控制台cmake, make, run。  
+但是VS Code提供了更加快捷的可以不通过terminal来run的功能。这就需要配置额task.json了。  
+在没有配置的时候，点击Run->Start Debugging或单击键盘上的F5会提示：
+"You dong have an extension for debugging 'JSON with Comments'. Should we find a 'JSON with Comments' extension in the Marketplace?"
+
+
+
+
+
+
+
+## settings.json
+有时候这个文件并不出现，这时候直接修改c_cpp_properties.json即可。  
+
 另一种方法是设置好环境变量，然后再json中使用%VULKAN_SDK%来代替地址  
 
 ## tasks.json

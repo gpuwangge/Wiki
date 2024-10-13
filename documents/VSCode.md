@@ -65,13 +65,37 @@ Ctrl + Shift + B: Run Build Task
 主要的配置文件有如下几个：  
 - settings.json： 这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
 - tasks.json: 跟编译有关的文件设置  
-如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
+如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。  
+选择"Tasks: Configure Default Build Task",然后选Task Build，就会生成默认的tasks.json文件了。  
 - launch.json: 跟运行有关的文件设置. debugger settings。这个Json会自动生成不需要修改。这个文件也不一定会出现。  
-点击左侧“Run and Debug”按钮，可以配置相关jason文件（选择GDB）将生成launch.json文件。  
+
+VS Code配置Run功能呢？
+缺省情况下，VS Code支持打开terminal后通过控制台cmake, make, run。  
+但是VS Code提供了更加快捷的可以不通过terminal来run的功能。这就需要配置额task.json了。  
+在没有配置的时候，点击Run->Start Debugging或单击键盘上的F5会提示：
+"You dong have an extension for debugging 'JSON with Comments'. Should we find a 'JSON with Comments' extension in the Marketplace?"
+
+点击左侧“Run and Debug”按钮(图标是一个瓢虫趴在三角形上)，点击"create a launch.json file"，选择C++(GDB), 将生成launch.json文件。  
 在json页面打开的情况下，点击右下角Add Configuration可添加配置。选择C/C++: (gdb) Launch  
 (需要修改gdb定位，也就是之前MinGW的bin文件夹内)  
 (多文件项目，其实就是建立不同的文件夹。可以新建更多工作区来存放不同代码，不同工作区有不同的.vscode编译和调试配置)  
 第一次运行C++文件的时候，会提示选择g++编译器  
+下面会看到"configurations"项目被自动填充了。  
+program这一项设定要手动修改为需要debug的binary，比如
+```  
+"program": "${cwd}/bin/simpleMipmap.exe"  
+```
+另外需要选择debuger工具，一般可以使用gdb。可以通过如下指令测试是不是支持gdb：
+```
+where gdb
+gdb
+```
+如果gdb可以用，则更改如下配置。
+> "MIMode": "gdb"  
+> "miDebuggerPath": "gdb"  
+
+这时候F5就能正确执行binary了。并且程序里面也可以设置断点了。  
+
 - c_cpp_properties.json:存有c/c++相关compiler的信息  
 如果要添加c_cpp_properties.json，使用如下快捷键：Control+Shift+P，選擇C/C++: Edit Configurations (JSON)，这时候会生成c_cpp_properties.json。  
 添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：  
@@ -98,83 +122,19 @@ Ctrl + Shift + B: Run Build Task
 这里的INCLUDE是一个环境变量，我测试的时候包含了VulkanSDK, GLM, GLFW, SDL等头文件。  
 如果不用环境变量INCLUDE，也可以直接展开，如下
 ```
-  "C_Cpp_Runner.includePaths": [
-    	"C:/VulkanSDK",
-   	 "C:/VulkanSDK/GLM",
-    	"C:/VulkanSDK/GLFW/include",
-   	 //"C:/VulkanSDK/1.2.176.1/Include"
-    	"${VULKAN_SDK}/Include"
-  ],
+"C_Cpp_Runner.includePaths": [
+   "C:/VulkanSDK",
+   "C:/VulkanSDK/GLM",
+   "C:/VulkanSDK/GLFW/include",
+   //"C:/VulkanSDK/1.2.176.1/Include"
+   "${VULKAN_SDK}/Include"
+],
 ```
-
-# VS Code配置Run功能
-缺省情况下，VS Code支持打开terminal后通过控制台cmake, make, run。  
-但是VS Code提供了更加快捷的可以不通过terminal来run的功能。这就需要配置额task.json了。  
-在没有配置的时候，点击Run->Start Debugging或单击键盘上的F5会提示：
-"You dong have an extension for debugging 'JSON with Comments'. Should we find a 'JSON with Comments' extension in the Marketplace?"
-
-
-
-
-
-
-
-## settings.json
-有时候这个文件并不出现，这时候直接修改c_cpp_properties.json即可。  
-
-另一种方法是设置好环境变量，然后再json中使用%VULKAN_SDK%来代替地址  
-
-## tasks.json
-接下来是如何通过run task来build。  
-使用快捷键Ctrl+Shift+B，或者打开Command Editor, 输入"Build"，选择"Tasks:Run Build Task"  
-
-说明：告诉Compiler build instructions。即使修改了settings.json，Compiler仍旧不知道includePaths在哪里。(注意VS Code不是IDE，因此VS Code和Compiler是独立存在的)，所以要一同修改task.json。
-(如果一开始没有这个文件，只要运行一次代码它就会出现)  
-注意：不知为何，glfw的MingG64版本只能使用dll版，因此需要拷贝dll文件到开发目录下。  
-```
-            "args": [
-                "-std=c++17",
-                "-IC:/VulkanSDK",
-                //"-IC:/VulkanSDK/1.3.250.1/Include",
-                "-I%VULKAN_SDK%/Include",
-                "-IC:/VulkanSDK/GLFW/include",
-                "-IC:/VulkanSDK/GLM",
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                //"-LC:/VulkanSDK/1.3.250.1/Lib",
-                "-L%VULKAN_SDK%/Lib",
-                "-LC:/VulkanSDK/GLFW/lib-mingw-w64",
-                "-lvulkan-1",
-                "-lglfw3dll",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
-            ],
-```
-
-## launch.json
-
-以下代码设定用哪个debugger
-> "MIMode": "gdb"  
-> "miDebuggerPath": "gdb"  
-
-program这一项设定要debug的binary  
-> "program": "${cwd}/bin/simpleMipmap.exe"  
-
-## c_cpp_properties.json
-settings.json修改了之后，这个也会更新。  
-如果cpp代码是c++17之后，需要手动把这个信息添加进这个文件。    
-
-### IntelliSense
+如果cpp代码是c++17之后，需要手动把这个信息添加进这个文件。  
 其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
 但是vscode的IntelliSense可以自动发现一些错误。以下是设置IntelliSense的方法。  
 
 
-添加编译器地址，如下所示：  
-> "compilerPath": "C:/mingw64_posix/bin/g++.exe",
-
-修改intelliSenseMode，如下所示：  
-> intelliSenseMode": "gcc-x64"  
 
 
 

@@ -65,16 +65,18 @@ Ctrl + Shift + B: Run Build Task
 主要的配置文件有如下几个  
 
 ## 配置文件：settings.json
-
 这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
+在建立工程后，这个文件似乎会自动产生。但其实不设置这个文件也没有什么关系。  
 
 ## 配置文件：tasks.json
 跟编译有关的文件设置  
 如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。  
 选择"Tasks: Configure Default Build Task",然后选Task Build，就会生成默认的tasks.json文件了。  
+不需要这个文件？？  
 
 ## 配置文件：launch.json
-跟运行有关的文件设置. debugger settings。这个Json会自动生成不需要修改。这个文件也不一定会出现。  
+跟运行有关的文件设置。 如果需要Debugger，就需要设置这个文件。  
+这个Json会自动生成不需要修改。这个文件也不一定会出现。  
 
 VS Code配置Run功能呢？
 缺省情况下，VS Code支持打开terminal后通过控制台cmake, make, run。  
@@ -105,7 +107,7 @@ gdb
 
 
 ## 配置文件：c_cpp_properties.json
-存有c/c++相关compiler的信息  
+存有c/c++相关compiler的信息。如果需要intellisense，就需要设置这个文件。  
 如果要添加c_cpp_properties.json，使用如下快捷键：Control+Shift+P，選擇C/C++: Edit Configurations (JSON)，这时候会生成c_cpp_properties.json。  
 添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：  
 ```

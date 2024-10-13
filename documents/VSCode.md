@@ -72,7 +72,7 @@ Ctrl + Shift + B: Run Build Task
 跟编译有关的文件设置  
 如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。  
 选择"Tasks: Configure Default Build Task",然后选Task Build，就会生成默认的tasks.json文件了。  
-不需要这个文件？？  
+(可以不要这个文件吗？？)  
 
 ## 配置文件：launch.json
 跟运行有关的文件设置。 如果需要Debugger，就需要设置这个文件。  

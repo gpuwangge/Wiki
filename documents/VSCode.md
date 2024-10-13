@@ -58,39 +58,51 @@ Ctrl + Shift + B: Run Build Task
 安装好了之后会提示你选择Default Compiler（gcc or g++）。  
 写一个hello world程序，点击运行，会提示选择gcc.exe作为build/debug工具。  
 运行结果会显示在底下的TERMINAL窗口。  
-这时候注意到左侧自动建立了.vscode文件夹，里面有tasks.json文件。里头包含了编译器和编译参数等信息。可以自行修改该文件改变编译效果。  
-如果要添加c_cpp_properties.json，使用如下快捷键：  
-> Control+Shift+P
 
-選擇C/C++: Edit Configurations (JSON)  
-在"includePath"這一項下添加：
-> "${workspaceFolder}/tfliteDist/include/tensorflow/lite"
-
+这时候注意到左侧自动建立了.vscode文件夹，里面有一些配置文件，包含了编译器和编译参数等信息。可以自行修改该文件改变编译效果。  
+配置文件有时候不会自动生成，这样就需要手动添加。  
+主要的配置文件有如下几个：  
+- settings.json： 这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
+- tasks.json: 跟编译有关的文件设置
+如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
+- launch.json: 跟运行有关的文件设置. debugger settings。这个Json会自动生成不需要修改。这个文件也不一定会出现。
 点击左侧“Run and Debug”按钮，可以配置相关jason文件（选择GDB）将生成launch.json文件。  
 在json页面打开的情况下，点击右下角Add Configuration可添加配置。选择C/C++: (gdb) Launch  
 (需要修改gdb定位，也就是之前MinGW的bin文件夹内)  
 (多文件项目，其实就是建立不同的文件夹。可以新建更多工作区来存放不同代码，不同工作区有不同的.vscode编译和调试配置)  
 第一次运行C++文件的时候，会提示选择g++编译器  
+- c_cpp_properties.json:存有c/c++相关compiler的信息
+如果要添加c_cpp_properties.json，使用如下快捷键：Control+Shift+P，選擇C/C++: Edit Configurations (JSON)，这时候会生成c_cpp_properties.json。  
+添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：
+```
+"configurations": [
+     {
+         "compilerPath": "C:\\mingw64\\bin\\gcc.exe",
+         "intelliSenseMode": "windows-gcc-x64"
+     }
+],
+```
+如果要让intelliSenseMode正常工作，还需要添加include信息：  
+在includePath栏添加INCLUDE，如下所示  
+```
+"configurations": [
+     {
+         "includePath": [
+             "${workspaceFolder}/**",
+             "${INCLUDE}"
+         ]
+     } 
+],
+```
+
+
+
 
 # VS Code配置文件
-新建文件夹，打开VSCode后打开该文件夹。  
-如果有需要的话，拷贝相应的资源(obj, png, dll…)到工作目录内。  
-添加源文件和后缀（比如.cpp），VS Code会自动生成.vscode文件夹，内含配置文件   
-配置这几个Json文件：   
-tasks.json: 跟编译有关的文件设置  
-launch.json: 跟运行有关的文件设置  
 
-这两个地方设置编译器：  
-```
-c_cpp_properties.json  
-"compilerPath": "C:\\mingw64\\bin\\gcc.exe",  
-settings.json  
- "C_Cpp.default.compilerPath": "C:\\mingw64\\bin\\g++.exe"  
-```
 
 ## settings.json
-说明：这个文件设置VS Code的compiler path and IntelliSense settings  
-更新这个文件会自动更新c_cpp_properties.json。但有时候这个文件并不出现，这时候直接修改c_cpp_properties.json即可。  
+有时候这个文件并不出现，这时候直接修改c_cpp_properties.json即可。  
 ```
   "C_Cpp_Runner.includePaths": [
     	"C:/VulkanSDK",
@@ -103,8 +115,6 @@ settings.json
 另一种方法是设置好环境变量，然后再json中使用%VULKAN_SDK%来代替地址  
 
 ## tasks.json
-首先要生成tasks.json文件。  
-按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。选择"Tasks: Configure Default Build Task"就会生成默认的tasks.json文件了。  
 接下来是如何通过run task来build。  
 使用快捷键Ctrl+Shift+B，或者打开Command Editor, 输入"Build"，选择"Tasks:Run Build Task"  
 
@@ -133,8 +143,7 @@ settings.json
 ```
 
 ## launch.json
-debugger settings。这个Json会自动生成不需要修改。  
-这个文件也不一定会出现。  
+
 以下代码设定用哪个debugger
 > "MIMode": "gdb"  
 > "miDebuggerPath": "gdb"  
@@ -149,14 +158,8 @@ settings.json修改了之后，这个也会更新。
 ### IntelliSense
 其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
 但是vscode的IntelliSense可以自动发现一些错误。以下是设置IntelliSense的方法。  
-Ctrl+Shift+P 跳出设置command prompt，选择C/C++: Edit Configuration(JSON)，这时候会生成c_cpp_properties.json。
-在includePath栏添加INCLUDE，如下所示  
-```
-            "includePath": [
-                "${workspaceFolder}/**",
-                "${INCLUDE}"
-            ]
-```
+
+
 添加编译器地址，如下所示：  
 > "compilerPath": "C:/mingw64_posix/bin/g++.exe",
 

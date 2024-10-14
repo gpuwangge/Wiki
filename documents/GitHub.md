@@ -71,7 +71,7 @@ git commit之后，会生成新的commit_id。因此git branch -a不变。git lo
 
 - **`FETCH_HEAD`** 这个变量名字带一个HEAD，顾名思义也是一个指针。它的区别是它指向的是从remote repo上拉下来的某一个commit。  
 FETCH_HEAD所指向的commit id可以通过查阅.git/底下的同名文件获得。  
-当使用git fetch的时候，某一个commit的files会从remote repo上拉到本地。  
+当使用git fetch的时候，某一个commit的files会从remote repo上拉到本地(.git/FETCH_HEAD也会相应更新)。  
 git pull的过程就是先git fetch，然后git merge。  
 
 

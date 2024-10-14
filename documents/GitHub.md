@@ -67,9 +67,14 @@ Add文件之后，git branch -a和git log的结果也不改变。git status会�
 git commit之后，会生成新的commit_id。因此git branch -a不变。git log会显示HEAD->develop在最新的commit_id上；但origin/develop和origin/HEAD会指向另外的commit_id。git status显示"Your branch is ahead of 'origin/develop' by 1 commit"。这时候可以git push了。  
 假如之前使用的origin版本不是最新的，这时候会有divergent，log里不再会显示origin相关指针。这里需要注意一下。git status显示"Your branch and 'origin/develop' have diverged, and have 1 and 1 different commits each"。总之是不太妙。  
 
-
-
 总结就是HEAD是指向分支的分支别名，它代表了当前正在工作的分支。除了本地的HEAD指针，在远程仓库还存在一个叫做origin/HEAD的指针。  
+
+- **`FETCH_HEAD`** 这个变量名字带一个HEAD，顾名思义也是一个指针。它的区别是它指向的是从remote repo上拉下来的某一个commit。  
+FETCH_HEAD所指向的commit id可以通过查阅.git/底下的同名文件获得。  
+当使用git fetch的时候，某一个commit的files会从remote repo上拉到本地。  
+git pull的过程就是先git fetch，然后git merge。  
+
+
 
 # 从init开始(本地有一个工作中待上传的文件夹)  
 **`1.网站上新建一个new remote repo`**  

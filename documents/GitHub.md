@@ -419,7 +419,7 @@ Change-Id：一串41个hex字母组成的号码
 
 > git reflog
 
-会显示pull, reset等改变HEAD的行为的log  
+显示HEAD变化的历史记录。会显示pull, reset等改变HEAD的行为的log。  
 
 
 ## show

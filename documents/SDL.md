@@ -61,6 +61,14 @@ int main(int argc, char* argv[])
 ```
 看见console中出现"Hello, SDL3!"则表明系统配置成功。  
 
+# SDL3配合Vulkan的使用方法
+目前Vulkan官方SDK1.3.283.0/Tempaltes/并没有更新到SDL3，因此需要以SDL2为基础版本手动更改为SDL3的API  
+安装完毕Vulkan后，在VulkanSDK/1.3.xxx.x/Templates/Visual Studio 2022下面有模板  
+VulkanProgram.zip: 简易vulkan模板  
+VulkanWindowedProgram.zip: 使用SDL2的vulkan模板  
+参考：https://wiki.libsdl.org/SDL3/NewFeatures
+
+
 
 # SDL系统函数
 ## SDL_CreateWindow(), SDL_DestroyWindow(window)

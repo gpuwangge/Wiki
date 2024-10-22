@@ -340,6 +340,12 @@ make -j: 24"
 举例：  
 > make -j -c build/release
 
+## clean
+清除上次的make命令所产生的object文件（后缀为“.o”的文件）及可执行文件  
+举例：  
+> make -C build clean  
+
+
 ## all
 该参数用于build整个项目。  
 一个项目可以包含很多源文件和库。all参数可以一次全部编译。  

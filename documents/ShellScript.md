@@ -38,6 +38,21 @@ LF使用n符号表示，ASCII代码是10，十六制为0x0A
 echo相当于print  
 > echo "Hello World!"  
 
+## 关键字：>
+>可以把stdout的输出direct到一个文件里  
+2>类似，但是是stderr的输出，也是到一个文件里  
+&>可以把stdout和stderr都导到同一个文件里  
+以上三个关键字都是新开文件。如果需要append，则可以使用>, 2>>和&>>  
+另外，>和2>可以出现在同一个命令中，表示把stdout导入一个文件里，stderr导入另一个文件里  
+
+举例：  
+> echo "This is standard output" > output.txt  
+
+> ls existing_file non_existent_file >> output.txt 2>> error.txt  
+
+
+
+
 ## 关键字：if
 ```
 if [ condition ]

@@ -127,10 +127,9 @@ program填写为需要debug的binary，比如
 "program": "${workspaceFolder}/bin/boostProject.exe"
 ```
 miDebuggerPath填写为debugger的地址。本例使用gdb。可以在控制台查看gdb信息： 
-```
-where gdb
-gdb
-```
+> where gdb  
+> gdb  
+
 如果能找到gdb，可以简单更改下面两项为：  
 ```  
 "MIMode": "gdb"  

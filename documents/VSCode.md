@@ -104,46 +104,51 @@ Ctrl + Shift + B: Run Build Task
 其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
 但是vscode的IntelliSense可以自动发现一些错误。  
 
-## 配置文件：settings.json
-这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
-在建立工程后，这个文件似乎会自动产生。但其实不设置这个文件也没有什么关系。  
-
-## 配置文件：tasks.json
-跟编译有关的文件设置  
-如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。  
-选择"Tasks: Configure Default Build Task",然后选Task Build，就会生成默认的tasks.json文件了。  
-(可以不要这个文件吗？？)  
-
 ## 配置文件：launch.json
-跟运行有关的文件设置。 如果需要Debugger，就需要设置这个文件。  
-这个Json会自动生成不需要修改。这个文件也不一定会出现。  
-
-VS Code配置Run功能呢？
+launch.json是跟运行有关的文件设置。  
+   
 缺省情况下，VS Code支持打开terminal后通过控制台cmake, make, run。  
-但是VS Code提供了更加快捷的可以不通过terminal来run的功能。这就需要配置额task.json了。  
 在没有配置的时候，点击Run->Start Debugging或单击键盘上的F5会提示：
 "You dong have an extension for debugging 'JSON with Comments'. Should we find a 'JSON with Comments' extension in the Marketplace?"
 
-点击左侧“Run and Debug”按钮(图标是一个瓢虫趴在三角形上)，点击"create a launch.json file"，选择C++(GDB), 将生成launch.json文件。  
+VS Code提供了更加快捷的可以不通过terminal来run的功能。  
+比如如果需要Debugger，就需要设置launch.json文件。  
+
+添加launch.json的方法：  
+点击左侧“Run and Debug”按钮(图标是一个瓢虫趴在三角形上)，点击"create a launch.json file"，选择C++(GDB/LLDB), 将生成launch.json文件。  
 在json页面打开的情况下，点击右下角Add Configuration可添加配置。选择C/C++: (gdb) Launch  
-(需要修改gdb定位，也就是之前MinGW的bin文件夹内)  
-(多文件项目，其实就是建立不同的文件夹。可以新建更多工作区来存放不同代码，不同工作区有不同的.vscode编译和调试配置)  
-第一次运行C++文件的时候，会提示选择g++编译器  
-下面会看到"configurations"项目被自动填充了。  
-program这一项设定要手动修改为需要debug的binary，比如
+接下来会看到launch.json文件中"configurations"项目被自动填充了很多内容。但有两个项目需要手动填充："program", "miDebuggerPath"  
+program填写为需要debug的binary，比如  
 ```  
 "program": "${cwd}/bin/simpleMipmap.exe"  
 ```
-另外需要选择debuger工具，一般可以使用gdb。可以通过如下指令测试是不是支持gdb：
+或  
+```  
+"program": "${workspaceFolder}/bin/boostProject.exe"
+```
+miDebuggerPath填写为debugger的地址。本例使用gdb。可以在控制台查看gdb信息： 
 ```
 where gdb
 gdb
 ```
-如果gdb可以用，则更改如下配置。
-> "MIMode": "gdb"  
-> "miDebuggerPath": "gdb"  
-
+如果能找到gdb，可以简单更改下面两项为：  
+```  
+"MIMode": "gdb"  
+"miDebuggerPath": "gdb" 
+```
 这时候F5就能正确执行binary了。并且程序里面也可以设置断点了。  
+
+
+## 配置文件(可选)：settings.json
+这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
+在建立工程后，这个文件似乎会自动产生。但其实不设置这个文件也没有什么关系。  
+
+## 配置文件(可选)：tasks.json
+跟编译有关的文件设置  
+如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。  
+选择"Tasks: Configure Default Build Task",然后选Task Build，就会生成默认的tasks.json文件了。  
+ 
+
 
 
 

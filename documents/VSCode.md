@@ -64,6 +64,46 @@ Ctrl + Shift + B: Run Build Task
 配置文件有时候不会自动生成，这样就需要手动添加。  
 主要的配置文件有如下几个  
 
+## 配置文件：c_cpp_properties.json
+存有c/c++相关compiler的信息。如果需要intellisense，就需要设置这个文件。  
+如果要添加c_cpp_properties.json，使用如下快捷键：Control+Shift+P，選擇C/C++: Edit Configurations (JSON)，这时候会生成c_cpp_properties.json。  
+添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：  
+```
+"configurations": [
+     {
+         "compilerPath": "C:\\mingw64\\bin\\gcc.exe",
+         "intelliSenseMode": "windows-gcc-x64"
+     }
+],
+```
+注意这里compiler和intelliSenseMode的内容必须适配  
+如果要让intelliSenseMode正常工作，还需要添加include信息：  
+在includePath栏添加INCLUDE，如下所示  
+```
+"configurations": [
+     {
+         "includePath": [
+             "${workspaceFolder}/**",
+             "${INCLUDE}"
+         ]
+     } 
+],
+```
+这里的INCLUDE是一个环境变量，我测试的时候包含了VulkanSDK, GLM, GLFW, SDL等头文件。如果不用额外头文件可以不加这一行  
+如果不用环境变量INCLUDE，也可以直接展开，如下
+```
+"C_Cpp_Runner.includePaths": [
+   "C:/VulkanSDK",
+   "C:/VulkanSDK/GLM",
+   "C:/VulkanSDK/GLFW/include",
+   //"C:/VulkanSDK/1.2.176.1/Include"
+   "${VULKAN_SDK}/Include"
+],
+```
+如果cpp代码是c++17之后，需要手动把这个信息添加进这个文件。  
+其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
+但是vscode的IntelliSense可以自动发现一些错误。  
+
 ## 配置文件：settings.json
 这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
 在建立工程后，这个文件似乎会自动产生。但其实不设置这个文件也没有什么关系。  
@@ -106,44 +146,7 @@ gdb
 这时候F5就能正确执行binary了。并且程序里面也可以设置断点了。  
 
 
-## 配置文件：c_cpp_properties.json
-存有c/c++相关compiler的信息。如果需要intellisense，就需要设置这个文件。  
-如果要添加c_cpp_properties.json，使用如下快捷键：Control+Shift+P，選擇C/C++: Edit Configurations (JSON)，这时候会生成c_cpp_properties.json。  
-添加之后，会自动填充compilerPath, intelliSenseMode的信息。如下所示：  
-```
-"configurations": [
-     {
-         "compilerPath": "C:\\mingw64\\bin\\gcc.exe",
-         "intelliSenseMode": "windows-gcc-x64"
-     }
-],
-```
-如果要让intelliSenseMode正常工作，还需要添加include信息：  
-在includePath栏添加INCLUDE，如下所示  
-```
-"configurations": [
-     {
-         "includePath": [
-             "${workspaceFolder}/**",
-             "${INCLUDE}"
-         ]
-     } 
-],
-```
-这里的INCLUDE是一个环境变量，我测试的时候包含了VulkanSDK, GLM, GLFW, SDL等头文件。  
-如果不用环境变量INCLUDE，也可以直接展开，如下
-```
-"C_Cpp_Runner.includePaths": [
-   "C:/VulkanSDK",
-   "C:/VulkanSDK/GLM",
-   "C:/VulkanSDK/GLFW/include",
-   //"C:/VulkanSDK/1.2.176.1/Include"
-   "${VULKAN_SDK}/Include"
-],
-```
-如果cpp代码是c++17之后，需要手动把这个信息添加进这个文件。  
-其实如果不使用IntelliSense，那不需要设置.vscode。因为可以自己用gcc/g++/cl来编译。  
-但是vscode的IntelliSense可以自动发现一些错误。以下是设置IntelliSense的方法。  
+
 
 
 

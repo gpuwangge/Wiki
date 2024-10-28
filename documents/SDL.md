@@ -153,8 +153,8 @@ unsigned int time = SDL_GetTicks();
 
 # Reference
 https://zh.wikipedia.org/zh-hans/SDL  
-https://wiki.libsdl.org/SDL2/FrontPage  
 https://www.bilibili.com/video/BV1gi4y1Y71f/?spm_id_from=333.337.search-card.all.click&vd_source=e9d9bc8892014008f20c4e4027b98036  
+https://wiki.libsdl.org/SDL2/FrontPage  
 https://wiki.libsdl.org/SDL3/FrontPage  
 https://github.com/libsdl-org/SDL/releases/tag/preview-3.1.3  
 https://www.cnblogs.com/xrunning/p/18241082  

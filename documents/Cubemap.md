@@ -21,10 +21,12 @@ DEM的实现需要很多时间开销，一般来说实践中会利用pre-render 
 
 
 # Vulkan和Cubemap
+- 在vkCreateImage的时候，设定imageCreateInfo.arrayLayers = 6和imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT  
+（imageType依旧保持VK_IMAGE_TYPE_2D）  
+- 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
+- 将texture load进memory，可以把6张图打包放在一起，也可以分开load六次，但最后传进gpu memory(device local memory)的时候顺序要对：front, back, up, down, right, and left  
+(如果打包一起传，每一个面的贴图叫做一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  
 
-
-
-# 一个Vulkan的samplerCube例子
 正确加载Cubemap后，在vertex shader里，把pos坐标(不需要texture coordiante坐标)传给fragment shader  
 在fragment shader里使用samplerCube而不是sampler2D来采样：  
 texture(samplerCube, dir), while dir is a vec3  

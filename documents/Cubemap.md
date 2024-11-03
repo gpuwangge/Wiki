@@ -36,5 +36,6 @@ texture(samplerCube, dir), while dir is a vec3
 
 # Reference
 https://learnopengl.com/Advanced-OpenGL/Cubemaps  
+https://github.com/SaschaWillems/Vulkan/blob/master/examples/texturecubemap/texturecubemap.cpp  
 https://satellitnorden.wordpress.com/2018/01/23/vulkan-adventures-cube-map-tutorial/  
 https://github.com/JerryYan97/Vulkan-Samples-Dictionary/tree/master/Samples/2-15_CubeMap/DebugSample/glsl  

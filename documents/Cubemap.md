@@ -20,7 +20,7 @@ Refraction：物体折射环境光线
 DEM的实现需要很多时间开销，一般来说实践中会利用pre-render Cubmap做优化  
 
 
-# Vulkan和Cubemap
+# 在Vulkan里使用Cubemap
 - 在vkCreateImage的时候，设定imageCreateInfo.arrayLayers = 6和imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT  
 （imageType依旧保持VK_IMAGE_TYPE_2D）  
 - 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  

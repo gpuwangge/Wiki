@@ -13,6 +13,7 @@
 
 # Graphics
 ## [Global illumination](https://github.com/gpuwangge/Wiki/blob/main/documents/Globalillumination.md)   
+## [Cubemap](https://github.com/gpuwangge/Wiki/blob/main/documents/Cubemap.md)   
 
 # GPU
 ## [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUDriver.md)  
@@ -41,7 +42,7 @@
 ## [MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md) 
 ## [SSL](https://github.com/gpuwangge/Wiki/blob/main/documents/SSL.md)   
 ## [Game Engine](https://github.com/gpuwangge/Wiki/blob/main/documents/GameEngine.md)   
-## [Boost](https://github.com/gpuwangge/Wiki/blob/main/documents/Boost.md)   
+
 
  
 

@@ -162,23 +162,6 @@ void main(){
 }
 ```
 
-## Texture
-与Buffer相似，texture也持有一段GPU上的内存。并且它还包含一些额外特征：Format, Sample Count, Flags。  
-为了将图像映射到几何图形上，几何顶点上必须有纹理坐标(texture coordinate)  
-为了跟顶点坐标xyz区分，纹理坐标一般表示为uvw。又因为texture一般是2d的，简写做uv  
-另外，texture的尺寸跟屏幕的尺寸一般不一致，为了显示在屏幕上，需要使用采样技术(区别于显示几何所需的光栅化技术)  
-既然要采样，就要定义采样器(Sampler): The (Texture) image is used as a descriptor interface and shared at the shader stage (fragment shader) in the form of samplers。
-Texture使用方法案例(Fragment Shader)
-```vulkan
-layout(binding = 1) uniform sampler2D texSampler;
-layout(location = 0) in vec3 fragColor;
-layout(location = 1) in vec2 fragTexCoord;
-layout(location = 0) out vec4 outColor;
-void main() {
-	outColor = texture(texSampler, fragTexCoord);
-}
-```
-
 ## Image
 Image用在创建swapchain,以及创建attachment和texture  
 Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
@@ -199,6 +182,23 @@ layout (binding = 0, rgba8) uniform readonly image2D inputImage;
 layout (binding = 1, rgba8) uniform writeonly image2D outputImage;
 vec3 pixel = imageLoad(inputImage, ivec2(gl_GlobalInvocationID.xy)).rgb;
 imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), pixel);
+```
+
+## Texture
+与Buffer相似，texture也持有一段GPU上的内存。并且它还包含一些额外特征：Format, Sample Count, Flags。  
+为了将图像映射到几何图形上，几何顶点上必须有纹理坐标(texture coordinate)  
+为了跟顶点坐标xyz区分，纹理坐标一般表示为uvw。又因为texture一般是2d的，简写做uv  
+另外，texture的尺寸跟屏幕的尺寸一般不一致，为了显示在屏幕上，需要使用采样技术(区别于显示几何所需的光栅化技术)  
+既然要采样，就要定义采样器(Sampler): The (Texture) image is used as a descriptor interface and shared at the shader stage (fragment shader) in the form of samplers。
+Texture使用方法案例(Fragment Shader)
+```vulkan
+layout(binding = 1) uniform sampler2D texSampler;
+layout(location = 0) in vec3 fragColor;
+layout(location = 1) in vec2 fragTexCoord;
+layout(location = 0) out vec4 outColor;
+void main() {
+	outColor = texture(texSampler, fragTexCoord);
+}
 ```
 
 # Buffer的创建和使用

@@ -164,7 +164,6 @@ void main(){
 
 ## Image
 Image用在创建swapchain,以及创建attachment和texture  
-Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在上面。Image不需要Sampler  
 Image与Buffer的关系：可以理解为Image是加了一层额外layer的buffer。因此，image和buffer之间的数据是可以互相拷贝的。  
 Image可以脱离Graphics Pipeline，仅跟Compute Shader搭配使用。这时候Image仅作为Compute输入/输出的数据，并不需要sampler和一般image需要的哪些属性。这种Image一般称为Storage Image。这种用法还有个好处就是可以直接挂载在swapchain上，以实现不需要graphics pipeline，仅用compute shader就画出图像的效果。  
 Image使用方法案例(Compute Shader)  
@@ -186,6 +185,7 @@ imageStore(outputImage, ivec2(gl_GlobalInvocationID.xy), pixel);
 
 ## Texture
 与Buffer相似，texture也持有一段GPU上的内存。并且它还包含一些额外特征：Format, Sample Count, Flags。  
+Image与Texture的关系：texture是一类特别的image，为了方便描述，把texture单独列在这里。Image不需要Sampler  
 为了将图像映射到几何图形上，几何顶点上必须有纹理坐标(texture coordinate)  
 为了跟顶点坐标xyz区分，纹理坐标一般表示为uvw。又因为texture一般是2d的，简写做uv  
 另外，texture的尺寸跟屏幕的尺寸一般不一致，为了显示在屏幕上，需要使用采样技术(区别于显示几何所需的光栅化技术)  

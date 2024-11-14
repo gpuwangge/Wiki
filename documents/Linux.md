@@ -286,6 +286,22 @@ Linux mv（英文全拼：move file）命令用来为文件或目录改名、或
 就是输出ls的输出的行数  
 如果当前目录下有两个文件，就输出2  
 
+# 获得硬件参数
+## Number of physical CPU
+> cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l  
+
+
+## Number of CPU cores per physical CPU
+> cat /proc/cpuinfo | grep "cpu cores" | uniq  
+
+
+## Number of logical CPU cores
+> cat /proc/cpuinfo | grep "processor" | wc -l  
+
+
+## CPU Info
+> cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c   
+
 
 # Linux常用环境变量
 如上所述，环境变量可以用env或printenv查看  

@@ -205,7 +205,7 @@ MakeFile
 https://www.bilibili.com/video/BV13K411M78v?p=2&vd_source=e9d9bc8892014008f20c4e4027b98036   
 在VS Code环境下编译项目有两种方法：1、不使用VS Code配置文件，就像上文所说，编写一个CMakeLists.txt，然后在VS Code terminal里面敲出CMake命令即可；2、使用VS Code配置文件，本章讨论这两种情况。  
 
-## 方法一：使用CMake
+## 方法一：使用CMake+VS Code
 需要预先安装VS Code, mingW64(包含gcc/g++编译器)和CMake  
 安装VS Code的Cmake插件：  
 cmake (optional，cmake语言提示插件)   
@@ -233,42 +233,9 @@ Solution: 使用
 
 这个指令强制使用MingW的gcc编译器。只是第一次用这个命令指定，以后cmake ..即可  
 
-## 方法二：使用VS Code配置文件
-在VS Code里面配置launch.json(for debug)和tasks.json(for build before debug)  
-### 配置tasks.json
-这个文件配置了编译器  
-默认的tasks.json是单文件编译的配置，如果不加修改，在多文件项目下编译就会出错。  
-主要就是修改"args"这个参数，使其跟手动编译的那个指令一样的参数就可以了。  
-修改了tasks.json之后，就可以自动编译多文件项目了！(不必再使用CMake)  
+## 方法二：不使用CMake，仅使用VS Code配置文件
+参考：https://github.com/gpuwangge/Wiki/edit/main/documents/VSCode.md    
 
-### 配置launch.json
-这个文件配置了运行时参数  
-"program": 自动生成的用于debug的可执行exe文件  
-"preLaunchTask": 运行调试之前的工作：使用g++.exe作为build，其实就是用来生成exe文件的工具。这个名字要跟tasks.json的那个名字对上。  
-
-### VS Code下的调试方法
-首先debug的工具也是跟着编译器MinGW安装的：gdb  
-验证安装了gdb的cmd命令:
-> where gdb
-
-调试器似乎必须结合VS Code, 毕竟，我们要在VS Code里面设置断点。  
-settings.json里面会记录使用的"C_Cpp_Runner.debuggerPath": "gdb"  
-launch.json里面也有"miDebuggerPath": "gdb"  
-
-最后，有一点注意，右上角的button的调试运行跟左边launch/task没啥关系。  
-以下讨论都是关于launch/task的。要启动launch，按键盘上的F5!  
-首先，如何调出这两个文件：  
-VSCode界面下点击Add Debug Configuration会添加launch.json文件和tasks.json文件。  
-launch.json解析：  
-"preLaunchTask":     会在执行launch之前先执行这里后面的task。默认会调用task来build。但是我们使用make来编译，就不用这个了，所以把这一行注释掉。（tasks.json就没用了）  
-“program”: 想调试的程序，设置成我们通过make生成的那个exe程序。(cmake里面一定要设定Debug模式！)  
-如上，以后我们编译就通过make，然后调试就用F5。  
-"cwd":   current work directory  
-
-其他launch.json设置参数  
-"request" : "launch"   会启动program  
-"request": "attach"     会提示附着在一个已经运行中的program上  
-关于VSCode的Debug/Release版本问题(尚未验证)：编译的时候的参数, -g是debug模式，-O2是release模式。所以VSCode默认是开debug模式的。  
 
 # CMake参数
 ## --build

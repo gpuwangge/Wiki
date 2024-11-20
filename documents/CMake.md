@@ -233,8 +233,9 @@ Solution: 使用
 
 这个指令强制使用MingW的gcc编译器。只是第一次用这个命令指定，以后cmake ..即可  
 
-## 方法二：不使用CMake，仅使用VS Code配置文件
+## 方法二：不使用CMake，仅使用VS Code配置文件tasks.json
 参考：https://github.com/gpuwangge/Wiki/edit/main/documents/VSCode.md    
+不过一般不这么用，毕竟CMakeLists.txt还是比tasks.json功能强太多了  
 
 
 # CMake参数

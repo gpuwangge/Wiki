@@ -110,6 +110,7 @@ launch.json是跟运行有关的文件设置。
 缺省情况下，VS Code支持打开terminal后通过控制台cmake, make, run。  
 在没有配置的时候，点击Run->Start Debugging或单击键盘上的F5会提示：
 "You dong have an extension for debugging 'JSON with Comments'. Should we find a 'JSON with Comments' extension in the Marketplace?"
+(有一点注意，右上角的button的调试运行跟左边launch/task没啥关系)  
 
 VS Code提供了更加快捷的可以不通过terminal来run的功能。  
 比如如果需要Debugger，就需要设置launch.json文件。  
@@ -118,7 +119,7 @@ VS Code提供了更加快捷的可以不通过terminal来run的功能。
 点击左侧“Run and Debug”按钮(图标是一个瓢虫趴在三角形上)，点击"create a launch.json file"，选择C++(GDB/LLDB), 将生成launch.json文件。  
 在json页面打开的情况下，点击右下角Add Configuration可添加配置。选择C/C++: (gdb) Launch  
 接下来会看到launch.json文件中"configurations"项目被自动填充了很多内容。但有两个项目需要手动填充："program", "miDebuggerPath"  
-program填写为需要debug的binary，比如  
+program填写为需要debug的binary(windows下是可执行exe文件)，比如  
 ```  
 "program": "${cwd}/bin/simpleMipmap.exe"  
 ```
@@ -137,16 +138,29 @@ miDebuggerPath填写为debugger的地址。本例使用gdb。可以在控制台�
 ```
 这时候F5就能正确执行binary了。并且程序里面也可以设置断点了。  
 
+还有一个参数preLaunchTask  
+"preLaunchTask": 运行调试之前的工作：使用g++.exe作为build，其实就是用来生成exe文件的工具。这个名字要跟tasks.json的那个名字对上。  
+会在执行launch之前先执行这里后面的task。默认会调用task来build。但是我们使用make来编译，就不用这个了，所以可以把这一行注释掉。（tasks.json就没用了）   
+
+"cwd":   current work directory  
+"request" : "launch"   会启动program  
+"request": "attach"     会提示附着在一个已经运行中的program上  
+关于VSCode的Debug/Release版本问题(尚未验证)：编译的时候的参数, -g是debug模式，-O2是release模式。所以VSCode默认是开debug模式的  
+
 
 ## 配置文件(可选)：settings.json
 这个文件设置VS Code的compiler path and IntelliSense settings。更新这个文件会自动更新c_cpp_properties.json。  
 在建立工程后，这个文件似乎会自动产生。但其实不设置这个文件也没有什么关系。  
 
+
 ## 配置文件(可选)：tasks.json
 跟编译有关的文件设置  
 如果要添加tasks.json, 按Ctrl+Shift+P打开Command Editor，输入"Task"后会显示一系列跟Task有关的指令。  
 选择"Tasks: Configure Default Build Task",然后选Task Build，就会生成默认的tasks.json文件了。  
- 
+
+默认的tasks.json是单文件编译的配置，如果不加修改，在多文件项目下编译就会出错。  
+主要就是修改"args"这个参数，使其跟手动编译的那个指令一样的参数就可以了。  
+修改了tasks.json之后，就可以自动编译多文件项目了！(不必再使用CMake)   
 
 
 

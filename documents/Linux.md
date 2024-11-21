@@ -56,7 +56,7 @@ void main(){
 最后的0参数的意思是不overwrite global env  
 
 
-## 种类  
+## 环境变量种类(永久或临时)  
 - 永久的：通过修改配置文件实现  
 > vim /etc/profile  
 
@@ -71,8 +71,10 @@ export PATH=/home/fs:$PATH
 - 临时的：使用export命令可以设置，但是关闭shell的时候失效  
 > export 变量名=变量值  
 
-## PATH格式
+
+## 环境变量：PATH格式
 PATH=$PATH:\<PATH1\>:\<PATH2\>:\<PATH3\>:-----:\<PATHn\>  
+
 
 # Linux Module
 ## 微内核体系结构(Micro Kernel)

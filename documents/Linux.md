@@ -24,6 +24,7 @@ Debian系包管理工具采用dpkg(.deb), apt-get。
 Arch Linux发行版由自由和开源软件组成。稳定性不如Redhat/Debian系。优点是软件库庞大。包管理器叫pacman。  
 Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜爱。  
 
+
 # Linux环境变量
 ## 如何查看某个环境变量
 > echo $PATH  
@@ -36,6 +37,24 @@ Tails Linux发行版注重安全，有许多加密工具，收隐私爱好者喜
 > env | grep wangge
 
 另外，printenv也有一样的效果  
+
+
+## 如何设置环境变量
+如上所述，环境变量可以用env或printenv查看  
+可以用env | grep xxxxx来查看含有某个关键字的环境变量  
+如果知道变量名字，也可以直接用echo $xxxxx来查看其变量的值  
+如果要更改变量的值，可以使用setenv xxxxx yyyyy命令，比如：  
+> setenv DISPLAY abc12345:0 
+
+## C语言里如何设置仅在运行某一个程式时的环境变量
+```C
+#include <cstdlib>
+void main(){
+    setenv("PYTHONPATH", "path/to/pathon", 0);
+}
+````
+最后的0参数的意思是不overwrite global env  
+
 
 ## 种类  
 - 永久的：通过修改配置文件实现  
@@ -302,13 +321,6 @@ Linux mv（英文全拼：move file）命令用来为文件或目录改名、或
 ## CPU Info
 > cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c   
 
-
-# Linux常用环境变量
-如上所述，环境变量可以用env或printenv查看  
-可以用env | grep xxxxx来查看含有某个关键字的环境变量  
-如果知道变量名字，也可以直接用echo $xxxxx来查看其变量的值  
-如果要更改变量的值，可以使用setenv xxxxx yyyyy命令，比如：  
-> setenv DISPLAY abc12345:0  
 
 ## DISPLAY
 如名字所暗示的，这个变量保存了有关显示设备的编号  

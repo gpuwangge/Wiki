@@ -26,6 +26,7 @@ DEM的实现需要很多时间开销，一般来说实践中会利用pre-render 
 举例：1024x1024的材质拼成6144x1024。假设每个texel由4个channel组成，并且每个channel由8个bits表示，材质总大小为6144x1024x4=25165824 bytes  
 2. 在vkCreateImage的时候，设定imageCreateInfo.arrayLayers = 6和imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT  
 另外，既然layer分成了6个，那么extent.width就需要设置成原来的六分之一了  
+这时候image在内存里的模样就相当于六张方形煎饼叠在一起  
 但imageType依旧保持VK_IMAGE_TYPE_2D  
 3. 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
 4. 将texture load进memory，上述6张方形材质称为一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  

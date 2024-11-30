@@ -25,7 +25,8 @@ DEM的实现需要很多时间开销，一般来说实践中会利用pre-render 
 排列顺序一般为：front, back, up, down, right, and left  
 举例：1024x1024的材质拼成6144x1024。假设每个texel由4个channel组成，并且每个channel由8个bits表示，材质总大小为6144x1024x4=25165824 bytes  
 2. 在vkCreateImage的时候，设定imageCreateInfo.arrayLayers = 6和imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT  
-（但imageType依旧保持VK_IMAGE_TYPE_2D）  
+另外，既然layer分成了6个，那么extent.width就需要设置成原来的六分之一了  
+但imageType依旧保持VK_IMAGE_TYPE_2D  
 3. 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
 4. 将texture load进memory，上述6张方形材质称为一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  
 5. 将memory里面的texel传进GPU之前需要改换layout(就像所有的材质一样)。但有一个区别是barrier.subresourceRange.layerCount需要设置成6  

@@ -21,18 +21,45 @@ DEM的实现需要很多时间开销，一般来说实践中会利用pre-render 
 
 
 # 在Vulkan里使用Cubemap
-- 在vkCreateImage的时候，设定imageCreateInfo.arrayLayers = 6和imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT  
-（imageType依旧保持VK_IMAGE_TYPE_2D）  
-- 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
-- 将texture load进memory，可以把6张图打包放在一起，也可以分开load六次，但最后传进gpu memory(device local memory)的时候顺序要对：front, back, up, down, right, and left  
-(如果打包一起传，每一个面的贴图叫做一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  
+1. 准备用于cubemap的材质。可以准备6张方形材质，也可以把6张材质合并成一张。这里采取合并一张的做法，并且6张材质水平排列  
+排列顺序一般为：front, back, up, down, right, and left  
+举例：1024x1024的材质拼成6144x1024。假设每个texel由4个channel组成，并且每个channel由8个bits表示，材质总大小为6144x1024x4=25165824 bytes  
+2. 在vkCreateImage的时候，设定imageCreateInfo.arrayLayers = 6和imageCreateInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT  
+（但imageType依旧保持VK_IMAGE_TYPE_2D）  
+3. 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
+4. 将texture load进memory，上述6张方形材质称为一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  
+5. 将memory里面的texel传进GPU之前需要改换layout(就像所有的材质一样)。但有一个区别是barrier.subresourceRange.layerCount需要设置成6  
+6. 传输的时候需要分成6次拷贝。每个layer需要单独设定一个region，这个region需要正确的imageExtent和bufferOffset。示例如下：  
+```c++
+void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
+  VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
-正确加载Cubemap后，在vertex shader里，把pos坐标(不需要texture coordiante坐标)传给fragment shader  
-在fragment shader里使用samplerCube而不是sampler2D来采样：  
-texture(samplerCube, dir), while dir is a vec3  
+  VkBufferImageCopy regions[6];
+  memset(regions, 0, sizeof(regions));
+  for(int i = 0; i < 6; i++){
+    regions[i].bufferOffset = i * (width / 6) * 4;// is the offset in bytes from the start of the buffer object where the image data is copied from or to
+    regions[i].bufferRowLength = width; //specify in texels a subregion of a larger two- or three-dimensional image in buffer
+    regions[i].bufferImageHeight = height;
+    regions[i].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; //imageSubresource is a VkImageSubresourceLayers used to specify the specific image subresources of the image used for the source or destination image data.
+    regions[i].imageSubresource.mipLevel = 0;
+    regions[i].imageSubresource.baseArrayLayer = i;
+    regions[i].imageSubresource.layerCount = 1;
+    regions[i].imageOffset = { 0, 0, 0 }; //selects the initial x, y, z offsets in texels of the sub-region of the source or destination image data.
+    regions[i].imageExtent = { //is the size in texels of the image to copy in width, height and depth.
+        width/6,
+        height,
+        1
+    };
+	}
 
-当场景里有很多物体的时候，skybox需要第一个draw，并且要关闭depth test  
-但是，使用early depth testing可以优化skybox  
+  vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 6, regions);
+
+  endSingleTimeCommands(commandBuffer);
+}
+```
+7. 正确创建Cubemap材质后，就可以把它如同普通材质一样贴在cube上。在贴的时候需要的修改：在vertex shader里，把pos坐标(而不是texture coordiante坐标)(pos是vec3类型)传给fragment shader  
+8. 在fragment shader里使用samplerCube而不是sampler2D来采样：texture(samplerCube, pos)  
+9. 其他要注意的：当场景里有很多物体的时候，skybox需要第一个draw，并且要关闭depth test，但是，使用early depth testing可以优化skybox  
 
 
 

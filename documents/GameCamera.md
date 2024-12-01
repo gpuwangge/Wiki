@@ -52,12 +52,12 @@ view = glm::lookAt(
 
 # 自由移动摄像机
 ```c++
-glm::vec3 cameraPos = glm:vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraPos = glm:：vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 ```
-更新cameraPos的方式：  
+更新cameraPos的方式举例  
 KEY_W: cameraPos += cameraSpeed * cameraFront;  
 KEY_S:  cameraPos -= cameraSpeed * cameraFront;  
 KEY_A: cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;  

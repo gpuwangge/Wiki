@@ -33,6 +33,10 @@
 ## [Linux](https://github.com/gpuwangge/Wiki/blob/main/documents/Linux.md)  
 ## [Shell Script](https://github.com/gpuwangge/Wiki/blob/main/documents/ShellScript.md)  
 
+# Game
+## [Game Engine Introduction](https://github.com/gpuwangge/Wiki/blob/main/documents/GameEngine.md)  
+## [Game Camera](https://github.com/gpuwangge/Wiki/blob/main/documents/GameCamera.md)  
+
 # MISC
 ## [Computer Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArchitecture.md)  
 ## [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  
@@ -41,7 +45,7 @@
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 ## [MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md) 
 ## [SSL](https://github.com/gpuwangge/Wiki/blob/main/documents/SSL.md)   
-## [Game Engine](https://github.com/gpuwangge/Wiki/blob/main/documents/GameEngine.md)   
+
 
 
  

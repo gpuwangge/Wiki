@@ -74,6 +74,11 @@ KEY_D: cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSp
 我们已经可以使用剪片改变摄像机的位置了，下面使用鼠标改变cameraFront以实现方向改变。  
 WIP  
 
+# Camera in Vulkan
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/WorldCoordinates.png" alt="alt text" width="300" height="300">  
+</p>  
+
 # Reference
 使用OpenGL底层实现游戏引擎中的摄像机  
 https://blog.csdn.net/qq_42428486/article/details/120420352  

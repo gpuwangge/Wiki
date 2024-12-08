@@ -76,7 +76,7 @@ WIP
 
 # Camera in Vulkan
 <p float="left">
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/WorldCoordinates.png" alt="alt text" width="300" height="300">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/WorldCoordinates.png" alt="alt text" width="600" height="400">  
 </p>  
 
 # Reference

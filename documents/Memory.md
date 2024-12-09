@@ -157,7 +157,7 @@ char* ptr = memorySpace.GetPointer(1000);
 
 是不是可以用hashtable而不是tree来创建？  
 map的实现方法是红黑树，查找快，插入和删除慢。unordered_map的实现方法是hashtable+bucket，但每个bucket仍旧是链表或红黑树。  
-
+因此hashtable可以看作一个tree的升级版本。  
 
 # 内存模型设计实例
 Input: uint64_t address  

@@ -382,7 +382,7 @@ rwx-rwx-rwx
 常见的情况，某个文件我希望owner拥有rw权限, 其他人只能r，则设置成644  
 > chmod 644 file.txt  
 
-需要注意的是，chomod不但能该文件的permission，文件夹的也可以改。并且文件夹的permission也影响里面的文件。  
+需要注意的是，chomod不但能改文件的permission，文件夹的也可以改。并且文件夹的permission也影响里面的文件。  
 比如，文件有w权限，但文件夹没有w，那么这个文件也是无法删除的。  
 以下命令可以把包括某个folder在内的的所有文件都改变权限：  
 > chmod -R 777 folder/*  

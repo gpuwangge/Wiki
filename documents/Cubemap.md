@@ -4,21 +4,9 @@ Cubemap是一种特殊的texture，它由6个单独的2D textures组成。
 当定义了Cubemap和Direction vector，图形API就能够计算出其相交的texels，并且返回正确的sampled texture value。  
 如果使用如上的unit cube，cube本身的pos坐标其实就是sample的pos。因此，unit cube的vector position就是texture coordinates。  
 
-
 # Skybox
 Skybox是一个cube，它使用Cubemap(通常需要很大的分辨率)贴合，它的用途是在游戏中用于展示远山、星空等背景场景  
 这种技术能让玩家觉得自己身处在一个巨大的宇宙场景中(尽管实际上是在一个小盒子里)  
-
-
-# Environment Mapping
-Environment Mapping是一项利用Cubemap来提高渲染效果的技术。其中最常见的两项是Reflection和Refraction  
-Reflection: 物体反射环境光线  
-Refraction：物体折射环境光线  
-只要在渲染物体的时候，稍微修改fragment shader code，就可以把Cubemap的信息添加到物体的颜色中，使其出现Reflection和Refraction效果  
-
-当然，对于一个物体，这样做的效果是很好的。但假如有多个物体，仅反射skybox就不行了。需要实时产生动态的Cubemap。这项技术叫做Dynamic Environment Mapping  
-DEM的实现需要很多时间开销，一般来说实践中会利用pre-render Cubmap做优化  
-
 
 # 在Vulkan里使用Cubemap
 1. 准备用于cubemap的材质。可以准备6张方形材质，也可以把6张材质合并成一张。这里采取合并一张的做法，并且6张材质水平排列  
@@ -61,7 +49,40 @@ void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, ui
 ```
 7. 正确创建Cubemap材质后，就可以把它如同普通材质一样贴在cube上。在贴的时候需要的修改：在vertex shader里，把pos坐标(而不是texture coordiante坐标)(pos是vec3类型)传给fragment shader  
 8. 在fragment shader里使用samplerCube而不是sampler2D来采样：texture(samplerCube, pos)  
-9. 其他要注意的：当场景里有很多物体的时候，skybox需要第一个draw，并且要关闭depth test，但是，使用early depth testing可以优化skybox；并且要在cube的view矩阵里去掉摄像机的translate分量  
+
+# 其他要注意的问题
+1. 到底是先渲染cube，还是先渲染其它物体?  
+因为cube是显示在背景里的，直觉上应该最先渲染cube。  
+但是考虑到实际游戏中通常画面会被非背景物体填满，如果先渲染cube会很浪费fragment shader。  
+因此实际上考虑到效率，应该最后渲染cube。  
+而且需要开启Eealy depth testing。  
+
+2. cube只有1x1x1大小，如果其他物体出现在这个范围之外，会被cube挡住因此看不见怎么办？  
+具体做法是令cube的position.z分量等于position.w分量，这样进行透视除法的时候，z/w永远等于1.0(既认为cube有最大的深度值，无限远)  
+也可以直接在fragment shader里指定z=1.0。  
+
+3. 当摄像机转动的时候，view矩阵会改变，cube也要相应改变；但是摄像机移动的时候，希望view矩阵不变，否则cube也会跟着移动(背景理论上不应该随着摄像机的移动而变化)  
+所以要在cube的view矩阵里去掉摄像机的translate分量。    
+
+# Environment Mapping
+Environment Mapping是一项利用Cubemap来提高渲染效果的技术。其中最常见的两项是Reflection和Refraction  
+Reflection: 物体反射环境光线  
+Refraction：物体折射环境光线  
+只要在渲染物体的时候，稍微修改fragment shader code，就可以把Cubemap的信息添加到物体的颜色中，使其出现Reflection和Refraction效果  
+
+当然，对于一个物体，这样做的效果是很好的。但假如有多个物体，仅反射skybox就不行了。需要实时产生动态的Cubemap。这项技术叫做Dynamic Environment Mapping  
+DEM的实现需要很多时间开销，一般来说实践中会利用pre-render Cubmap做优化  
+
+具体做法：(未验证)  
+选择希望进行EM的物体，为它的shaders做出如下修改  
+1. 在vertex shader里计算normal  
+2. 在fragment shader里计算I(摄像机方向)；用结果计算R(反射方向)；用R作为输入变量进行samplerCube  
+3. 在host(cpu)端，把cubebox的贴图贴在物体上  
+这样贴出来的效果就是物体表面像镜面一样反射出背景。  
+如果不想要镜子效果，可以添加反射贴图，造成不完全反射的效果(比如在金属部分制造反射，非金属部分禁止反射)。  
+4. 在fragment shader里给R添加一个ratio，可以改变折射率，创造折射效果。  
+运行结果就是更加像玻璃了。  
+以上就是EM的实现方法。DEM需要每一帧创建六个角度的新贴图，因此需要很大的额外开销。其他做法是类似的。  
 
 
 
@@ -70,3 +91,5 @@ https://learnopengl.com/Advanced-OpenGL/Cubemaps
 https://github.com/SaschaWillems/Vulkan/blob/master/examples/texturecubemap/texturecubemap.cpp  
 https://satellitnorden.wordpress.com/2018/01/23/vulkan-adventures-cube-map-tutorial/  
 https://github.com/JerryYan97/Vulkan-Samples-Dictionary/tree/master/Samples/2-15_CubeMap/DebugSample/glsl  
+https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/06%20Cubemaps/  
+

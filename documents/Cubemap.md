@@ -61,7 +61,7 @@ void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, ui
 ```
 7. 正确创建Cubemap材质后，就可以把它如同普通材质一样贴在cube上。在贴的时候需要的修改：在vertex shader里，把pos坐标(而不是texture coordiante坐标)(pos是vec3类型)传给fragment shader  
 8. 在fragment shader里使用samplerCube而不是sampler2D来采样：texture(samplerCube, pos)  
-9. 其他要注意的：当场景里有很多物体的时候，skybox需要第一个draw，并且要关闭depth test，但是，使用early depth testing可以优化skybox  
+9. 其他要注意的：当场景里有很多物体的时候，skybox需要第一个draw，并且要关闭depth test，但是，使用early depth testing可以优化skybox；并且要在cube的view矩阵里去掉摄像机的translate分量  
 
 
 

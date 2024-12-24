@@ -7,6 +7,7 @@ Cubemap是一种特殊的texture，它由6个单独的2D textures组成。
 # Skybox
 Skybox是一个cube，它使用Cubemap(通常需要很大的分辨率)贴合，它的用途是在游戏中用于展示远山、星空等背景场景  
 这种技术能让玩家觉得自己身处在一个巨大的宇宙场景中(尽管实际上是在一个小盒子里)  
+Skybox和Cubemap的区别：后者是一种贴图(采样)方式，前者是一种应用方式。凡是skybox都需要用cubemap技术。但反过来不一定。比如之后会提到environment map应用的时候也是用了cubemap，但它不是skybox。  
 
 # 在Vulkan里使用Cubemap
 1. 准备用于cubemap的材质。可以准备6张方形材质，也可以把6张材质合并成一张。这里采取合并一张的做法，并且6张材质水平排列  

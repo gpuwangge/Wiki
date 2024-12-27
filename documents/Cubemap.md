@@ -114,7 +114,7 @@ Refraction：物体折射环境光线
 当然，对于一个物体，这样做的效果是很好的。但假如有多个物体，仅反射skybox就不行了。需要实时产生动态的Cubemap。这项技术叫做Dynamic Environment Mapping  
 DEM的实现需要很多时间开销，一般来说实践中会利用pre-render Cubmap做优化  
 
-具体做法：(未验证)  
+具体做法:   
 选择希望进行EM的物体，为它的shaders做出如下修改  
 1. 在vertex shader里计算normal  
 2. 在fragment shader里计算I(摄像机方向)；用结果计算R(反射方向)；用R作为输入变量进行samplerCube  

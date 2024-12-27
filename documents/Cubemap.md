@@ -10,7 +10,9 @@ Skybox是一个cube，它使用Cubemap(通常需要很大的分辨率)贴合，�
 Skybox和Cubemap的区别：后者是一种贴图(采样)方式，前者是一种应用方式。凡是skybox都需要用cubemap技术。但反过来不一定。比如之后会提到environment map应用的时候也是用了cubemap，但它不是skybox。  
 
 # 在Vulkan里使用Cubemap
+<p float="left">  
 <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cubemap.jpg" alt="alt text" width="300" height="300">  
+</p>	
 1. 准备用于cubemap的材质。可以准备6张方形材质，也可以把6张材质合并成一张。这里采取合并一张的做法，并且6张材质水平排列  
 排列顺序一般为：front, back, up, down, right, and left  
 举例：1024x1024的材质拼成6144x1024。假设每个texel由4个channel组成，并且每个channel由8个bits表示，材质总大小为6144x1024x4=25165824 bytes  

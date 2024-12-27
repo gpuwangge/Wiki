@@ -20,7 +20,7 @@ Skybox和Cubemap的区别：后者是一种贴图(采样)方式，前者是一�
 3. 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
 4. 将texture load进memory，上述6张方形材质称为一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  
 5. 将memory里面的texel传进GPU之前需要改换layout(就像所有的材质一样)。但有一个区别是barrier.subresourceRange.layerCount需要设置成6  
-6. 传输的时候需要分成6次拷贝。每个layer需要单独设定一个region，这个region需要正确的imageExtent和bufferOffset。示例如下：  
+6. 传输的时候需要分成6次拷贝。每个layer需要单独设定一个region，这个region需要正确的imageExtent和bufferOffset。对于一行排开的六张图片，读取示例如下：  
 ```c++
 void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
@@ -47,6 +47,38 @@ void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, ui
 
   endSingleTimeCommands(commandBuffer);
 }
+```
+对于更加流行的一种排布方式，读取方法如下：  
+```
+/* Standard Skybox Format
+*			up
+*	left	front	right	back
+*			down
+*/
+unsigned int extend_width = width / 4;
+unsigned int extend_height = height / 3;
+for(int i = 0; i < 6; i++){
+	regions[i].bufferRowLength = width; //specify in texels a subregion of a larger two- or three-dimensional image in buffer
+	regions[i].bufferImageHeight = height;
+	regions[i].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; //imageSubresource is a VkImageSubresourceLayers used to specify the specific image subresources of the image used for the source or destination image data.
+	regions[i].imageSubresource.mipLevel = 0;
+	regions[i].imageSubresource.baseArrayLayer = i;
+	regions[i].imageSubresource.layerCount = 1;
+	regions[i].imageOffset = { 0, 0, 0 }; //selects the initial x, y, z offsets in texels of the sub-region of the source or destination image data.
+	regions[i].imageExtent = { //is the size in texels of the image to copy in width, height and depth.
+		extend_width,
+		extend_height,
+		1
+	};
+}
+int unit_width = extend_width * 4;
+int unit_height = extend_height * 4;
+regions[0].bufferOffset = 1 * unit_height * unit_width + 2 * unit_width; 	//right
+regions[1].bufferOffset = 1 * unit_height * unit_width; 					//left
+regions[2].bufferOffset = 0 * unit_height * unit_width + 1 * unit_width; 	//up
+regions[3].bufferOffset = 2 * unit_height * unit_width + 1 * unit_width; 	//bottom
+regions[4].bufferOffset = 1 * unit_height * unit_width + 1 * unit_width; 	//front
+regions[5].bufferOffset = 1 * unit_height * unit_width + 3 * unit_width; 	//back
 ```
 7. 正确创建Cubemap材质后，就可以把它如同普通材质一样贴在cube上。在贴的时候需要的修改：在vertex shader里，把pos坐标(而不是texture coordiante坐标)(pos是vec3类型)传给fragment shader  
 8. 在fragment shader里使用samplerCube而不是sampler2D来采样：texture(samplerCube, pos)  

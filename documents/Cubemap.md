@@ -11,7 +11,7 @@ Skybox和Cubemap的区别：后者是一种贴图(采样)方式，前者是一�
 
 # 在Vulkan里使用Cubemap
 <p float="left">  
-	<img src="https://github.com/gpuwangge/Wiki/blob/main/images/cubemap.jpg" alt="alt text" width="300" height="300">  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/cubemap.jpg" alt="alt text" width="300" height="300">  
 </p>	
 
 1. 准备用于cubemap的材质。可以准备6张方形材质，也可以把6张材质合并成一张。这里采取合并一张的做法，并且6张材质水平排列  

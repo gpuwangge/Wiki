@@ -20,13 +20,17 @@ Skybox和Cubemap的区别：后者是一种贴图(采样)方式，前者是一�
 3. 在vkCreateImageView的时候，设定view.subresourceRange.layerCount = 6和view.viewType = VK_IMAGE_VIEW_TYPE_CUBE  
 4. 将texture load进memory，上述6张方形材质称为一个layer。传的时候imagesize是所有6个layer的大小合起来计算；layersize就是一个layer的size，因此layersize=imagesize/6)  
 5. 将memory里面的texel传进GPU之前需要改换layout(就像所有的材质一样)。但有一个区别是barrier.subresourceRange.layerCount需要设置成6  
-6. 传输的时候需要分成6次拷贝。每个layer需要单独设定一个region，这个region需要正确的imageExtent和bufferOffset。对于一行排开的六张图片，读取示例如下：  
+6. 传输的时候需要分成6次拷贝。每个layer需要单独设定一个region，这个region需要正确的imageExtent和bufferOffset。对于一行排开的六张图片，拷贝示例如下：  
 ```c++
 void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
   VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
   VkBufferImageCopy regions[6];
   memset(regions, 0, sizeof(regions));
+/* Horizontal Skybox Format
+* right,left,up,bottom,front,back
+* When changing skybox format, remember to change image enxtend in imageBuffer.cpp as well!
+*/
   for(int i = 0; i < 6; i++){
     regions[i].bufferOffset = i * (width / 6) * 4;// is the offset in bytes from the start of the buffer object where the image data is copied from or to
     regions[i].bufferRowLength = width; //specify in texels a subregion of a larger two- or three-dimensional image in buffer
@@ -48,7 +52,7 @@ void CTextureImage::copyBufferToImage_cubemap(VkBuffer buffer, VkImage image, ui
   endSingleTimeCommands(commandBuffer);
 }
 ```
-对于更加流行的一种排布方式，读取方法如下：  
+对于更加流行的一种排布方式，拷贝方法如下：  
 ```
 /* Standard Skybox Format
 *			up

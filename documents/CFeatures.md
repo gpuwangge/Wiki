@@ -55,8 +55,23 @@ int main(){
 }
 ```
 ```c++
+int a = 42;
+int * intPtr = &a;
+char* charPtr = reinterpret_cast<char*>(intPtr); //把整数指针转换成字符指针
+uintptr_t intAddress = reinterpret_cast<uintptr_t>(intPtr); //把整数指针转换成整数(其实是一样的，指针一般是十六进制，整数一般是十进制)
+int *newIntPtr = reinterpret_cast<int*>(intAddress); //又把整数转成了整数指针
+std::cout<<*newIntPtr; //这里打印的还是42，表示转换没有错误
 ```
 ```c++
+typedef void (*FuncType1)(int);
+typedef void (*FuncType2)(double);
+void func1(int x){std::cout<<x<<std::endl;}
+int main(){
+  FuncType1 f1 = func1;
+  FuncType2 f2 = reinterpret_cast<FuncType2>(f1); //这里把f1从FuncType2转换成FuncType1类型的函数指针
+  f2(3.14); //输出结果为3
+}
+//结论：我们在这里把double类型的数据传到了本应该支持int的func1(int)函数里(当然3.14截断成了3)
 ```
 
 

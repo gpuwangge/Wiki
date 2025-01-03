@@ -478,3 +478,9 @@ pull成功后，把stash的修改内容恢复，就可以继续开发了
 在vs code面板左侧，STASHES目录下选择Apply Stash或Pop Stash。两者区别是前者会保留stash，后者会删除stash。选后者就可以了。  
 这时候会打开Merge Changes面板，对比两个版本。绿色是remote pull下来的版本，蓝色是local修改的版本。  
 点击Resolve in Merge Editor按钮处理conflict。 
+
+# 实战：Git Pull总是出现错误，即使git branch切换分支也没用
+可以先git branch到正确分支  
+然后使用reset --hard HEAD^1倒退指针  
+或者git fetch然后接git reset --hard FETCH_HEAD  
+之后pull就能正常了  

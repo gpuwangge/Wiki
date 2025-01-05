@@ -33,7 +33,7 @@ From this location: 这个是远程连接的Computer名字
 # 如何链接无线麦克(Wireless Microphone)、音箱(Speaker)、合成器(Mixing Console)和投影仪
 ## 麦克
 - 麦克放入电池
-- 无线接收器需要充满带你
+- 无线接收器需要充满电
 ## 音箱
 - 链接主副两个音箱(使用配备的专用的链接线)
 - 主音箱接电源
@@ -45,7 +45,8 @@ From this location: 这个是远程连接的Computer名字
 - 链接投影仪或其他音频输入，使用2 x RCA接口
 ## 投影仪
 - 接电源
-- 音频输出口连接合成器(?)
+- 音频输出口连接合成器  
+
 坚果N1有四个接口：
 - HDMI(可以接电脑)
 - HDMI eARC(增强型音频回传通道?好像也是用来输出音频数据的：HDMI to RCA Cable不知道能不能用，效果跟耳机口比起来如何？)

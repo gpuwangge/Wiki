@@ -10,7 +10,7 @@ layout (local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
 ```
 以上shader code描述了compute shader的一个workgroup结构为16x16x1=256个workitem  
 ```
-vkCmdDIspatch(1024/16,1024/16,1)
+vkCmdDispatch(1024/16,1024/16,1)
 ```
 以上host code描述了compute shader的workgroup数量为64x64x1=4096个workgroup  
 以上两段代码描述了总共1024x1024=256*4096=1048576个workitem  

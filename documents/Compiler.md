@@ -98,7 +98,7 @@ Vulkan Shader采用了SPIR-V格式(为了GPU并行计算设计)，它使用跟�
 SPIR-V是IR(中间)文件  
 - OpLoad: 从memory中加载data到reg  
 - OpStore：从reg存data到memory  
-作为对比，在传统汇编中，memory和reg的数据传输使用MOV实现
+作为对比，在传统汇编中，memory和reg的数据传输使用MOV实现(CISC, x86架构)或LOAD/STORE实现(RISC, ARM/MIPS架构)
 ```
 %result = OpLoad %type %pointer
 OpStore %pointer %value
@@ -116,7 +116,10 @@ OpStore %pointer %value
 ```
 %result = OpIAdd %int %a %b
 ```
-
+OpAccessChain用于指向数组中的一个指针
+```
+%result = OpAccessChain %type %base %index1 %index2 ...
+```
 
 ## Vulkan Shader编译使用的工具
 ## Vulkan Shader从高级语言生成SPIR-V汇编语言的流程

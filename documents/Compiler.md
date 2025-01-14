@@ -95,6 +95,29 @@ llc生成的asm是平台有关的。尽管.air是从metal shader来的，但llc�
 # Vulkan Shader编译相关
 ## Vulkan Shader格式(SPIR-V)和传统汇编语言的区别
 Vulkan Shader采用了SPIR-V格式(为了GPU并行计算设计)，它使用跟传统汇编(为了运行CPU而设计)不同的指令集  
+SPIR-V是IR(中间)文件  
+- OpLoad: 从memory中加载data到reg  
+- OpStore：从reg存data到memory  
+作为对比，在传统汇编中，memory和reg的数据传输使用MOV实现
+```
+%result = OpLoad %type %pointer
+OpStore %pointer %value
+```
+上述代码中，%result是一个变量，用于存储从内存中加载的数据，相当于reg  
+%type是数据类型  
+%pointer是一个指向内存的指针  
+通过OpLoad指令把内存的数据存到%result里了 
+%value是要存储的数据  
+通过OpStore把数据存到内存里了  
+- OpIAdd, OpFAdd: 整数，浮点数加法，对应ADD  
+- OpISub, OpFSub: 整数，浮点数减法，对应SUB   
+- OpIMul, OpFMul: 整数，浮点数乘法，对应MUL  
+- OpIDiv, OpFDiv: 整数，浮点数除法，对应DIV   
+```
+%result = OpIAdd %int %a %b
+```
+
+
 ## Vulkan Shader编译使用的工具
 ## Vulkan Shader从高级语言生成SPIR-V汇编语言的流程
 

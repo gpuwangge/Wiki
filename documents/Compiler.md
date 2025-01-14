@@ -121,8 +121,18 @@ OpAccessChain用于指向数组中的一个指针
 %result = OpAccessChain %type %base %index1 %index2 ...
 ```
 
-## Vulkan Shader编译使用的工具
-## Vulkan Shader从高级语言生成SPIR-V汇编语言的流程
+## Vulkan Shader编译使用的工具链
+安装好Vulkan SDK后，相关工具可以在安装目录Bin/下面找到  
+glslc.exe可以把vulkan shader(glsl)转换成spir-v格式  
+```
+glslc.exe shader.comp -o shader.spv
+```
+spirv-dis.exe可以把spir-v转换成spir-v汇编语言  
+```
+spirv-dis.exe shader.spv -o shader.asm
+```
+
+
 
 
 

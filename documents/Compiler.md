@@ -106,7 +106,7 @@ OpStore %pointer %value
 上述代码中，%result是一个变量，用于存储从内存中加载的数据，相当于reg  
 %type是数据类型  
 %pointer是一个指向内存的指针  
-通过OpLoad指令把内存的数据存到%result里了 
+通过OpLoad指令把内存的数据存到%result里了  
 %value是要存储的数据  
 通过OpStore把数据存到内存里了  
 - OpIAdd, OpFAdd: 整数，浮点数加法，对应ADD  

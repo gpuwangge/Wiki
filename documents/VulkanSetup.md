@@ -3,7 +3,7 @@
 ## Vulkan SDK 安装
 Vulkan SDK下载地址：  
 https://vulkan.lunarg.com/sdk/home#windows  
-下载最新版本，比如Windows 1.2.176.1 SDK Installer (255mb)  
+下载最新版本，本文使用Windows 1.2.176.1 SDK Installer (255mb)  
 点击安装。  
 验证安装好了的方法: (in command prompt)  
 > echo %VULKAN_SDK%

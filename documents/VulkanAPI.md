@@ -53,7 +53,7 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 在创建Framebuffer的时候，attachment的次序也很重要。虽然各个attachment本质上都是buffer，但性质和用法都不一样。  
 比如在某个app中使用了msaa attachment，depth attachment，color attachment，它们可以按任意次序加载到framebuffer中。但是这个次序必须跟renderpass->subpass里面定义的渲染次序一致。  
 换句话说，在创建subpass的时候，也应该使VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=0, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL的attachment#=1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=2  
-并且在创建renderpass的时候，vector<VkAttachmentDescription>里面attachment descriptor的次序也应该是msaacolor, depth, color  
+并且在创建renderpass的时候，vector/<VkAttachmentDescription/>里面attachment descriptor的次序也应该是msaacolor, depth, color  
 
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  

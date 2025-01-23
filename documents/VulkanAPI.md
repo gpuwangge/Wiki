@@ -35,8 +35,8 @@ Driver/API开发者负责查询哪一组VkImageView/VkImage处于空闲(可以�
 **`Attachment(附件)`**: 作为图像输出容器，比如Color Attachment, Depth/Stencil Attachment。每个Attachment都要绑定一个VkImageView。每个Attachment可以看作一种资源的描述。   
 Swapchain除了要创建本身的images和views，还要给这些attachment分别创建image和view。  
 值得指出的是，作为持续输出容器的Color Attachment的数量需要等于swapchain image的数量；而只是临时使用的depth attachment只需要创建一个。比如，为swapchain image size=3的application申请资源的时候，需要创建3个color attachment，和1个depth attachment(三个image使用同一个depth attachment)  
-当然也可以为每个swapchain image创建独立的depth attachment，但这样并没有什么特别的好处，运行效率也不会获得提升。  
-但在一些特殊的场景也可能需要创建不止一个depth attachment。  
+当然也可以为每个swapchain image创建独立的depth attachment，但这样并没有什么特别的好处，运行效率也不会获得提升。(至少在Vulkan Turtorial的示例代码里如此，并不确定在复杂环境下还是成立)  
+但在一些特别的场景也不排除需要创建不止一个depth attachment，这一点stackoverflow上有一些争议，值得进一步探讨。  
 **`Framebuffer(帧缓存)`**: 把一些attachment资源，以及对应的描述渲染过程的RenderPass包在一起，让渲染器可以在渲染的时候使用的结构。  
 因为每一帧画面实际上只用到一个swapchain image，所以也只会用到一份framebuffer。因此swapchain image/view数量跟framebuffer数量也是相同的。  
 

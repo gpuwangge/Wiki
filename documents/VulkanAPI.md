@@ -50,15 +50,21 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 根据图片与镜头的距离，我们创建一张与窗口大小相同的深度图，并且也把它放进一个容器里(Depth Attachment)。  
 现在，我们的RenderPass里就绑定了两个容器(or 附件Attachment)，同样把两者打包进一个framebuffer，这样渲染的时候就能够正确呈现两张图片的遮蔽关系了。  
 
+在创建Framebuffer的时候，attachment的次序也很重要。虽然各个attachment本质上都是buffer，但性质和用法都不一样。  
+比如在某个app中使用了msaa attachment，depth attachment，color attachment，它们可以按任意次序加载到framebuffer中。但是这个次序必须跟renderpass->subpass里面定义的渲染次序一致。  
+换句话说，在创建subpass的时候，也应该使VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=0, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL的attachment#=1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=2  
+并且在创建renderpass的时候，vector<VkAttachmentDescription>里面attachment descriptor的次序也应该是msaacolor, depth, color  
+
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  
+
 
 <p float="left">
   <img src="https://github.com/gpuwangge/Wiki/blob/main/images/swapchain.png " alt="alt text" width="800" height="500">  
 </p> 
  
 
-(图片取自Learning Vulkan)  
+(from Learning Vulkan)  
 可以看出来, swapchain 一开始创建的是color image和相应的imageview。  
 随后如果用到depth image的时候需要手动allocate memory。  
 相关创建代码：  
@@ -74,6 +80,7 @@ if (vkCreateImageView(CContext::GetHandle().GetLogicalDevice(), &viewInfo, nullp
   throw std::runtime_error("failed to create texture image view!");
 }
 ```
+
 
 
 # Renderer

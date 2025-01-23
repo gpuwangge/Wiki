@@ -50,11 +50,25 @@ Swapchain需要把RenderPass，以及对应的attachment资源打包成framebuff
 根据图片与镜头的距离，我们创建一张与窗口大小相同的深度图，并且也把它放进一个容器里(Depth Attachment)。  
 现在，我们的RenderPass里就绑定了两个容器(or 附件Attachment)，同样把两者打包进一个framebuffer，这样渲染的时候就能够正确呈现两张图片的遮蔽关系了。  
 
-在创建Framebuffer的时候，attachment的次序也很重要。虽然各个attachment本质上都是buffer，但性质和用法都不一样。  
-比如在某个app中使用了msaa attachment，depth attachment，color attachment，它们可以按任意次序加载到framebuffer中。但是这个次序必须跟renderpass->subpass里面定义的渲染次序一致。  
-(framebuffer里的attachment是真实的buffer，renderpass里的attachment是layout description)  
-换句话说，在创建subpass的时候，也应该使VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=0, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL的attachment#=1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=2  
-并且在创建renderpass的时候，vector\<VkAttachmentDescription\>里面attachment descriptor的次序也应该是msaacolor, depth, color  
+现在考虑开启深度检测和MSAA的情况。MSAA要求对单个像素多重采样，所以需要支持多像素采样的color buffer。对应的深度attachment也需要支持多像素采样。  
+然而，没办法使用swapchain的color attachment来做MSAA，因为swapchain的image是通过vulkan标准vkGetSwapchainImagesKHR函数创建的，它的属性来自于显示器。而显示器一个像素只支持一个color，并不能支持多像素采样。  
+Vulkan的解决办法是手动创建一个单独的支持多重像素采样的color attachment，等msaa计算结束后，把结果从多采样的color attachment拷贝入单采样的color attachment(这个过程叫做resolve)  
+因此，在这个情况下，我们首先在framebuffer中准备三个attachment：  
+- attachment_color_present: 直接来自swapchain生成的image buffer  
+- attachment_depth: 支持samplers=n的image buffer  
+- attachment_color_multisample: 支持samplers=n的image buffer  
+然后，在RenderPass里准备相应的Description:  
+- attachment_description_color_present  
+- attachment_description_depth  
+- attachment_description_color_multisample  
+在这里要注意attachment里buffer和description的顺序要能对的上  
+最后，在创建subpass的时候，创建对应的reference  
+- attachment_reference_color_present  
+- attachment_reference_depth  
+- attachment_reference_color_multisample  
+在创建的时候，它们对应的attachment index也要对得上  
+换句话说，应该使VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=0, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL的attachment#=1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=2  
+如此设置的话，在submit present command的时候，第一个attachment(attachment_color_present)的内容会被刷新在屏幕上  
 
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  

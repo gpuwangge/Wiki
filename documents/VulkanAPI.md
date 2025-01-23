@@ -56,16 +56,19 @@ Vulkan的解决办法是手动创建一个单独的支持多重像素采样的co
 因此，在这个情况下，我们首先在framebuffer中准备三个attachment：  
 - attachment_color_present: 直接来自swapchain生成的image buffer  
 - attachment_depth: 支持samplers=n的image buffer  
-- attachment_color_multisample: 支持samplers=n的image buffer  
+- attachment_color_multisample: 支持samplers=n的image buffer
+
 然后，在RenderPass里准备相应的Description:  
 - attachment_description_color_present  
 - attachment_description_depth  
-- attachment_description_color_multisample  
+- attachment_description_color_multisample
+
 在这里要注意attachment里buffer和description的顺序要能对的上  
 最后，在创建subpass的时候，创建对应的reference  
 - attachment_reference_color_present  
 - attachment_reference_depth  
-- attachment_reference_color_multisample  
+- attachment_reference_color_multisample
+
 在创建的时候，它们对应的attachment index也要对得上  
 换句话说，应该使VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=0, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL的attachment#=1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=2  
 如此设置的话，在submit present command的时候，第一个attachment(attachment_color_present)的内容会被刷新在屏幕上  

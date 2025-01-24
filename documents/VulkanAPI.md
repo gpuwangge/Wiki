@@ -73,6 +73,13 @@ Vulkan的解决办法是手动创建一个单独的支持多重像素采样的co
 换句话说，应该使VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=0, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL的attachment#=1, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL的attachment#=2  
 如此设置的话，在submit present command的时候，第一个attachment(attachment_color_present)的内容会被刷新在屏幕上  
 
+最后，也是在创建subpass，需要指定如下三个pointer:  
+- pColorAttachments: fragment shader的color输出的位置就是这个指针指向的位置。这个指针可以指向一个attachment array。相对应的，fragment shader里也可以通过location关键之指定输出的位置。  
+这里有个问题需要注意，就是fragment shader的输出可能是单像素采样或多像素采样(msaa开启的时候)。如果是单像素采样，这里可以直接接到attachment_reference_color_present(也就是直接接到swapchain image的present color attachment，结果可以在窗口呈现)  
+如果是多像素采样，不能直接接到present color attachment，必须接到另一个支持多像素采样的color attachment。  
+- pDepthStencilAttachment: 直接接attachment_reference_depth，没有问题  
+- pResolveAttachments：直接接attachment_reference_color_multisample。因为当使用这个pointer的时候一定是打开了msaa的时候。既然打开了msaa，present attachment肯定不能接pColorAttachments，那就只能接这里。换句话说这个pointer只能接单像素采样color attachment。  
+
 因为交换链是与窗口系统和显示相关的组件，因此它依赖于surface的属性。  
 因此，在创建了surface之后，我们可以立刻设置swapchain images/imageviews。尽管这时候还没有任何attachment/framebuffer资源。  
 
@@ -500,6 +507,7 @@ Descriptor是一类Shader变量，它用于描述Uniform变量的类型和Layout
 常见的Uniform变量包括  
 - MVP矩阵: 类型为VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER
 - Image Sampler: 类型为VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER
+- Depth Sampler
 - Storage Buffer: 类型为VK_DESCRIPTOR_TYPE_STORAGE_BUFFER
 - Texture/Image: 类型都是VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
 

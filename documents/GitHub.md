@@ -99,7 +99,42 @@ remotes/origin/Lesson2_2
 checkout的作用是切换到一个branch  
 checkout -b的作用是创建一个新的branch，并且切换到那个branch  
 
+## Detached Head问题
+clone repo之后，如果直接checkout会出现Detached Head问题  
+比如，git branch -a有如下分支：  
+```
+* master
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/master
+  remotes/origin/branch1
+  remotes/origin/branch2
+```
+本地想要切换到branch1工作，如果使用命令  
+git checkout origin/branch1  
+(这里也可以用remotes/origin/branch1, remotes/可以省略)  
+会checkout origin/branch1的一个commit，而不是branch。  
+这时候会提示(HEAD detached at origin/branch1)  
+Detached HEAD：当 HEAD 处于“分离状态”时，它指向一个特定的提交，而不是一个分支。这意味着你当前检出了一个特定的提交，而不是一个分支的最新状态。  
 
+若要避免Detached Head问题，产生正确的本地分支，应该用如下命令  
+git checkout -b branch1 origin/branch1  
+这里多做了一件事情，就是在本地建立了branch1分支，并且用它来跟踪远程分支origin/branch1  
+这时候git branch -a看起来是这样：  
+```
+  master
+* branch1
+  remotes/origin/HEAD -> origin/master
+  remotes/origin/master
+  remotes/origin/branch1
+  remotes/origin/branch2
+```
+git log可以看到HEAD正确指向了branch1，避免了Detached HEAD问题  
+
+如果要验证本地分支branch1是否成功追踪了远端分支origin/branch1，可以使用如下命令  
+git branch -vv  
+```
+* branch1 xxxxxxxx [origin/branch1] abcdefg
+```
 
 
 ## Branch的合并方法

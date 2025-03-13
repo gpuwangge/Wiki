@@ -139,6 +139,11 @@ git log可以看到HEAD正确指向了branch1，避免了Detached HEAD问题
 * branch1 xxxxxxxx [origin/branch1] abcdefg
 ```
 
+如果在本地错误建立了一个branch，想要删除，可以用  
+> git branch -d branch1  
+
+
+
 
 ## Branch的合并方法
 ### 没有冲突的合并

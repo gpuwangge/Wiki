@@ -117,6 +117,11 @@ clone repo之后，如果直接checkout会出现Detached Head问题
 这时候会提示(HEAD detached at origin/branch1)  
 Detached HEAD：当 HEAD 处于“分离状态”时，它指向一个特定的提交，而不是一个分支。这意味着你当前检出了一个特定的提交，而不是一个分支的最新状态。  
 
+Detached HEAD会带来什么问题：如果只是临时进行测试和修改，DEtached HEAD并不会带来任何问题。因为origin/branch1的所有文件其实已经同步到了本地。  
+但是此时本地的branch1是一个提交，而不属于任何branch。因此，假如此时修改了代码并提交，此次提交也不会关联到任何分支。  
+换句话说，如果本地的branch切换了，那么原本的修改的代码就找不到了。  
+那么，是不是说Detached HEAD就没用了呢？也不是。如果只是做临时测试，或者只是使用而不需要提交的话，使用Detached HEAD对remote repo的原分支其实更安全一点。  
+
 若要避免Detached Head问题，产生正确的本地分支，应该用如下命令  
 > git checkout -b branch1 origin/branch1  
 

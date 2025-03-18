@@ -141,7 +141,7 @@ factorial.cpp //#include "functions.h"。内含数学函数的实现
 printhello.cpp //#include "functions.h"。内含打印函数的实现  
 main.cpp  //#include "functions.h"。main函数里调用数学和打印函数  
 该如何编译呢:  
-> g++ main.cpp factorial.cpp pringhello.cpp -o main  
+> g++ main.cpp factorial.cpp printhello.cpp -o main  
 
 现在问题是，在实际的项目中，往往不止三个源文件。使用这种原始的编译方法将导致编译命令无比坑长；并且如果只改动了其中一个源文件，重新编译的时候需要把所有源文件重新编译一次，浪费时间。  
 
@@ -149,7 +149,8 @@ main.cpp  //#include "functions.h"。main函数里调用数学和打印函数
 > g++ main.cpp -c  
 
 这个命令只编译，不链接。结果是产生了main.o文件。同理：  
-> g++ main.cpp -c
+> g++ factorial.cpp -c  
+> g++ printhello.cpp -c  
 
 生成了三个.o文件，然后：  
 > g++ *.o -o main  

@@ -72,7 +72,7 @@ Vulkan Loader支持Windows, Linux, Andruoid and macOS
 driver软件含有很多组件，其中一个组件叫做Installable Client Driver(ICD)，ICD负责把图形API的调用转换成特定图形硬件的指令。  
 对于Vulkan来说，Vulkan ICD就是把Vulkan API Commands转换成支持Vulkan的显卡指令。  
 (其他图形API比如OpenGL也有OpenGL ICD)  
-因为Vulkan ICD可能有不止一个，Vulkan Loader的作用就是查找、加载和管理系统中的Vulkan ICD。Loader会在应用程序启动的时候选择合适的ICD，一边应用程序可以使用Vulkan API进行图形渲染。  
+因为Vulkan ICD可能有不止一个，Vulkan Loader的作用就是查找、加载和管理系统中的Vulkan ICD。Loader会在应用程序启动的时候选择合适的ICD，以便应用程序可以使用Vulkan API进行图形渲染。  
 
 
 # Reference  

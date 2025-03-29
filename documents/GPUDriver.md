@@ -74,6 +74,7 @@ driver软件含有很多组件，其中一个组件叫做Installable Client Driv
 (其他图形API比如OpenGL也有OpenGL ICD)  
 因为Vulkan ICD可能有不止一个，Vulkan Loader的作用就是查找、加载和管理系统中的Vulkan ICD。Loader会在应用程序启动的时候选择合适的ICD，以便应用程序可以使用Vulkan API进行图形渲染。  
 
+# User和Kernel Mode
 
 # Reference  
 https://blog.csdn.net/m0_51737348/article/details/122657090  

@@ -75,6 +75,17 @@ driver软件含有很多组件，其中一个组件叫做Installable Client Driv
 因为Vulkan ICD可能有不止一个，Vulkan Loader的作用就是查找、加载和管理系统中的Vulkan ICD。Loader会在应用程序启动的时候选择合适的ICD，以便应用程序可以使用Vulkan API进行图形渲染。  
 
 # User和Kernel Mode
+GPU Driver工作的时候分为User Mode(UMD)和Kernel Mode(KMD)。这两个模式不是单独工作的，而是一起协同工作。  
+UMD: 用来处理图形API，把OpenGL或Vulkan调用转换成更低层次的指令，并与KMD通信。  
+KMD: UMD把指令传过来后，KMD通过操作系统直接与GPU硬件交互，管理内存和用户中断。因此，KMD需要访问更多资源，权限比UMD高，操作更加接近底层。但是，因为可以访问硬件资源，如果操作不当容易崩溃。   
+
+GPU Driver拆分UMD和KMD的动机  
+- 安全隔离：因为UMD权限较低，访问受限，如果出现(恶意)错误不会导致系统崩溃(只影响当前应用程序)  
+- 简化调试：分开模式之后，UMD单独调试比较简单(不需要重启系统)  
+- 优化管理：UMD进行高级资源优化；KMD进行底层优化。  
+- 移植性：UMD不需要处理硬件细节，所以容易移植到不同的硬件系统上。(因此，UMD和KMD一般独立升级和更新)  
+- 开发效率: UMD和KMD可以分别由不同的团队开发，前者专注API和应用程序；后者专注底层硬件交互和资源管理。  
+
 
 # Reference  
 https://blog.csdn.net/m0_51737348/article/details/122657090  

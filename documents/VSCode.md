@@ -7,6 +7,9 @@ MinGW下载地址：
 https://www.mingw-w64.org/downloads/  
 页面底下 Sources这一栏，点击SourceForge。拉到底下，选择x86_64-win32-seh
 
+或者也可以去github页面下载：  
+https://github.com/niXman/mingw-builds-binaries/releases
+
 下载后解压后剪切粘贴到c盘的根目录下。  
 然后是配置环境变量——也就是告诉VS Code编译器在什么地方：  
 把MinGW的bin路径(c:\mingw64\bin)粘贴到PATH环境变量里面。  

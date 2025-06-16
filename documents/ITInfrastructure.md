@@ -12,10 +12,10 @@
 11、有时候会出现Router找不到Moderm，这时候需要手动查询Moderm的MAC地址，然后拿一个电脑手动登录到Router上(IP一般是192.168.1.1，不要用公司电脑尝试)，手动更改MAC地址，之后Router就可以找到Moderm了。（建议这一步打电话给Router客服根据指示操作）  
 
 # 换Spectrum Moderm
-1、把旧Moderm拆了换上新的
-2、根据运营商安装说明书，应该可以在app内开启服务；实测不行
-3、根据app打客服电话或发信息。提供Moderm物理地址CM(Cable Moderm) MAC Address，客服在后台可以查看状态。并帮助开启
-4、Moderm Online灯变成蓝色后，表示internet功能开启了
+1、把旧Moderm拆了换上新的  
+2、根据运营商安装说明书，应该可以在app内开启服务；实测不行  
+3、根据app打客服电话或发信息。提供Moderm物理地址CM(Cable Moderm) MAC Address，客服在后台可以查看状态。并帮助开启  
+4、Moderm Online灯变成蓝色后，表示internet功能开启了  
 
 
 

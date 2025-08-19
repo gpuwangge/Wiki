@@ -31,9 +31,10 @@ https://github.com/libsdl-org/SDL/tree/main/examples
 
 # SDL3(3.13 for windows)安装方法
 进入网站  
-https://github.com/libsdl-org/SDL/releases/tag/preview-3.1.3  
+https://github.com/libsdl-org/SDL/releases  
+选择一个版本(比如3.2.20)  
 如果选择使用windows下mingw编译的话，可以下载:  
-SDL3-devel-3.1.3-mingw.zip  
+SDL3-devel-3.2.20-mingw.tar.gz  
 解压后打开x86_64-w64-mingw32/这里面有安装需要的所有东西：   
 - bin/SDL3.dll：是编译和运行程序都需要的动态链接库。当app发布的时候，要连这个一起附上  
 - include/SDL3: 需要include到app源代码的头文件。可以放在常用的系统头文件目录下。我是简单扔进C:/VulkanSDK/底下，就不用额外设置环境变量了  
@@ -100,22 +101,44 @@ SDL Render相当于画笔。这种渲染的方法有点像GDI。如果画个简�
 还需要用SDL_RenderCopy把texture的内容传到渲染器(SDL Renderer)  
 
 # SDL Text
-需要SD2/SDL_ttf.h支持  
-先把字体存为ttf font类型，填入路径  
-再把字体加载成Surface  
+首先需要SD2/SDL_ttf.h支持。SDL_TTF主页如下：  
+https://github.com/libsdl-org/SDL_ttf  
+下载页面如下：  
+https://github.com/libsdl-org/SDL_ttf/releases  
+选择一个版本(比如3.2.2)下载：  
+SDL3_ttf-devel-3.2.2-mingw.tar.gz  
+解压缩后打开文件夹x86_64-w64-mingw32  
+bin/下面的SDL3_ttf.dll就是二进制文件，其头文件为  
+include/SDL3_ttf/SDL_ttf.h  
+将两者包含进项目工程里就可以了  
+
+下一步准备ttf font类型的字体  
+这里建议使用google的开源font: https://fonts.google.com/noto  
+点击"Browse all Noto fonts"也可以查看所有font样式  
+如果要下载font文件，进入github相关页面：https://github.com/notofonts/noto-cjk  
+
+最后把字体加载成Surface  
 再使用Texture来呈现  
+示例代码如下：  
 ```
-TTF_Init();
-TTF_Font *font_title = TTF_OpenFont("./res/oppo_sans.ttf", 64);
-SDL_Color color_title = {0xff, 0xff, 0xff, 0xff};
-SDL_Surface *surface_title = TTF_RenderText_Blended(font_title, "This is a title!", color_title);
-SDL_Texture *texture_title = SDL_CreateTextureFromSurface(renderer, surface_title);
+if (TTF_Init() == -1) 
+   std::cout << "SDL_ttf could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+m_font = TTF_OpenFont("../thirdparty/fonts/NotoSansCJK-VF.otf.ttc", 24);
+if (!m_font) 
+    std::cout << "Failed to load font! SDL_Error: " << SDL_GetError() << std::endl;
 
-...
-
-TTF_CloseFont(font_title);
-SDL_DestroyTexture(texture_title);
-SDL_FreeSurface(surface_title);
+//test SDL text (Test only, for this is conflict with Vulkan)
+SDL_Color white = {255, 255, 255, 255};
+SDL_Surface* textSurface = TTF_RenderText_Blended(m_font, "hello你好", 11, white);
+SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
+SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+SDL_FRect textRect = {20, 20, textSurface->w, textSurface->h};
+SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+SDL_RenderClear(renderer);
+SDL_RenderTexture(renderer, textTexture, NULL, &textRect);
+SDL_RenderPresent(renderer);
+TTF_CloseFont(m_font);
+TTF_Quit();
 ```
 
 # SDL Event

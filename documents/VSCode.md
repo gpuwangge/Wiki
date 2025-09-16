@@ -27,6 +27,8 @@ https://github.com/niXman/mingw-builds-binaries/releases
 如果安装过Visual Studio，也会有编译器了： cl.exe。而且这个是Windows下VS Code的默认编译器   
 (关于posix版本编译器：可以再下载x86_64-posix-seh，然后文件夹加上后缀_posix跟win32版放在一起，如果遇上p线程的问题可以换这个: 修改CMakeLists，使用posix版g++，但make还是一样的)  
 
+如果需要用"make -j"这种简洁编译命令，可以  
+进入编译器bin目录，重命名mingw32-make.exe为make.exe  
 
 # VS Code安装方法
 VS Code下载地址：  

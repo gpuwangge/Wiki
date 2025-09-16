@@ -8,7 +8,14 @@ https://www.mingw-w64.org/downloads/
 页面底下 Sources这一栏，点击SourceForge。拉到底下，选择x86_64-win32-seh
 
 或者也可以去github页面下载：  
-https://github.com/niXman/mingw-builds-binaries/releases
+https://github.com/niXman/mingw-builds-binaries/releases  
+选择：x86_64-15.2.0-release-win32-seh-ucrt-rt_v13-rev0.7z   
+- x86_64 说明这是给 64 位目标平台 用的工具链。  
+- 15.2.0-release 编译器版本号。 这里指的是 GCC 15.2.0（GNU Compiler Collection）  
+- win32: 使用 Windows 原生线程模型（基于 Win32 API）。  
+- seh: Windows 的异常处理机制(Linux对应的是dwarf)  
+- ucrt: 新的 C 标准库，支持更完整的标准，比msvcrt好  
+- rt_v13 表示 runtime version，这里是 MinGW-w64 runtime v13  
 
 下载后解压后剪切粘贴到c盘的根目录下。  
 然后是配置环境变量——也就是告诉VS Code编译器在什么地方：  

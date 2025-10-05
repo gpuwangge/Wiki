@@ -147,8 +147,36 @@ git log可以看到HEAD正确指向了branch1，避免了Detached HEAD问题
 如果在本地错误建立了一个branch，想要删除，可以用  
 > git branch -d branch1  
 
+## Switch
+switch是Git 2.23之后推荐使用的新增命令。  
+之所以创建这个新指令，是因为原有的checkout不仅用于切换分支、还用于文件管理，非常容易使用混淆。  
+比如checkout的常见用法如下  
+```
+切换分支:
+git checkout branchName
+新建并切换分支:
+git checkout -b newBranch
+恢复文件到某个版本:
+git checkout commit -- file.txt
+```
 
+switch取代了一些checkout的用法, 比较容易记忆和使用  
+```
+切换分支: (等价于git checkout)
+git switch branchName
+新建并切换分支: (等价于git checkout -b)
+git switch -c newBranch
+```
 
+作为对比, git branch也可以新建分支, 但不会切换分支  
+```
+新建分支
+git branch newBranch
+删除分支
+git branch -d oldBranch
+重命名分支
+git branch -m oldName newName
+```
 
 ## Branch的合并方法
 ### 没有冲突的合并

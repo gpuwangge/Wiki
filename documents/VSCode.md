@@ -52,7 +52,9 @@ https://www.git-scm.com/downloads
 Use Visual Studio Code as Git's default editor   
 安装好之后，就可以在console里使用Git Clone等命令了  
 在local git repo打开VS Code，可以发现左边的Source Control功能会自动开启git功能，表示安装成功，可以联动了  
-如果要使用git来check in，别忘了设定name和email，比如：
+
+如果要使用git来check in，别忘了设定name和email，否则只能clone不让push。  
+设置举例：  
 > git config --global user.name "Connor"  
 > git config --global user.email wxj995@gmail.com  
 

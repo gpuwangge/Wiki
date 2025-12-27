@@ -61,7 +61,7 @@ MinGW编译的时候使用了Windows的C运行时库，因此其开发的程序�
 目标： 运行一个基本的编译命令生成exe   
 **`1. 安装CMake`**  
 https://cmake.org/download/  
-选择Binary distributions里面的Windows x64 Installer  
+选择Binary distributions里面的Windows x64 ZIP  
 比如：  
 https://cmake-3.27.0-windows-x86_64.zip/  
 下载后解压复制到C盘根目录下, 把C:\cmake-3.27.0-windows-x86_64\bin添加到Path环境变量中   

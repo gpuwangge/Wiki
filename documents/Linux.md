@@ -387,6 +387,8 @@ rwx-rwx-rwx
 以下命令可以把包括某个folder在内的的所有文件都改变权限：  
 > chmod -R 777 folder/*  
 
+注意如果文件夹没有x权限的话会无法进入。并且git也无法修改。所以一般不要把文件夹的x属性去掉。  
+
 
 # Reference
 https://www.runoob.com/linux/linux-shell.html  

@@ -52,7 +52,7 @@ Issue: deqp-vksc只有begin session，没有end session
 
 (2.92GB, 7663 Files)   
 
-> cd VK-GL-CTS
+> cd VK-GL-CTS  
 > python3 external/fetch_sources.py  
 
 (3.40GB, 15983 Files)  

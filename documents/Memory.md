@@ -60,7 +60,8 @@ Coherent Memory(一致性内存)
 在 Non-Coherent 情况  
 1. CPU 把数据写到 CPU cache（可能还没写回到 DRAM）  
 2. DMA 从 DRAM 读 -> 读到旧数据（因为新数据还在 CPU cache）  
-3. 解决：CPU 在启动 DMA 前要 clean/flush cache（把脏数据写回内存）  
+3. 解决：CPU 在启动 DMA 前要 clean/flush cache（把脏数据写回内存）
+
 反过来，DMA 写入 buffer，CPU 读取：  
 1. DMA 把数据写到 DRAM  
 2. CPU 可能还持有该地址旧的 cache line  

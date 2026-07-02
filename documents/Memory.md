@@ -40,6 +40,39 @@
 
 如果要往某个内存地址存数据，首先要获得内存地址的值，然后还有数据宽度(比如8, 16, 32或64位)。  
 
+# Coherent Memory
+Non-Coherent Memory(非一致性内存) 和 Coherent Memory(一致性内存) 的核心区别在于：CPU 与其他主设备（如 GPU、NPU、DMA、外设）是否自动保持缓存一致性(cache coherence)。这会直接影响数据共享时的正确性、性能、编程复杂度。  
+
+定义与本质差异  
+Non-Coherent Memory(非一致性内存)  
+含义：不同主设备访问同一块内存时，硬件不保证缓存一致性。  
+结果：CPU 缓存里可能是旧数据，DMA/设备看到的是内存中的数据（或相反），容易出现“我写了但对方读不到/读到旧的”问题。  
+开发者体验：必须显式做 cache 维护（flush / clean / invalidate）、使用非缓存映射、或用驱动框架提供的同步 API  
+
+Coherent Memory(一致性内存)  
+含义：当多个主设备访问同一块内存时，硬件/互连（如 ACE/CHI/CCN/CMN 等）会保证缓存一致性。  
+结果：CPU cache、GPU/NPU cache（若参与一致性域）以及内存中的数据视图保持一致。  
+开发者体验：通常不需要手动做 cache flush/invalidate（或只需要最少的同步原语）。  
+
+## 直观例子
+假设 CPU 写入一个 buffer，然后让 DMA/设备读取  
+
+在 Non-Coherent 情况  
+1. CPU 把数据写到 CPU cache（可能还没写回到 DRAM）  
+2. DMA 从 DRAM 读 -> 读到旧数据（因为新数据还在 CPU cache）  
+3. 解决：CPU 在启动 DMA 前要 clean/flush cache（把脏数据写回内存）  
+反过来，DMA 写入 buffer，CPU 读取：  
+1. DMA 把数据写到 DRAM  
+2. CPU 可能还持有该地址旧的 cache line  
+3. CPU 直接读 cache -> 读到旧数据  
+4. 解决：CPU 在读取前要 invalidate cache（丢掉旧 cache，从内存重新取）  
+
+在 Coherent 情况  
+1. DMA/设备写入或读取会通过一致性互连与 CPU cache 协调：  
+CPU 写入后，设备读取不会读到旧数据  
+设备写入后，CPU 读取也不会读到旧数据  
+2. 仍然需要“同步”的概念，但通常是内存屏障/队列同步而非手工 cache 维护。  
+
 # Virtual Memory虚拟内存
 ## 虚拟内存原理
 操作系统处理内存的时候，使用虚拟内存技术。采用这种技术时，每个进程仿佛自己独享一片2（N次方）字节的内存，其中N是机器位数。例如在64位CPU和64位操作系统下，每个进程的虚拟地址空间为2（64次方） Byte。  

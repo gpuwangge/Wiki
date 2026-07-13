@@ -307,6 +307,13 @@ Linux mv（英文全拼：move file）命令用来为文件或目录改名、或
 就是输出ls的输出的行数  
 如果当前目录下有两个文件，就输出2  
 
+## top
+查看进程。用q可以退出查看。  
+
+## kill
+kill pid可以关闭一个进程。默认参数是-15，表示温和关闭。  
+kill -9 pid可以强制关闭。  
+
 # 获得硬件参数
 ## Number of physical CPU
 > cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l  

@@ -104,7 +104,7 @@ FOV / near / far 决定的是“投影矩阵长什么样”；
 最终裁剪用的是 X/Y/Z/W 是否满足标准盒子内的条件，  
 这就是 X+W、W-X 等形式的来源。  
 
-# Guardband clipping
+# Guardband
 概念整理  
 实际屏幕：物理设备上的所有像素。  
 窗口：操作系统在屏幕上分配的一个区域。全屏模式就是覆盖整个屏幕。一个窗口对应一个framebuffer，这个framebuffer也叫render target。  

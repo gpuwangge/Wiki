@@ -1,5 +1,5 @@
 # Clip介绍
-Clip出现的位置，mvp之后，ndc/viewport变换/ras之前。  
+Clip出现的位置: mvp之后，ndc/viewport变换/ras之前。  
 
 Clip Space：Pclip  
 Pclip=MVP*p_model  

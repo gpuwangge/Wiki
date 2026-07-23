@@ -178,6 +178,11 @@ git branch -d oldBranch
 git branch -m oldName newName
 ```
 
+什么时候应该加 -c 呢？是在本地没有目标分支的时候。  
+如何知道本地有没有目标分支？用 git branch 查看，会列出所有本地已经存在的分支。  
+（git branch -a 列出的是本地和远端的所有分支）  
+
+
 ## Branch的合并方法
 ### 没有冲突的合并
 分为快进合并和非快进合并。  

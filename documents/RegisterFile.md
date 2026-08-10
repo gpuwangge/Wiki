@@ -25,6 +25,32 @@ add x3, x1, x2
 ```
 CPU 通常从 register file 的两个读端口并行读 x1 与 x2，经 ALU 计算后，通过写端口把结果写回 x3。一个典型设计正是 2 read ports + 1 write port。  
 
+```
+Register file（寄存器堆）
+├── x0
+├── x1   ← 一个 register
+├── x2   ← 另一个 register
+├── x3
+└── ...
+```
+x1、x2 各自是一个 register，不是 “一个 register file”。  
+它们共同属于同一个 register file。  
+这个 register file 具有 Read port A 和 Read port B，所以能在同一时刻指定两个地址，例如 A 指向 x1、B 指向 x2。  
+
+关键是端口数  
+如果硬件只有 一个读端口，即使 x1、x2 仍在同一个 register file，也通常一次只能选择并输出一个寄存器值：
+```
+单读端口 RF：
+cycle 1: 读 x1
+cycle 2: 读 x2
+```
+如果是 双读端口：
+```
+双读端口 RF：
+同一时刻: Port A 读 x1，Port B 读 x2
+```
+同一个读端口甚至可以读到同一个寄存器两次：例如 add x3, x1, x1，让两个读端口都选择 x1 即可。双读端口允许同时读取相同或不同的寄存器。  
+
 一个容易混淆的点  
 某些专用寄存器不一定属于通用 register file，例如 PC、状态寄存器、控制寄存器、GPU 的某些特殊硬件寄存器；它们可能独立实现。  
 相反，CPU 也可能把部分特殊寄存器纳入 register file，具体取决于微架构。  

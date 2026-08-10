@@ -20,6 +20,7 @@
 ## [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUDriver.md)  
 ## [GPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUArchitecture.md)   
 ## [Warp Divergence](https://github.com/gpuwangge/Wiki/blob/main/documents/WarpDivergence.md)  
+## [Register File](https://github.com/gpuwangge/Wiki/blob/main/documents/RegisterFile.md)  
 
 # TOOLS
 ## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMake.md)  

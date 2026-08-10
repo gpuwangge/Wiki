@@ -102,5 +102,53 @@ FMA 半满 × 4
 ```
 即 8 次“半载”执行  
 
+BFS 风格：先分类，再做下一层  
+把原程序拆成两轮。  
+
+第 1 轮：只决定去哪里  
+```
+// classify.comp
+if (x[i] > 0.0) {
+    append(fmaQueue, i);
+} else {
+    append(subQueue, i);
+}
+```
+结果：
+```
+fmaQueue：所有 x > 0 的元素索引，共 64 个
+subQueue：所有 x <= 0 的元素索引，共 64 个
+```
+这一步就是 BFS/queue 的“第一层”：  
+
+所有元素先统一完成“判断自己下一步要做什么”。  
+
+第 2 轮：分别处理两个队列  
+```
+// fma.comp：输入全来自 fmaQueue
+uint i = fmaQueue[gl_GlobalInvocationID.x];
+y[i] = a[i] * b[i] + c[i];
+```
+```
+// sub.comp：输入全来自 subQueue
+uint i = subQueue[gl_GlobalInvocationID.x];
+y[i] = x[i] - d[i];
+```
+此时：
+```
+fmaQueue 里的 64 个元素
+= 两个完整 warp
+= 每个 lane 都做 FMA
+
+subQueue 里的 64 个元素
+= 两个完整 warp
+= 每个 lane 都做减法
+```
+变成：
+```
+FMA 满载 × 2
+减法 满载 × 2
+```
+从“8 次半载”变成“4 次满载”。  
 
 

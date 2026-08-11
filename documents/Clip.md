@@ -108,7 +108,6 @@ FOV / near / far 决定的是“投影矩阵长什么样”；
 (不同 API 的标准 Z 裁剪体并不完全相同： OpenGL是-W~W，Vulkan是0~W)  
 
 # Guardband
-概念整理  
 实际屏幕：物理设备上的所有像素。  
 窗口：操作系统在屏幕上分配的一个区域。全屏模式就是覆盖整个屏幕。一个窗口对应一个framebuffer，这个framebuffer也叫render target。  
 Viewport：framebuffer上的一个矩形区域。  

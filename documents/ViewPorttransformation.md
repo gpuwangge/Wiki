@@ -4,19 +4,19 @@
 之后由 viewport transform 把 NDC 映射到 framebuffer 像素坐标。 
 
 整个流程可以概括为：
-
-Object Space
-→
-World Space
-→
-View Space
-→
-Clip Space
-→
-NDC
-→
-Framebuffer Space
-Object Space→World Space→View Space→Clip Space→NDC→Framebuffer Space
+$$
+\text{Object Space}
+\rightarrow
+\text{World Space}
+\rightarrow
+\text{View Space}
+\rightarrow
+\text{Clip Space}
+\rightarrow
+\text{NDC}
+\rightarrow
+\text{Framebuffer Space}
+$$
 
 NDC 是一个固定范围的立方体：
 

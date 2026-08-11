@@ -4,6 +4,7 @@
 之后由 viewport transform 把 NDC 映射到 framebuffer 像素坐标。 
 
 整个流程可以概括为：
+
 $$
 \text{Object Space}
 \rightarrow

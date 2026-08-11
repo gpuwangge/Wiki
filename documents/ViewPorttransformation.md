@@ -316,11 +316,7 @@ $$
 此时 Y 映射为：
 
 $$
-y_{\text{fb}}
-=
-H
-+
-\frac{y_{\text{ndc}} + 1}{2} \, (-H)
+y_{\text{fb}} = H + \frac{y_{\text{ndc}} + 1}{2} \, (-H)
 $$
 
 于是：
@@ -375,21 +371,15 @@ $$
 然后通过 viewport transform：
 
 $$
-x_{\text{fb}}
-=
-x_v + \frac{x_{\text{ndc}} + 1}{2} \, W
+x_{\text{fb}} = x_v + \frac{x_{\text{ndc}} + 1}{2} \, W
 $$
 
 $$
-y_{\text{fb}}
-=
-y_v + \frac{y_{\text{ndc}} + 1}{2} \, H
+y_{\text{fb}} = y_v + \frac{y_{\text{ndc}} + 1}{2} \, H
 $$
 
 $$
-z_{\text{fb}}
-=
-d_{\min} + z_{\text{ndc}} (d_{\max} - d_{\min})
+z_{\text{fb}} = d_{\min} + z_{\text{ndc}} (d_{\max} - d_{\min})
 $$
 
 

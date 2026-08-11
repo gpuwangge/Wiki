@@ -200,7 +200,7 @@ viewport.maxDepth = d_max;
 X 坐标映射：
 
 $$
-x_{\text{fb}}
+x
 =
 x_v
 +

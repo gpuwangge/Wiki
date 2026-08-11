@@ -250,19 +250,11 @@ $$
 映射到 framebuffer 中心：
 
 $$
-x_{\text{fb}}
-=
-\frac{0 + 1}{2} \times 1920
-=
-960
+x_{\text{fb}} = \frac{0 + 1}{2} \times 1920 = 960
 $$
 
 $$
-y_{\text{fb}}
-=
-\frac{0 + 1}{2} \times 1080
-=
-540
+y_{\text{fb}} = \frac{0 + 1}{2} \times 1080 = 540
 $$
 
 因此：
@@ -280,21 +272,13 @@ $$
 X 坐标：
 
 $$
-x_{\text{fb}}
-=
-\frac{-0.5 + 1}{2} \times 1920
-=
-480
+x_{\text{fb}} = \frac{-0.5 + 1}{2} \times 1920 = 480
 $$
 
 Y 坐标：
 
 $$
-y_{\text{fb}}
-=
-\frac{0.25 + 1}{2} \times 1080
-=
-675
+y_{\text{fb}} = \frac{0.25 + 1}{2} \times 1080 = 675
 $$
 
 深度值（假设 \(d_{\min}=0, d_{\max}=1\)）：

@@ -2,16 +2,18 @@
 Clip出现的位置: mvp之后，ndc/viewport变换/ras之前。  
 
 Clip Space：Pclip  
-Pclip=MVP*p_model  
+Pclip=P*V*M*p_model  
 
 Clip就是把位于Clip Space之外的几何部分除去。  
+裁剪的目标不是简单地“删除 clip space 外的顶点”，而是将图元与裁剪体求交。完全在外的图元会被丢弃；部分相交的图元会生成新的顶点和更小的多边形。  
+例如，一个非常大的三角形只有很小一部分落在屏幕可见范围内。如果不先裁剪，光栅化器可能需要处理覆盖范围很大的三角形。裁剪后，硬件只需光栅化可见区域对应的小多边形，从而避免大量无效工作。  
 举例：一个巨大的三角形，只有一小部分在屏幕里。如果不clip，就必须做完整三角形的光栅化。clip把这个巨大的三角形裁剪成合法范围内的小多边形，节省渲染成本。  
 
 # Clip分类
 - View Frustum Clipping 视锥裁剪  
 - Near Plane 近裁剪面  
 - Viewport 视口  
-首先这个不是Viewport变换   
+首先这个不是View变换   
 Viewport的定义是(0,0,width,height)  
 也叫隐式裁剪  
 
@@ -103,6 +105,8 @@ FOV / near / far 决定的是“投影矩阵长什么样”；
 投影矩阵又决定了“世界点在 clip space 中的 X/Y/Z/W”；  
 最终裁剪用的是 X/Y/Z/W 是否满足标准盒子内的条件，  
 这就是 X+W、W-X 等形式的来源。  
+
+(不同 API 的标准 Z 裁剪体并不完全相同： OpenGL是-W~W，Vulkan是0~W)  
 
 # Guardband
 概念整理  

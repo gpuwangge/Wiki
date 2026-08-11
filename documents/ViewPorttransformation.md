@@ -200,11 +200,7 @@ viewport.maxDepth = d_max;
 X 坐标映射：
 
 $$
-x
-=
-x_v
-+
-\frac{x_{\text{ndc}} + 1}{2} \, W
+x = x_v + \frac{x_{\text{ndc}} + 1}{2} \, W
 $$
 
 Y 坐标映射：

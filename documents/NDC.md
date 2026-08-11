@@ -385,3 +385,9 @@ $$
 
 
 # ViewPort Transformation
+由上述NDC分析可知，Viewport transformation（视口变换）是图形管线中把裁剪空间经透视除法得到的 NDC 坐标，映射到某个实际渲染区域的过程：也就是从标准化范围映射到 framebuffer 的像素坐标与深度范围。  
+它发生在 vertex shader 输出 gl_Position 之后、光栅化之前。NDC 的 x,y 通常在 [−1,1]；视口变换决定它们具体落在屏幕的哪里、多大。  
+视口本质上就是一次缩放加平移：把 NDC 正方形/立方体的一部分坐标范围，嵌入一块指定大小的渲染目标区域。  
+最后，viewport 不是裁剪机制：三角形是否在可见范围，先由 clip space clipping 决定；viewport 负责把保留下来的 NDC 坐标映射至目标区域。scissor 则是在 rasterization 后限制 fragment 覆盖区域。  
+
+

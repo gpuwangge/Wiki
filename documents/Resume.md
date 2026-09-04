@@ -110,10 +110,9 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 
 ## Technical Skills
 
-- **Programming:** C++, C, Python, C#, JavaScript, SQL
-- **Graphics APIs:** Vulkan, DirectX 11, DirectX 12, OpenGL
-- **Tools & Platforms:** Linux, Windows, Git, Microsoft SQL Server
-- **Engineering Practices:** RTL collaboration, design verification support, debugging, regression testing, bit-accurate validation, log analysis, test automation, tool development
+- **Programming:** C++/C, Python, C#, Matlab
+- **Graphics APIs:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL
+- **Tools & Platforms:** Linux, Windows, Android, MacOS, Git, VSCode, Xcode, Perforce, Visual Studio
 
 ## Information to Complete Before Applying
 

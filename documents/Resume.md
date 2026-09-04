@@ -74,7 +74,7 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **January 2010 – December 2016**
 
 - Conducted research in computer graphics, fluid simulation, deformable materials, geometric processing, and 3D model representation.
-- Dissertation: **Graphical Simulation Analysis**.
+- Dissertation: **Fluid Animation on Deforming Surface Meshes**.
   - Designed a tool for analyzing time-invariant factors in fluid simulations.
   - Generated accurate flow trajectories with improved visual quality and reduced computational cost.
   - Applied eigensolver-based methods for Lagrangian Coherent Structure analysis.

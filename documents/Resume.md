@@ -88,7 +88,7 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **Open Source | C++ | Vulkan | [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)**
 
 - Built an open-source C++/Vulkan real-time rendering and game-engine framework with explicit GPU resource management, synchronization, command submission, descriptor systems, and swapchain presentation.
-- Implemented glTF/GLB scene loading, PBR materials, image-based lighting, and Vulkan ray tracing with acceleration structures, shader binding tables, reflections, and shadows.
+- Implemented PBR materials, image-based lighting, and Vulkan ray tracing with acceleration structures, shader binding tables, reflections, and shadows.
 
 ## Education
 

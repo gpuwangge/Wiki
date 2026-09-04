@@ -80,12 +80,8 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **September 2009 – May 2017**
 
 - Delivered lectures, led lab sessions, graded assignments, and guided more than 300 undergraduate students.
-- Supported junior- and senior-level coursework in computer graphics, multimedia processing, game development, and programming.
 - Courses supported:
-  - **CSE 471 — Media Processing and Multimedia:** Image processing, signal processing, and MFC.
-  - **CSE 472 — Computer Graphics:** OpenGL and foundational graphics programming.
-  - **CSE 473 — Fundamentals of 3D Game Development:** XNA and C programming.
-  - **CSE 231 / CSE 232 — Introduction to Programming I & II:** Python and C++.
+  - **CSE 471 — Media Processing and Multimedia:**, **CSE 472 — Computer Graphics:**, **CSE 473 — Fundamentals of 3D Game Development:**, **CSE 231 / CSE 232 — Introduction to Programming I & II:** 
 
 ## Open Source Project
 ### Vulkan Game Engine

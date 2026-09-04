@@ -112,8 +112,7 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 
 - **Programming:** C++, C, Python, C#, JavaScript, SQL
 - **Graphics APIs:** Vulkan, DirectX 11, DirectX 12, OpenGL
-- **GPU & Graphics:** GPU architecture modeling, graphics pipeline simulation, fixed-function hardware, tessellation, primitive processing, cache/compression systems, functional validation, image comparison, performance analysis
-- **Tools & Platforms:** Linux, Windows, Git, Microsoft SQL Server, WPF, MFC, XNA
+- **Tools & Platforms:** Linux, Windows, Git, Microsoft SQL Server
 - **Engineering Practices:** RTL collaboration, design verification support, debugging, regression testing, bit-accurate validation, log analysis, test automation, tool development
 
 ## Information to Complete Before Applying
@@ -121,3 +120,4 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 - Add education details, including degree(s), major(s), graduation year(s), and dissertation information if applicable.
 - Add 3–5 concrete accomplishment bullets for the MediaTek role, ideally with ownership scope, GPU blocks/IP, measurable outcomes, and cross-functional partners.
 - Tailor the skills section and selected accomplishment bullets to each role’s keywords, such as GPU architecture, GPU modeling, performance analysis, graphics drivers, Vulkan, ray tracing, shader cores, memory systems, or verification.
+- **GPU & Graphics:** GPU architecture modeling, graphics pipeline simulation, fixed-function hardware, tessellation, primitive processing, cache/compression systems, functional validation, image comparison, performance analysis

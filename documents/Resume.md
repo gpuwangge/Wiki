@@ -56,17 +56,6 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 - Investigated rapid-prototyping tools based on 2D physics engines and 3D graphics simulators in collaboration with product designers.
 - Evaluated interaction and visualization concepts for future Microsoft product experiences.
 
-## Open Source Project
-### Vulkan Game Engine
-**Open Source | C++ | Vulkan | [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)**
-
-- Developed an open-source real-time rendering and game-engine framework in C++ and Vulkan, covering renderer initialization, GPU resource management, synchronization, command submission, and swapchain presentation.
-- Implemented a modern graphics pipeline with shader compilation, descriptor management, texture and material loading, camera controls, and scene rendering.
-- Built support for physically based rendering (PBR), glTF/GLB asset loading, image-based lighting, normal mapping, and configurable lighting workflows.
-- Designed the engine for iterative graphics debugging, including validation-layer integration, GPU error diagnosis, render-target inspection, and reproducible test scenes.
-- Developed Vulkan ray-tracing functionality using acceleration structures, shader binding tables, ray-generation, closest-hit, miss, and shadow-ray shaders.
-- Maintained build, documentation, and sample-scene infrastructure to make the project reproducible across supported development environments.
-
 ## Research Experience
 
 ### Research Assistant
@@ -97,6 +86,31 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
   - **CSE 472 — Computer Graphics:** OpenGL and foundational graphics programming.
   - **CSE 473 — Fundamentals of 3D Game Development:** XNA and C programming.
   - **CSE 231 / CSE 232 — Introduction to Programming I & II:** Python and C++.
+
+## Open Source Project
+### Vulkan Game Engine
+**Open Source | C++ | Vulkan | [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)**
+
+- Developed an open-source real-time rendering and game-engine framework in C++ and Vulkan, covering renderer initialization, GPU resource management, synchronization, command submission, and swapchain presentation.
+- Implemented a modern graphics pipeline with shader compilation, descriptor management, texture and material loading, camera controls, and scene rendering.
+- Built support for physically based rendering (PBR), glTF/GLB asset loading, image-based lighting, normal mapping, and configurable lighting workflows.
+- Designed the engine for iterative graphics debugging, including validation-layer integration, GPU error diagnosis, render-target inspection, and reproducible test scenes.
+- Developed Vulkan ray-tracing functionality using acceleration structures, shader binding tables, ray-generation, closest-hit, miss, and shadow-ray shaders.
+- Maintained build, documentation, and sample-scene infrastructure to make the project reproducible across supported development environments.
+
+## Education
+
+**Ph.D., Computer Science (Computer Graphics)**  
+Michigan State University, East Lansing, MI  
+September 2009 – December 2017
+
+**M.S. Coursework, Software Engineering**  
+Chinese Academy of Sciences, Beijing, China  
+September 2008 – June 2009
+
+**B.S., Automation**  
+Beihang University, Beijing, China  
+September 2004 – July 2008
 
 ## Publications
 

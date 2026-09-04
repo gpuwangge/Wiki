@@ -1,0 +1,124 @@
+# Xiaojun Wang
+
+San Diego, CA | 517-899-1570 | wxjmsu@gmail.com | linkedin.com/in/xiaojun-wang | github.com/gpuwangge
+
+## Professional Summary
+
+Staff GPU Engineer with extensive experience in GPU architecture modeling, graphics-pipeline simulation, functional validation, and developer-tool automation. Expertise in C++, Python, DirectX 11/12, Vulkan, graphics hardware modeling, fixed-function GPU pipeline development, debugging, and image-based validation. Proven record of delivering GPU features across multiple Adreno generations, owning complex graphics blocks, building scalable regression infrastructure, and partnering with RTL and design-verification teams.
+
+## Professional Experience
+
+### Staff GPU Engineer
+**MediaTek** — San Diego / San Jose, CA  
+**May 2023 – Present**
+
+- Develop and maintain GPU modeling capabilities for next-generation graphics hardware.
+- Perform high-level GPU architecture analysis, feature modeling, debugging, and validation.
+- Collaborate with cross-functional hardware and software teams to improve GPU functional correctness, performance analysis, and development efficiency.
+
+### Senior GPU Engineer
+**Qualcomm** — San Diego / Santa Clara, CA  
+**January 2018 – May 2023**
+
+- Conducted accurate high-level modeling and analysis for a large-scale C++ GPU simulator across Linux and Windows environments.
+- Owned and trained engineers on two major fixed-function graphics blocks: **Tessellation** and **Primitive Control**.
+- Developed features for the **CCU (Cache and Compression Unit)** and maintained source code across five fixed-function blocks in the graphics pipeline.
+- Delivered two major features and more than 10 minor features spanning the 6th, 7th, and 8th generations of Adreno GPUs.
+- Resolved more than 1,000 modeling bugs across multiple Qualcomm SoCs, improving simulation correctness and platform readiness.
+- Partnered closely with RTL, design verification, and architecture teams to debug GPU issues and evaluate novel graphics features.
+- Created and delivered more than 200 bit-accurate unit tests using DirectX 11, DirectX 12, and Vulkan, strengthening functional coverage for next-generation Qualcomm GPUs.
+- Maintained a legacy sanity-regression test list containing more than 4,000 tests across multiple GPU performance tiers and release milestones.
+- Developed and maintained an image-comparison tool used by more than 50% of relevant test cases, reducing test-development effort by approximately 15% and lowering manual-analysis errors.
+- Expanded the image-comparison framework to support two additional image formats.
+- Built more than 10 Python tools for image analysis, log analysis, regression triage, and workflow automation, improving engineering productivity and reducing human error.
+
+### Software Engineer Intern
+**Microsoft** — Sunnyvale, CA  
+**June 2013 – August 2013**
+
+- Developed automated mitigation tools to filter and correct errors in raw source data for the Windows 8 News app.
+- Used Microsoft SQL Server, C, JavaScript, and HTML5 to process, analyze, and repair incoming data.
+- Optimized the incoming-data analysis workflow, substantially improving processing efficiency.
+- Achieved an 89% acceptance rate and a 100% mitigation rate for targeted data issues.
+
+### Research Intern
+**Microsoft Research Asia** — Beijing, China  
+**November 2008 – April 2009**
+
+- Developed a portable human-computer interaction prototype using gyroscopes as an alternative display and interaction mechanism.
+- Implemented multithreaded software to improve control accuracy, responsiveness, and runtime performance.
+
+### Software Engineer Intern
+**Microsoft Advanced Technology Center** — Beijing, China  
+**April 2008 – August 2008**
+
+- Designed user-interface prototypes for Windows Mobile and Microsoft Surface products using C# and WPF.
+- Investigated rapid-prototyping tools based on 2D physics engines and 3D graphics simulators in collaboration with product designers.
+- Evaluated interaction and visualization concepts for future Microsoft product experiences.
+
+## Open Source Project
+### Vulkan Game Engine
+**Open Source | C++ | Vulkan | [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)**
+
+- Developed an open-source real-time rendering and game-engine framework in C++ and Vulkan, covering renderer initialization, GPU resource management, synchronization, command submission, and swapchain presentation.
+- Implemented a modern graphics pipeline with shader compilation, descriptor management, texture and material loading, camera controls, and scene rendering.
+- Built support for physically based rendering (PBR), glTF/GLB asset loading, image-based lighting, normal mapping, and configurable lighting workflows.
+- Designed the engine for iterative graphics debugging, including validation-layer integration, GPU error diagnosis, render-target inspection, and reproducible test scenes.
+- Developed Vulkan ray-tracing functionality using acceleration structures, shader binding tables, ray-generation, closest-hit, miss, and shadow-ray shaders.
+- Maintained build, documentation, and sample-scene infrastructure to make the project reproducible across supported development environments.
+
+## Research Experience
+
+### Research Assistant
+**Michigan State University** — East Lansing, MI  
+**January 2010 – December 2016**
+
+- Conducted research in computer graphics, fluid simulation, deformable materials, geometric processing, and 3D model representation.
+- Dissertation: **Graphical Simulation Analysis**.
+  - Designed a tool for analyzing time-invariant factors in fluid simulations.
+  - Generated accurate flow trajectories with improved visual quality and reduced computational cost.
+  - Applied eigensolver-based methods for Lagrangian Coherent Structure analysis.
+- Developed fluid-dynamics simulation features for deformable physical systems.
+- Added fictitious forces on deforming meshes to improve realism in fluid simulations.
+- Proposed and implemented homogenization techniques for textile diffusion properties, enabling more realistic stain formation on deforming cloth.
+- Proposed an algorithm for recovering triangle-mesh vertex coordinates from known triangle connectivity using spectral analysis.
+- Conducted research on compact 3D model representation and compression for triangulated surfaces.
+
+## Teaching Experience
+
+### Teaching Assistant
+**Michigan State University** — East Lansing, MI  
+**September 2009 – May 2017**
+
+- Delivered lectures, led lab sessions, graded assignments, and guided more than 300 undergraduate students.
+- Supported junior- and senior-level coursework in computer graphics, multimedia processing, game development, and programming.
+- Courses supported:
+  - **CSE 471 — Media Processing and Multimedia:** Image processing, signal processing, and MFC.
+  - **CSE 472 — Computer Graphics:** OpenGL and foundational graphics programming.
+  - **CSE 473 — Fundamentals of 3D Game Development:** XNA and C programming.
+  - **CSE 231 / CSE 232 — Introduction to Programming I & II:** Python and C++.
+
+## Publications
+
+**Xiaojun Wang, Shiguang Liu, Yiying Tong.**  
+“Stain Formation on Deforming Inelastic Cloth.”  
+*IEEE Transactions on Visualization and Computer Graphics.*  
+DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
+
+**Ze Zhang, Xiaojun Wang, Yiying Tong.**  
+“Angle-Based Representation of Triangulated Surfaces.”  
+*International Conference on Computer Graphics and Image Processing (CGIP), 2024.*
+
+## Technical Skills
+
+- **Programming:** C++, C, Python, C#, JavaScript, SQL
+- **Graphics APIs:** Vulkan, DirectX 11, DirectX 12, OpenGL
+- **GPU & Graphics:** GPU architecture modeling, graphics pipeline simulation, fixed-function hardware, tessellation, primitive processing, cache/compression systems, functional validation, image comparison, performance analysis
+- **Tools & Platforms:** Linux, Windows, Git, Microsoft SQL Server, WPF, MFC, XNA
+- **Engineering Practices:** RTL collaboration, design verification support, debugging, regression testing, bit-accurate validation, log analysis, test automation, tool development
+
+## Information to Complete Before Applying
+
+- Add education details, including degree(s), major(s), graduation year(s), and dissertation information if applicable.
+- Add 3–5 concrete accomplishment bullets for the MediaTek role, ideally with ownership scope, GPU blocks/IP, measurable outcomes, and cross-functional partners.
+- Tailor the skills section and selected accomplishment bullets to each role’s keywords, such as GPU architecture, GPU modeling, performance analysis, graphics drivers, Vulkan, ray tracing, shader cores, memory systems, or verification.

@@ -314,6 +314,15 @@ Linux mv（英文全拼：move file）命令用来为文件或目录改名、或
 kill pid可以关闭一个进程。默认参数是-15，表示温和关闭。  
 kill -9 pid可以强制关闭。  
 
+## pushd
+pushd是操作目录栈的命令  
+目录栈可以用dirs -v查看，栈顶是当前目录  
+
+pushd somedir可以把somedir送到栈顶  
+popd把栈顶pop(popd -0是相同效果)  
+pushd不加参数可以切换栈顶和栈顶下面那个dir  
+
+
 # 获得硬件参数
 ## Number of physical CPU
 > cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l  

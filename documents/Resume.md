@@ -62,16 +62,9 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **Michigan State University** — East Lansing, MI  
 **January 2010 – December 2016**
 
-- Conducted research in computer graphics, fluid simulation, deformable materials, geometric processing, and 3D model representation.
-- Dissertation: **Fluid Animation on Deforming Surface Meshes**.
-  - Designed a tool for analyzing time-invariant factors in fluid simulations.
-  - Generated accurate flow trajectories with improved visual quality and reduced computational cost.
-  - Applied eigensolver-based methods for Lagrangian Coherent Structure analysis.
-- Developed fluid-dynamics simulation features for deformable physical systems.
-- Added fictitious forces on deforming meshes to improve realism in fluid simulations.
-- Proposed and implemented homogenization techniques for textile diffusion properties, enabling more realistic stain formation on deforming cloth.
-- Proposed an algorithm for recovering triangle-mesh vertex coordinates from known triangle connectivity using spectral analysis.
-- Conducted research on compact 3D model representation and compression for triangulated surfaces.
+- Conducted research in computer graphics, fluid simulation, deformable materials, geometric processing, and 3D mesh representation.
+- Dissertation: **Fluid Animation on Deforming Surface Meshes**; developed eigensolver-based methods for analyzing flow trajectories on deforming surfaces with improved quality and efficiency.
+- Developed realistic fluid and stain-simulation techniques for deforming meshes, and proposed spectral methods for compact triangulated-surface representation.
 
 ## Teaching Experience
 
@@ -81,7 +74,7 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 
 - Delivered lectures, led lab sessions, graded assignments, and guided more than 300 undergraduate students.
 - Courses supported:
-  - **CSE 471 — Media Processing and Multimedia:**, **CSE 472 — Computer Graphics:**, **CSE 473 — Fundamentals of 3D Game Development:**, **CSE 231 / CSE 232 — Introduction to Programming I & II:** 
+  - **CSE 471 — Media Processing and Multimedia**, **CSE 472 — Computer Graphics**, **CSE 473 — Fundamentals of 3D Game Development**, **CSE 231 / CSE 232 — Introduction to Programming I & II** 
 
 ## Open Source Project
 ### Vulkan Game Engine

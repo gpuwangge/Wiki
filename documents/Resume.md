@@ -73,8 +73,7 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **September 2009 – May 2017**
 
 - Delivered lectures, led lab sessions, graded assignments, and guided more than 300 undergraduate students.
-- Courses supported:
-  - **CSE 471 — Media Processing and Multimedia**, **CSE 472 — Computer Graphics**, **CSE 473 — Fundamentals of 3D Game Development**, **CSE 231 / CSE 232 — Introduction to Programming I & II** 
+- Courses supported: **CSE 471 — Media Processing and Multimedia**, **CSE 472 — Computer Graphics**, **CSE 473 — Fundamentals of 3D Game Development**, **CSE 231 / CSE 232 — Introduction to Programming I & II** 
 
 ## Open Source Project
 ### Vulkan Game Engine

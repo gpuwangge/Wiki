@@ -43,7 +43,7 @@
 
 # Computer Architecture
 ## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ArchitectureHistory.md)  
-## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ISA.md)  
+## [ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/ISA.md)  
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 
 # MISC

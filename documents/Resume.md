@@ -4,17 +4,17 @@ San Diego, CA | 517-899-1570 | wxjmsu@gmail.com | linkedin.com/in/xiaojun-wang |
 
 ## Professional Summary
 
-Staff GPU Engineer with extensive experience in GPU architecture modeling, graphics-pipeline simulation, functional validation, and developer-tool automation. Expertise in C++, Python, DirectX 11/12, Vulkan, graphics hardware modeling, fixed-function GPU pipeline development, debugging, and image-based validation. Proven record of delivering GPU features across multiple Adreno generations, owning complex graphics blocks, building scalable regression infrastructure, and partnering with RTL and design-verification teams.
+Staff GPU Engineer with extensive experience in GPU architecture modeling, graphics-pipeline simulation, functional validation, and developer-tool automation. Expertise in C++, Python, Vulkan, graphics hardware modeling, fixed-function GPU pipeline development, debugging, and image-based validation. Proven record of delivering GPU features across multiple GPU IP generations, owning complex graphics blocks, building scalable regression infrastructure, and partnering with RTL and design-verification teams.
 
 ## Professional Experience
 
-### Staff GPU Engineer
+### Staff GPU Engineer / Technical Lead
 **MediaTek** — San Diego / San Jose, CA  
 **May 2023 – Present**
-
-- Develop and maintain GPU modeling capabilities for next-generation graphics hardware.
-- Perform high-level GPU architecture analysis, feature modeling, debugging, and validation.
-- Collaborate with cross-functional hardware and software teams to improve GPU functional correctness, performance analysis, and development efficiency.
+- Led ARM GPU IP(Mali) integration for SoC platforms, including IP validation, graphics-driver enablement, and system-level bring-up; also contributed to GPU product-line roadmap planning.
+- Served as Geometry Model Lead for an in-house GPU, driving geometry-pipeline modeling and integrating a texture-compression block.
+- Worked as a GPU Architect on a confidential next-generation GPU program, defining and developing new architectural features.
+- Performed GPU benchmark validation and performance profiling using PVRTune to identify bottlenecks and support optimization.
 
 ### Senior GPU Engineer
 **Qualcomm** — San Diego / Santa Clara, CA  
@@ -111,7 +111,8 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 
 - **Programming:** C++/C, Python, C#, Matlab
 - **Graphics APIs:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL
-- **Tools & Platforms:** Linux, Windows, Android, MacOS, Git, VSCode, Xcode, Perforce, Visual Studio
+- **Platforms & Tools:** Linux, Windows, Android, MacOS, Git, VSCode, Xcode, Perforce, Visual Studio
+- **Profiling Tools:** PVRTune, RenderDoc
 
 ## Information to Complete Before Applying
 

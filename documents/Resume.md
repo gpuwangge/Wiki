@@ -12,7 +12,7 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **MediaTek** — San Diego / San Jose, CA  
 **May 2023 – Present**
 - Led **Arm Mali GPU IP integration** for SoC platforms, including IP-level validation, **graphics-driver** enablement, system bring-up, and cross-functional issue triage.
-- Served as **Geometry Model Lead** for an in-house GPU, driving geometry-pipeline modeling(Triangle assemble/setup, Clipping, Tiling, TBDR, DVS, Compression...) and integrating a texture-compression block.
+- Served as **Geometry High Level Model Lead** for an in-house GPU, driving geometry-pipeline modeling(Triangle assemble/setup, Clipping, Tiling, TBDR, DVS, Compression...) and integrating a texture-compression block.
 - Worked as a **GPU Architect** on a confidential next-generation GPU program, defining and developing new architectural features.
 - Performed **GPU benchmark**(Aztec, Manhattan...) validation and performance profiling using PVRTune to identify bottlenecks and support optimization. Designed and Implemented Top-level Vulkan tests.  
 

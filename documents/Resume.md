@@ -1,10 +1,10 @@
 # Xiaojun Wang
 
-San Diego, CA | 517-899-1570 | wxjmsu@gmail.com | linkedin.com/in/xiaojun-wang | github.com/gpuwangge
+San Diego, CA | 517-899-1570 | [wxjmsu@gmail.com](mailto:wxjmsu@gmail.com) | [linkedin.com/in/xiaojun-wang](https://www.linkedin.com/in/xiaojun-wang) | [github.com/gpuwangge](https://github.com/gpuwangge)
 
 ## Professional Summary
 
-Staff GPU Engineer with extensive experience in GPU architecture modeling, graphics-pipeline simulation, functional validation, and developer-tool automation. Expertise in C++, Python, Vulkan, graphics hardware modeling, fixed-function GPU pipeline development, debugging, and image-based validation. Proven record of delivering GPU features across multiple GPU IP generations, owning complex graphics blocks, building scalable regression infrastructure, and partnering with RTL and design-verification teams.
+Staff GPU Engineer with 8+ years of industry experience developing GPU models, fixed-function graphics features, validation infrastructure, and GPU IP integrations. Combines this experience with 7+ years of Ph.D. level research in computer graphics, geometric processing, fluid simulation, and rendering.
 
 ## Professional Experience
 
@@ -32,82 +32,37 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 - Expanded the image-comparison framework to support two additional image formats.
 - Built more than 10 Python tools for image analysis, log analysis, regression triage, and workflow automation, improving engineering productivity and reducing human error.
 
-### Software Engineer Intern
-**Microsoft** — Sunnyvale, CA  
-**June 2013 – August 2013**
+## Earlier Experience
 
-- Developed automated data-mitigation tools for the Windows 8 News app, using Microsoft SQL Server, C, JavaScript, and HTML5 to detect and correct raw-source data errors.
-- Optimized the data-analysis workflow, achieving an 89% acceptance rate and 100% mitigation of targeted data issues.
-
-### Research Intern
-**Microsoft Research Asia** — Beijing, China  
-**November 2008 – April 2009**
-
-- Developed a portable human-computer interaction prototype using gyroscopes as an alternative display and interaction mechanism.
-- Implemented multithreaded software to improve control accuracy, responsiveness, and runtime performance.
-
-### Software Engineer Intern
-**Microsoft Advanced Technology Center** — Beijing, China  
-**April 2008 – August 2008**
-
-- Designed C#/WPF UI prototypes for Windows Mobile and Microsoft Surface, and evaluated 2D-physics and 3D-simulation tools to explore future interaction and visualization concepts with product designers.
-
-## Research Experience
-
-### Research Assistant
-**Michigan State University** — East Lansing, MI  
-**January 2010 – December 2016**
-
-- Conducted research in computer graphics, fluid simulation, deformable materials, geometric processing, and 3D mesh representation.
-- Dissertation: **Fluid Animation on Deforming Surface Meshes**; developed eigensolver-based methods for analyzing flow trajectories on deforming surfaces with improved quality and efficiency.
-- Developed realistic fluid and stain-simulation techniques for deforming meshes, and proposed spectral methods for compact triangulated-surface representation.
-
-## Teaching Experience
-
-### Teaching Assistant
-**Michigan State University** — East Lansing, MI  
-**September 2009 – May 2017**
-
-- Delivered lectures, led lab sessions, graded assignments, and guided more than 300 undergraduate students.
-- Courses supported: **CSE 471 — Media Processing and Multimedia**, **CSE 472 — Computer Graphics**, **CSE 473 — Fundamentals of 3D Game Development**, **CSE 231 / CSE 232 — Introduction to Programming I & II** 
+**Microsoft / Microsoft Research Asia** — Software Engineering & Research Intern | Sunnyvale, CA | Beijing, China | 2008–2013  
+Built data-quality automation for the Windows 8 News app (SQL Server, C, JavaScript, HTML5), achieving 89% acceptance and 100% mitigation of targeted issues.  
+Developed gyroscope-based HCI prototypes, multithreaded interaction software, and C#/WPF prototypes for Windows Mobile and Microsoft Surface.
 
 ## Open Source Project
-### Vulkan Game Engine
-**Open Source | C++ | Vulkan | [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)**
+### Vulkan Game Engine: [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)
 
-- Built an open-source C++/Vulkan real-time rendering and game-engine framework with explicit GPU resource management, synchronization, command submission, descriptor systems, and swapchain presentation.
-- Implemented PBR materials, image-based lighting, and Vulkan ray tracing with acceleration structures, shader binding tables, reflections, and shadows.
+- Built an open-source C++/Vulkan rendering engine featuring explicit GPU resource and synchronization management, PBR/IBL, and ray tracing with acceleration structures, SBTs, reflections, and shadows.  
 
 ## Education
 
-**Ph.D., Computer Science (Computer Graphics)**  
-Michigan State University, East Lansing, MI  
-September 2009 – December 2017
-
-**M.S. Coursework, Software Engineering**  
-Chinese Academy of Sciences, Beijing, China  
-September 2008 – June 2009
-
-**B.S., Automation**  
-Beihang University, Beijing, China  
-September 2004 – July 2008
+**Ph.D., Computer Science (Computer Graphics)**  Michigan State University, East Lansing, MI, September 2009 – December 2017  
+Dissertation: *Fluid Animation on Deforming Surface Meshes*. Research in geometric processing, fluid simulation, deformable materials, and 3D mesh representation.   
+**B.S., Automation**  Beihang University, Beijing, China, September 2004 – July 2008  
 
 ## Publications
 
-**Xiaojun Wang, Shiguang Liu, Yiying Tong.**  
-“Stain Formation on Deforming Inelastic Cloth.”  
+**Xiaojun Wang, Shiguang Liu, Yiying Tong.**  “Stain Formation on Deforming Inelastic Cloth.”  
 *IEEE Transactions on Visualization and Computer Graphics.*  
-DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
+DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.  
 
-**Ze Zhang, Xiaojun Wang, Yiying Tong.**  
-“Angle-Based Representation of Triangulated Surfaces.”  
+**Ze Zhang, Xiaojun Wang, Yiying Tong.**  “Angle-Based Representation of Triangulated Surfaces.”  
 *International Conference on Computer Graphics and Image Processing (CGIP), 2024.*
 
 ## Technical Skills
 
 - **Programming:** C++/C, Python, C#, Matlab
-- **Graphics APIs:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL
+- **Graphics APIs:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL, OpenCL
 - **Platforms & Tools:** Linux, Windows, Android, MacOS, iOS, Git, VSCode, Xcode, Perforce, Visual Studio
 - **Profiling Tools:** PVRTune, RenderDoc
-- **GPU Skills:** GPU architecture, GPU modeling, Graphics drivers, Ray tracing, GPU verification
+- **GPU Skills:** GPU architecture/modeling/driver/verification, Ray tracing, Parallel Computing 
 

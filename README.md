@@ -43,12 +43,13 @@
 
 # Computer Architecture
 ## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ArchitectureHistory.md)  
+## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ISA.md)  
+## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 
 # MISC
 ## [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  
 ## [Assembly Language](https://github.com/gpuwangge/Wiki/blob/main/documents/AssemblyLanguage.md) 
 ## [IT Infrastructure](https://github.com/gpuwangge/Wiki/blob/main/documents/ITInfrastructure.md)   
-## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 ## [MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md) 
 ## [SSL](https://github.com/gpuwangge/Wiki/blob/main/documents/SSL.md)   
 ## [C Features](https://github.com/gpuwangge/Wiki/blob/main/documents/CFeatures.md)   

@@ -36,10 +36,8 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **Microsoft** — Sunnyvale, CA  
 **June 2013 – August 2013**
 
-- Developed automated mitigation tools to filter and correct errors in raw source data for the Windows 8 News app.
-- Used Microsoft SQL Server, C, JavaScript, and HTML5 to process, analyze, and repair incoming data.
-- Optimized the incoming-data analysis workflow, substantially improving processing efficiency.
-- Achieved an 89% acceptance rate and a 100% mitigation rate for targeted data issues.
+- Developed automated data-mitigation tools for the Windows 8 News app, using Microsoft SQL Server, C, JavaScript, and HTML5 to detect and correct raw-source data errors.
+- Optimized the data-analysis workflow, achieving an 89% acceptance rate and 100% mitigation of targeted data issues.
 
 ### Research Intern
 **Microsoft Research Asia** — Beijing, China  
@@ -52,9 +50,7 @@ Staff GPU Engineer with extensive experience in GPU architecture modeling, graph
 **Microsoft Advanced Technology Center** — Beijing, China  
 **April 2008 – August 2008**
 
-- Designed user-interface prototypes for Windows Mobile and Microsoft Surface products using C# and WPF.
-- Investigated rapid-prototyping tools based on 2D physics engines and 3D graphics simulators in collaboration with product designers.
-- Evaluated interaction and visualization concepts for future Microsoft product experiences.
+- Designed C#/WPF UI prototypes for Windows Mobile and Microsoft Surface, and evaluated 2D-physics and 3D-simulation tools to explore future interaction and visualization concepts with product designers.
 
 ## Research Experience
 
@@ -111,12 +107,7 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 
 - **Programming:** C++/C, Python, C#, Matlab
 - **Graphics APIs:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL
-- **Platforms & Tools:** Linux, Windows, Android, MacOS, Git, VSCode, Xcode, Perforce, Visual Studio
+- **Platforms & Tools:** Linux, Windows, Android, MacOS, iOS, Git, VSCode, Xcode, Perforce, Visual Studio
 - **Profiling Tools:** PVRTune, RenderDoc
+- **GPU Skills:** GPU architecture, GPU modeling, Graphics drivers, Ray tracing, GPU verification
 
-## Information to Complete Before Applying
-
-- Add education details, including degree(s), major(s), graduation year(s), and dissertation information if applicable.
-- Add 3–5 concrete accomplishment bullets for the MediaTek role, ideally with ownership scope, GPU blocks/IP, measurable outcomes, and cross-functional partners.
-- Tailor the skills section and selected accomplishment bullets to each role’s keywords, such as GPU architecture, GPU modeling, performance analysis, graphics drivers, Vulkan, ray tracing, shader cores, memory systems, or verification.
-- **GPU & Graphics:** GPU architecture modeling, graphics pipeline simulation, fixed-function hardware, tessellation, primitive processing, cache/compression systems, functional validation, image comparison, performance analysis

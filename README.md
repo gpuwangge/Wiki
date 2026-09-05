@@ -41,8 +41,10 @@
 ## [Game Engine Introduction](https://github.com/gpuwangge/Wiki/blob/main/documents/GameEngineIntroduction.md)  
 ## [Game Camera](https://github.com/gpuwangge/Wiki/blob/main/documents/GameCamera.md)  
 
+# Computer Architecture
+## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ArchitectureHistory.md)  
+
 # MISC
-## [Computer Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArchitecture.md)  
 ## [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  
 ## [Assembly Language](https://github.com/gpuwangge/Wiki/blob/main/documents/AssemblyLanguage.md) 
 ## [IT Infrastructure](https://github.com/gpuwangge/Wiki/blob/main/documents/ITInfrastructure.md)   

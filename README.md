@@ -45,6 +45,8 @@
 ## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ArchitectureHistory.md)  
 ## [ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/ISA.md)  
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
+## [Arithmetic](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArithmetic.md)  
+
 
 # MISC
 ## [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  

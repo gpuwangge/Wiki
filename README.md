@@ -20,6 +20,7 @@
 # GPU
 ## [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUDriver.md)  
 ## [GPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUArchitecture.md)   
+## [GPU ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUISA.md)   
 ## [Warp Divergence](https://github.com/gpuwangge/Wiki/blob/main/documents/WarpDivergence.md)  
 ## [Register File](https://github.com/gpuwangge/Wiki/blob/main/documents/RegisterFile.md)  
 

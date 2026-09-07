@@ -99,7 +99,8 @@ Cascade 能：
 - 执行终端命令（安装依赖、运行测试、修复错误）
 - 多文件协作编辑（前端、后端、配置、测试一起改）
 - 自动生成项目结构
-- 自动规划多步骤任务（AI Flow）
+- 自动规划多步骤任务（AI Flow）  
+
 Windsurf 会记住：  
 - 项目结构
 - 你的编码习惯
@@ -147,5 +148,25 @@ OpenRouter： 一个 API 聚合平台，里面包含很多标记为 Free 的模�
     - 大型/满血模型 (70B+): 48 GB+ 显存/统一内存 (双卡 RTX 3090/4090 或 Mac Studio (64G-128G))
     - 满血旗舰 (671B 原始 R1): 350 GB+ 显存/内存 (8× A100/H100 节点),不建议本地单机运行，必须走 Online API
 
-
+# OpenCode
+开发公司：OpenCode 由 OpenCode 团队/开源社区 维护开发，遵循 MIT 开源开源协议。  
+旨在提供一个无厂商绑定（No Lock-in）、透明、隐私安全且支持多端使用的 Agent 编程引擎。  
+## 安装方法
+通过 npm / pnpm 全局安装  
+在项目根目录下打开终端，输入 opencode 启动交互界面（TUI）。  
+选择对应的提供商并粘贴 API Key 即可开始使用。  
+## 功能
+Plan 模式：只读分析代码，生成改动方案与架构规划，不直接动代码（安全且节约 Token）。  
+Build 模式：全权限构建，能自动创建/修改文件并运行 Bash 命令落地功能。  
+## 费用
+OpenCode Agent 本身是 100% 免费且开源的，你不需要为客户端软件付一分钱。唯一的费用来自于使用后台的大语言模型（LLM API）。  
+- 自备 API 密钥 (BYOK)：直接按厂商 API 计费，接入自己的 DeepSeek、Anthropic (Claude)、OpenAI 或 Ollama/LM Studio（本地全免费）。OpenCode 不收取任何中间差价。  
+- 免费开源模型包：OpenCode Zen 平台提供的部分完全免费的开源代码模型目录。
+- OpenCode Zen (按量付费)：官方提供的统一网关，充值后按模型原价计费，包含部分轮换的免费模型。
+- OpenCode Go (订阅制)：$10 / 月，提供开源/主流编程模型（如 DeepSeek, GLM, Qwen, Kimi 等）的稳定高额度调用。  
+## OpenCode+本地模型部署 跟 continue+本地模型部署有什么区别
+- Continue:作为VSCode插件,对小模型友好的，比较轻量。默认不自带代码执行环境，侧重生成与分析。  
+Qwen2.5-Coder-7B / DeepSeek-Coder 即可很好处理补全和对话。  
+- OpenCode:独立Terminal，是AI Agent，要求本地模型具备较强Tool Calling和Agent能力。自带/集成沙箱执行环境，模型能自己跑代码并根据报错修复。通常更依赖32B或更大参数量、上下文更长的高性能模型。  
+需要较强的 Function Calling / Tool Use 和逻辑推理能力，如 DeepSeek-R1、Llama-3.3-70B  
 

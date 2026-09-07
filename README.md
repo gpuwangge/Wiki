@@ -43,7 +43,8 @@
 
 # Computer Architecture
 ## [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ArchitectureHistory.md)  
-## [ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/ISA.md)  
+## [ISA Fundamentals](https://github.com/gpuwangge/Wiki/blob/main/documents/ISAFundamentals.md)  
+## [ARM ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/ARMISA.md)  
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 ## [Arithmetic](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArithmetic.md)  
 

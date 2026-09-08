@@ -10,7 +10,8 @@
 
 # AI
 ## [Stable Diffusion](https://github.com/gpuwangge/Wiki/blob/main/documents/StableDiffusion.md)   
-## [AI Coding](https://github.com/gpuwangge/Wiki/blob/main/documents/AICoding.md)   
+## [AI Agent Provider](https://github.com/gpuwangge/Wiki/blob/main/documents/AIAgentProvoder.md)   
+## [AI Agent Local](https://github.com/gpuwangge/Wiki/blob/main/documents/AIAigentLocal.md)   
 
 # Graphics
 ## [Global illumination](https://github.com/gpuwangge/Wiki/blob/main/documents/Globalillumination.md)   

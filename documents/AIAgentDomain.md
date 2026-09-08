@@ -23,7 +23,7 @@ Domain AI Agent跟AI Coding, AI Agent的区别如下：
 | 一句话概括 | 帮你写代码 | 替你完成多步骤任务 | 在一个专业领域中，按该领域的知识、工具和规则完成任务 |
 
 
-在有AI Agent的情况下，用什么语言实现Domain AI Agent？
+在有AI Agent的情况下，用什么语言实现Domain AI Agent:
 
 | 模块 | 推荐语言 | 原因 |
 |---|---|---|
@@ -34,7 +34,7 @@ Domain AI Agent跟AI Coding, AI Agent的区别如下：
 | Tool 协议 | **JSON Schema + HTTP/REST、MCP 或 gRPC** | 将 Agent runtime 与领域工具解耦；工具可独立测试、替换、审计和部署 |
 
 
-描述ai coding, ai agent for coding, swe agent的关系：
+描述AI Coding, AI Agent for Coding, SWE Agent的关系：
 
 | 类别 | 一句话定义 | 是否自主调用工具 | 典型任务范围 | 典型交付物 | 是否必须验证 |
 |---|---|---:|---|---|---:|

@@ -62,7 +62,7 @@ http://localhost:11434
 11434是OLLAMA_HOST指定的默认TCP端口。改成其他的未占用端口也是可以的。  
 若显示“Ollama is running”，则表示本地服务已就绪，VSCode可以通过这个端口来连接模型。  
 (此时可以关闭Terminal，端口11434的服务仍然会继续有效)  
-(如果要关闭服务，在任务管理器中强制关闭ollama.exe。如果要重新打开，就重新执行ollama run)  
+(如果要关闭服务，使用ollma stop, 或者在任务管理器中强制关闭ollama.exe。如果要重新打开，就重新执行ollama run)  
 回到VSCode，点击Continue的空心六边形图标，再点击右上角齿轮，再点击Configs图标，再点击"Main Config"右边的六边形齿轮图标，会打开config.yaml文件。  
 在config.yaml文件内加入如下字段：  
 ```
@@ -120,4 +120,35 @@ WIP
 WIP
 ## 大模型介绍：Kimi / Moonshot 系列开源蒸馏版/轻量版 (月之暗面)
 WIP
+
+## Ollama使用Notes
+### 自动加载模型
+当VSCode+Continue+Ollama+模型的链路设定完成后，每次时候就不需要在terminal里面运行ollama run了。  
+可以直接在chatbot上选择模型名字，然后随便说点什么，这个模型就会自动被加载。  
+甚至开启了autocomplete之后，只要在VSCode文档里输入东西触发补全，就会自动在后台加载模型。  
+这里会出现一些小问题，不如不小心触发了模型加载，之后玩游戏就会出现显存不够用的麻烦。  
+
+### 多模型加载
+如果Ollma设定了不只一个模型，那么每次用ollma run或使用chatbot时候或触发补全的时候，这些模型都会被同时加载。  
+这些模型都共用同一个端口，比如11434。  
+但是，每次加载一个模型，GPU内存都会被占用一部分。比如: 正常情况下，笔记本5080(16GB)的显存占用为0.7/16GB。  
+- 加载qwen2.5-coder:7b之后占用为5.7/16GB。  
+- 加载llama3.1:8b之后占用为6.4/16GB。  
+- 同时加载两者之后占用为11.4/16GB。  
+
+### 常用Ollama命令
+除了
+```
+ollama run model_name
+```
+用如下命令可以查看当前加载的模型：
+```
+ollama ps
+```
+用如下命令可以卸载模型：
+```
+ollama stop model_name
+```
+
+
 

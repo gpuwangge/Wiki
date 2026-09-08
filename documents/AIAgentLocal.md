@@ -6,7 +6,7 @@ Continue是开源 AI 编程插件，它不能独立使用，必须配合大模�
 2026年6月中旬，Continue 团队被 Cursor 收购，官方 GitHub 仓库设置为只读状态，但其开源代码库依然开源可用。社区依然在广泛使用它，或者将其无缝迁移至继承其路线的开源项目（如 Cline 或 Roo Code）。  
 要实现高效且低成本（甚至免费）的 AI 编程环境，Continue + 免费/开源模型 API 是非常经典的架构方案。  
 
-## Steps to Build a AI Agent
+## Steps to Build a AI Chatbot and AI Coding Complete System
 ### 首先是安装Continue
 可通过VSCode Extension安装。  
 第一次点击左侧 Continue 图标(一个空心六边形)，它会自动引导你进行初始化设置。  
@@ -67,13 +67,13 @@ http://localhost:11434
 在config.yaml文件内加入如下字段：  
 ```
 models:
-  - name: "Qwen2.5 Coder 7B"
-    provider: ollama
-    model: qwen2.5-coder:7b
-    apiBase: http://localhost:11434
-    roles:
-        - chat
-        - autocomplete
+    - name: "Qwen2.5 Coder 7B"
+        provider: ollama
+        model: qwen2.5-coder:7b
+        apiBase: http://localhost:11434
+        roles:
+            - chat
+            - autocomplete
 ```
 这时候在Continue底部就可以选择"Qwen2.5 Coder 7B"作为对话模型了。  
 roles这一栏如果不写，默认就是chat。写了autocomplete并且模型也支持autocomplete功能，就可以在代码编辑器中使用Tab键进行代码补全。  
@@ -81,40 +81,41 @@ roles这一栏如果不写，默认就是chat。写了autocomplete并且模型�
 一般来讲7b做补全没有问题，但如果想提升响应速度，可以用1.5b的qwen2.5模型。  
 到这里我们就用Continue+Ollama+Qwen2.5 Coder 7B搭建了一个**免费的无限使用的不依赖网络的**AI聊天和代码补全环境。  
 
-## 大模型介绍：DeepSeek-R1
-定位： 强推理/逻辑链模型（Reasoning Model）。  
-特点： 在出厂时就经过大规模强化学习训练，回答编码问题前会先进行内部“思考（Chain of Thought）”。擅长解决复杂 Bug、算法设计、重构底座架构等需要深度逻辑推理的场景。  
-在 Continue 中的角色： 适合放在 Chat（对话）模式下，当你遇到极其晦涩的代码报错或复杂的逻辑需求时调用。  
-## 大模型介绍：Llama-3
+ 
+## Steps to Build a AI Agent
+首先AI Agent对模型有更强的需求。这里选取Llama-3.1:8b作为基础模型。  
+大模型介绍：Llama-3  
 定位： 全能通用开源大模型。  
 特点： 具有极高的响应速度、出色的指令遵循能力和极强的代码生成基础。  
-其中llama3.1:8b是入门级AI Agent模型。(Agent Mode需要tool/function calling)
-先抓取模型(4.9GB)：
+其中llama3.1:8b是入门级AI Agent模型。(Agent Mode需要tool/function calling)  
+先抓取模型(4.9GB)：  
 ```
 ollama run llama3.1:8b
 ```
 然后修改config.yaml文件，加入llama3.1:8b的配置信息。  
 ```
+models:
     - name: "Llama3.1:8B"
-    provider: ollama
-    model: llama3.1:8b
-    apiBase: http://localhost:11434
-    roles:
-        - chat
-        - autocomplete
-    capabilities:
-        - tool_use
+        provider: ollama
+        model: llama3.1:8b
+        apiBase: http://localhost:11434
+        roles:
+            - chat
+            - autocomplete
+        capabilities:
+            - tool_use
 ```
 然后确认在continue底部左下角的mode选中的是Agent。  
 根据Continue的说明，如果模型有某个工具调用的能力，就可以直接调用，不需要你教他怎么使用。  
 可以先让模型读一个文件测试一下，然后写入文件，然后读一个工作区所有文件并列出目录，确认功能正常后再赋予复杂的任务。  
-到这里**免费的无限使用的不依赖网络的**AI Agent做完成了。  
+到这里**免费的无限使用的不依赖网络的**通用AI Agent做完成了。  
 
+## 大模型介绍：DeepSeek-R1
+定位： 强推理/逻辑链模型（Reasoning Model）。  
+特点： 在出厂时就经过大规模强化学习训练，回答编码问题前会先进行内部“思考（Chain of Thought）”。擅长解决复杂 Bug、算法设计、重构底座架构等需要深度逻辑推理的场景。  
+在 Continue 中的角色： 适合放在 Chat（对话）模式下，当你遇到极其晦涩的代码报错或复杂的逻辑需求时调用。 
 ## 大模型介绍：Qwen2.5
 ## 大模型介绍：GLM 系列 (智谱 AI - Zhipu AI)
 ## 大模型介绍：Kimi / Moonshot 系列开源蒸馏版/轻量版 (月之暗面)
-
-## Steps to Build a SWE Agent
-SWE Agent跟Coding Agent的区别是，SWE Agent把“解决一个软件工程工作项”作为最小交付单位，强调可验证的代码变更和工程闭环。   
 
 

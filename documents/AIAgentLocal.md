@@ -1,6 +1,6 @@
 # How to Build a Local AI Agent
 
-## Continue
+## VSCode插件工具：Continue
 Continue是开源 AI 编程插件，它不能独立使用，必须配合大模型。  
 开发公司：Continue Dev，采用 Apache 2.0 开源协议  
 2026年6月中旬，Continue 团队被 Cursor 收购，官方 GitHub 仓库设置为只读状态，但其开源代码库依然开源可用。社区依然在广泛使用它，或者将其无缝迁移至继承其路线的开源项目（如 Cline 或 Roo Code）。  
@@ -115,7 +115,9 @@ models:
 特点： 在出厂时就经过大规模强化学习训练，回答编码问题前会先进行内部“思考（Chain of Thought）”。擅长解决复杂 Bug、算法设计、重构底座架构等需要深度逻辑推理的场景。  
 在 Continue 中的角色： 适合放在 Chat（对话）模式下，当你遇到极其晦涩的代码报错或复杂的逻辑需求时调用。 
 ## 大模型介绍：Qwen2.5
+WIP
 ## 大模型介绍：GLM 系列 (智谱 AI - Zhipu AI)
+WIP
 ## 大模型介绍：Kimi / Moonshot 系列开源蒸馏版/轻量版 (月之暗面)
-
+WIP
 

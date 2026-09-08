@@ -82,8 +82,8 @@ Codex 本身不单独收费，包含在 ChatGPT 套餐中
 ## 费用
 - 免费额度 (Google AI Studio)：个人开发者使用来自 AI Studio 的 API Key 时，享有高限额的免费调用额度，足以覆盖日常终端命令交互与轻度开发需求。
 - 按量付费 (Pay-As-You-Go)：按 API Token 计费，超出免费额度或绑定 Google Cloud 账单后，按调用的具体模型（如 Gemini Flash / Pro）的输入/输出 Token 计费（例如 Gemini Flash 输入低至 $0.10 - $0.50 / 百万 Token）。
-- Google Cloud Shell：免费使用，在 Google Cloud Shell 环境中提供默认免费配额（云环境每周提供 50 小时免费使用时长）。
-- Gemini Code Assist订阅：如果你购买或获得了 Gemini Code Assist 许可证，Gemini CLI 与 IDE 插件将共享配额，无需重复支付 API 费用。
+- Google Cloud Shell：免费使用，在 Google Cloud Shell 环境中提供默认免费配额（云环境每周提供 50 小时免费使用时长）。  
+- Gemini Code Assist订阅：如果你购买或获得了 Gemini Code Assist 许可证，Gemini CLI 与 IDE 插件将共享配额，无需重复支付 API 费用。  
 
 # Windsurf
 最初开发者：Codeium  
@@ -134,6 +134,14 @@ Ollama类似于大模型界的 Docker。在终端输入一行命令（例如 oll
 可通过VSCode Extension安装。  
 第一次点击左侧 Continue 图标，它会自动引导你进行初始化设置。  
 在配置文件中接入你的云端 API Key（如 DeepSeek、OpenRouter）或本地 Ollama 后，即可直接开始使用。  
+
+- 如何获得API Key：以Google Gemini API为例，首先准备好google账号，前往 Google AI Studio，登陆后同意服务条款，然后点击屏幕左侧Dashboard界面，会看到API Key已经生成好了，默认状态是Free tier。(同时会看到自动生成了一个Default Gemini Project)  
+Free tier的Gemini API Key没有时间过期，但有配额限制：具体的每分钟请求数（RPM）和每天请求数（RPD）会根据你调用的模型（如 Flash 或 Pro 系列）以及官方当时的实时容量政策而变化。  
+Free tier的数据可能会被 Google 记录以用于改进其产品和服务。  
+- Gemini Project有什么用：Google 对 Gemini API 的免费使用限制（如每分钟请求数 RPM、每天请求数 RPD）是按项目（Project）统计的，而非单纯按 API 密钥计算。  
+即使是免费调用，也需要在 Google Cloud 底层启用 Generative Language API 等核心服务，项目充当了这些服务的容器。  
+将 API 密钥绑定在项目中，如果你以后决定从免费层升级到按量付费（Pay-as-you-go）方案，只需直接为该项目关联账单（Billing）即可无缝提升配额，无需重新更换密钥。  
+
 ### 大模型
 - Online 模式，通过云端厂商提供的 API Endpoint 运行，不需要下载模型到本地。  
 在 Continue 的配置文件（config.yaml 或 config.json）中填入 API Key 即可。  

@@ -52,6 +52,10 @@
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 ## [Arithmetic](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArithmetic.md)  
 
+# SystemC
+## [SystemC Tutorial](https://github.com/gpuwangge/Wiki/blob/main/documents/SystemCTutorial.md)  
+## [TLM Tutorial](https://github.com/gpuwangge/Wiki/blob/main/documents/TLMTutorial.md)  
+
 
 # MISC
 ## [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  

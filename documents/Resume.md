@@ -4,7 +4,7 @@ San Diego, CA | 517-899-1570 | [wxjmsu@gmail.com](mailto:wxjmsu@gmail.com) | [li
 
 ## Professional Summary
 
-Staff GPU Engineer with 8+ years of industry experience developing GPU models, fixed-function graphics features, validation infrastructure, and GPU IP integrations. Combines this experience with 7+ years of Ph.D. level research in computer graphics, geometric processing, fluid simulation, and rendering.
+Staff GPU Engineer with 8+ years of industry experience developing GPU models, fixed-function graphics features, validation infrastructure, and GPU IP integrations. Combines a deep background in hardware simulation and graphics with active research/practice in NPU/AI accelerator architectures and AI Agent workflows.
 
 ## Professional Experience
 
@@ -39,9 +39,8 @@ Built data-quality automation for the Windows 8 News app (SQL Server, C, JavaScr
 Developed gyroscope-based HCI prototypes, multithreaded interaction software, and C#/WPF prototypes for Windows Mobile and Microsoft Surface.
 
 ## Open Source Project
-### Vulkan Game Engine: [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)
-
-- Built an open-source C++/Vulkan rendering engine featuring explicit GPU resource and synchronization management, PBR/IBL, and ray tracing with acceleration structures, SBTs, reflections, and shadows.  
+**Vulkan Game Engine** [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)  
+Built an open-source C++/Vulkan rendering engine featuring explicit GPU resource and synchronization management, PBR/IBL, and ray tracing with acceleration structures, SBTs, reflections, and shadows.  
 
 ## Education
 
@@ -60,9 +59,11 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 
 ## Technical Skills
 
-- **Programming:** C++/C, Python, C#, Matlab
-- **Graphics APIs:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL, OpenCL
+- **Programming:** C++/C, Python, C#, Matlab, SystemC, TLM
+- **Graphics/Compute API:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL, OpenCL
+- **GPU:** GPU architecture/modeling/driver/verification, Ray tracing, Parallel Computing 
 - **Platforms & Tools:** Linux, Windows, Android, MacOS, iOS, Git, VSCode, Xcode, Perforce, Visual Studio
-- **Profiling Tools:** PVRTune, RenderDoc
-- **GPU Skills:** GPU architecture/modeling/driver/verification, Ray tracing, Parallel Computing 
+- **AI:** AI Agent, AI Infrastructure, NPU Concepts
+- **Profiling:** PVRTune, RenderDoc
+
 

@@ -312,7 +312,7 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 | $N_{\text{sc}}$ | Shader Core（着色器核心）总数 |
 | $W_{\text{AXI}}$ | AXI 总线宽度（Bits 或 Bytes） |
 | $S_{\text{beat}}$ | 单次传输 Beat 的数据大小（128 Bytes） |
-| $B_{\text{L2\_EXT\_RD}}$ | L2 观测到的外部读传输 Beat 数 |
+| $B_{\mathrm{L2\_EXT\_RD}}$ | L2 观测到的外部读传输 Beat 数 |
 | $B_{\text{L2\_EXT\_WR}}$ | L2 观测到的外部写传输 Beat 数 |
 | $\sum B_{\text{SC\_RD\_EXT}}$ | 各 Shader 单元（RTU, FTC, LSC, TEX）发起的外部读 Beat 总和 |
 | $\sum B_{\text{SC\_WR}}$ | 各 Shader 单元（LSC_OTHER, TIB, LSC_WB）发起的写传输 Beat 总和 |

@@ -289,6 +289,14 @@ LSC（Load-Store Cache）：是 Shader Core 内专为普通内存读写（Genera
 RTU (Ray Tracing Unit)：RTU 的引入就是为了将这些高重复性、高算力消耗的任务从 Shader Core 中剥离出来，用专用硬件硬件电路去跑。  
 比如：BVH 遍历加速（BVH Traversal），射线-三角面相交检验（Ray-Triangle Intersection Testing）。  
 
+之所以选择 FTC、TEX、LSC、RTU，通常是因为这几个模块直接产生或消费大量可归因于数据访问的 cache/memory traffic。  
+它们有一个共同点：它们的请求最终会进入 L2 / memory hierarchy，因此可以和 L2 侧的 counter 做 cross-check。  
+
+为什么Shader以外的 Geometry Fixed Function 不参与计算？  
+因为实际上隐含了一个假设：Shader-side external traffic ≈ L2 external traffic  
+Geometry Fixed Function 不是因为“它不重要”而不统计，而是因为你必须确认它是否存在独立、可对应到 L2 的 memory traffic。  
+如果存在，那么它理论上应该加入统计。  
+
 ## DDR
 DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机与 GPU 硬件中，它通常指 DDR SDRAM（双倍速率同步动态随机存取存储器），即我们常说的主内存或系统显存/外存。  
 
@@ -301,7 +309,6 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 - DDR（系统主存 / 显存）： 外部大容量存储，位于芯片外部，容量大（GB ~ TB 级别），但访问延迟显著高于片上 Cache。
 
 在 GPU 架构中，当计算单元（Shader Core）所需的指令或数据没有在 L1/L2 Cache 中命中（Cache Miss）时，就必须通过内存控制器（Memory Controller）穿过物理总线，直接去 DDR 中拉取数据。  
-
 
 ## Bandwidth Validation
 带宽一致性校验（Bandwidth Validation）通过比较底层/硬件边缘计数（Ground Truth，基准值）与上层/着色器核心统计（Actual，实测估算值）之间的偏差，来校验数据流量建模或硬件监控（Hardware Counters）的准确性。  

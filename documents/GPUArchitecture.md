@@ -171,14 +171,48 @@ Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）�
 
 对齐机制（Alignment）：Cache Line 在物理内存中是严格按其大小对齐的。例如在 64 字节 Cache Line 的系统中，内存地址 $0x00 \sim 0x3F$ 属于同一行，下一个 Cache Line 必然从 $0x40$ 开始。  
 
-## Beat
-GPU/CPU 硬件性能建模中，Beat（通常译为“拍”或“数据拍”）指的是在单个时钟周期（Clock Cycle）内，通过总线传输的一块数据单元（Data Transfer Unit）。  
-简单来说，当系统需要传输一大块内存数据（例如一个 128 字节的 Cache Line）时，总线通常不会在一个时钟周期内把所有数据一次性送达，而是把这块数据拆分成多次突发传输（Burst Transfer），每一次传输的基本单位就叫作一个 Beat。
+## Cache Eviction
+Cache 逐出 (Eviction) 是指当缓存（Cache）空间已满，而 CPU/GPU 又需要载入新的数据时，缓存控制器强制将某一条已存在的缓存数据（Cache Line）移除或写回主存，从而为新数据腾出空间的机制。  
 
-在实际芯片硬件或总线传输中，Cache Line 与数据传输的关系如下：  
-- 假设 GPU 产生了一次 128 字节 Cache Line 的缺失（Miss），需要向外存发起读取；  
-- 如果总线单次数据传输能力（Beat）为 16 字节（128-bit 总线）；(或者说一个beat的大小就是总线的宽度)  
-- 那么传输这 1 个 Cache Line 的数据就需要占用 8 个 Beats（$128 / 16 = 8$ 拍突发传输）。  
+工作原理  
+命中（Cache Hit）： 请求的数据已在 Cache 中，直接快速读取。  
+未命中（Cache Miss）与替换： 请求的数据不在 Cache 中，需要从更慢的下一级存储（如 L3 Cache 或 DDR/内存）读取。如果此时 Cache 没有空余位置，就必须触发 Eviction。  
+Dirty / Clean 状态处理：  
+- Clean Line（未修改数据）： 该缓存数据与下一级内存中的内容一致，逐出时直接丢弃/覆盖（Discard），不产生额外的写回开销。
+- Dirty Line（已修改数据）： 该缓存数据被处理器写过，与内存不一致。逐出时必须先将其写回（Write-back）到下一级存储，这会产生额外的内存总线流量（写开销）。  
+
+### 常见的替换策略（Eviction Policies）  
+决定“哪一条数据该被逐出”由硬件/软件的算法控制
+- LRU (Least Recently Used)： 逐出最近最少使用的数据，假设越久没用过的未来越不可能用（最常用的算法）。
+- FIFO (First-In, First-Out)： 逐出最先载入的数据，不考虑后续使用频率。
+- LFU (Least Frequently Used)： 逐出使用频率最低的数据。
+- Random（随机）： 随机挑选一条数据逐出，实现成本低，常用于某些硬件硬件简化的缓存结构。
+
+对系统性能的影响
+- Cache Thrashing（缓存抖动）： 如果频繁触发 Eviction（例如程序循环访问的数据量大于 Cache 容量），会导致数据不断被“载入-逐出-写回-再载入”，引发大量的内存带宽开销，显著拖慢系统性能。
+- 带宽开销： 在硬件性能建模（如 GPU 仿真）中，Eviction 产生的 Dirty Line 写回属于非有效数据请求（Overhead Traffic），通常需要在计算核心有效数据吞吐率时予以剔除。
+
+## Cache Coherency
+缓存一致性消息（Cache Coherency Messages） 是多核处理器或 GPU 多 Slot/Core 架构中，各个 Cache 控制器之间为了保证不同缓存中同一份数据完全一致而发送的控制信号或数据数据包。  
+
+核心痛点：为什么需要 Consistency/Coherency？  
+在多核系统（例如 GPU 的多个 L2 Cache Slice 或 Shader Core）中，主存（DDR）中的同一个内存地址 $A$ 可能会同时被复制并缓存到多个核心的私有/局部 Cache 中：  
+1. Core 0 读取了地址 $A$（值 = 10），并在本地缓存。
+2. Core 1 也读取了地址 $A$（值 = 10），并在本地缓存。
+3. Core 0 将地址 $A$ 修改为 20。此时，Core 0 的 Cache 里 $A=20$，但 Core 1 的 Cache 里依然是过期的旧值 $10$。
+4. 如果 Core 1 再次读取地址 $A$，就会读到脏数据（Stale Data）。
+
+为了解决这个冲突，系统必须在硬件层面引入缓存一致性协议。  
+
+常见的 Coherency 消息类型为了维护数据的一致状态（如 MESI、MOESI 协议），各 Cache 节点之间会频繁广播或点对点发送以下控制消息：
+- Invalidate（失效消息）： 当某个核心写数据时，向其他所有持有该数据 Cache Line 的核心发送“失效通知”，强制它们将本地副本标记为无效（Invalid）。
+- Read Shared / Read Exclusive（读请求消息）： 核心申请以“只读”或“独占/准备写入”的状态获取数据。
+- Writeback / Probe Response（写回与响应消息）： 当核心 $A$ 申请最新的数据，而最新的数据刚好在核心 $B$ 的 Dirty 状态 Cache 里时，核心 $B$ 会响应并将最新数据发送给核心 $A$ 或写回下一级 Cache。
+- Snoop Request / Probe（总线嗅探/探测消息）： 检查其他核心的 Cache 中是否包含指定内存地址的副本。
+
+对系统与性能建模的影响
+- 总线带宽开销（Control Overhead）： 一致性消息本身通常不包含完整的 64B/128B 用户数据，而是简短的控制命令包（Header/Address/State）。但在频繁进行跨核数据共享和并发写入时，这些消息会占用相当一部分片上网络（NoC）或总线带宽。
+- 性能模型剔除：这类计数器统计的就是与 Cache Coherency / Compute Unit 协议通信相关的非数据消息。在计算真正的有效数据传输带宽时，需要将这些一致性控制消息占用的流量剔除。
 
 ## Cache Slice
 Cache Slice（缓存切片）：是现代 CPU 和 GPU 为了解决高并发访问冲突与布线拥堵（Routing Congestion），将一个原本庞大的集中式大缓存（通常是 L2 或 L3 Cache）在物理和逻辑上拆分成的多个平行、独立的工作单元。每个独立的切片就被称为一个 Cache Slice。  
@@ -193,6 +227,32 @@ Cache Slice 的工作机制
 - 哈希散列寻址（Address Hashing）： 内存地址在进入 L2 之前，硬件会通过一个交错的 Hash 函数对地址进行计算，决定这个地址的数据应该归属于哪一个 Slice。  
 例如：地址 0x1000 映射到 Slice 0，地址 0x1040 映射到 Slice 1。  
 - 独立并行处理： 每一个 Cache Slice 都拥有自己独立的控制逻辑、TAG 比较器和数据阵列（Data Array）。只要两个核心访问的数据被 Hash 到不同的 Slice，它们就能完全并行读写，互不干涉。
+
+## MMU 页表查询(MMU Page Table Walk)
+当内存管理单元 (MMU) 无法在本地缓存中完成转换时，**亲自访问多级页表数据结构，将虚拟内存地址 (Virtual Address, VA) 转换为物理内存地址 (Physical Address, PA)** 的过程。
+
+### 地址转换流程
+1. **TLB Hit (快表命中):** MMU 优先查询转换后备缓冲区 (TLB)。若命中，直接返回物理地址。
+2. **TLB Miss (快表未命中):** 未命中时触发 **Page Table Walk**。
+3. **多级页表逐级查询 (如 4 级页表):**
+   * 读取基址寄存器，获取一级页表物理地址。
+   * 利用虚拟地址的高位 Index 查找下级页表地址。
+   * 重复查询直至在最后一级页表条目 (PTE) 中读取物理页帧号 (PFN)。
+   * 将 PFN 与虚拟地址偏移量 (Offset) 拼接生成最终物理地址，并写入 TLB。
+
+### 性能影响
+* **访问延迟 (Latency):** 一次 TLB Miss 会引发多次额外的物理内存读访问，导致指令流水线停顿 (Stall)。
+* **带宽开销 (Overhead Traffic):** 统计的 MMU 页表读取流量属于系统管理开销，不属于应用层有效数据流，计算 Core 有效带宽时需予以剔除。
+
+
+## Beat
+GPU/CPU 硬件性能建模中，Beat（通常译为“拍”或“数据拍”）指的是在单个时钟周期（Clock Cycle）内，通过总线传输的一块数据单元（Data Transfer Unit）。  
+简单来说，当系统需要传输一大块内存数据（例如一个 128 字节的 Cache Line）时，总线通常不会在一个时钟周期内把所有数据一次性送达，而是把这块数据拆分成多次突发传输（Burst Transfer），每一次传输的基本单位就叫作一个 Beat。
+
+在实际芯片硬件或总线传输中，Cache Line 与数据传输的关系如下：  
+- 假设 GPU 产生了一次 128 字节 Cache Line 的缺失（Miss），需要向外存发起读取；  
+- 如果总线单次数据传输能力（Beat）为 16 字节（128-bit 总线）；(或者说一个beat的大小就是总线的宽度)  
+- 那么传输这 1 个 Cache Line 的数据就需要占用 8 个 Beats（$128 / 16 = 8$ 拍突发传输）。 
 
 ## Ground Truth and Actual
 在硬件性能建模、仿真测试以及数据校验中，Ground Truth（底层基准值） 和 Actual（上层累加值） 是用来做交叉验证（Cross-Validation）的两个对比测量维度。  
@@ -243,7 +303,62 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 在 GPU 架构中，当计算单元（Shader Core）所需的指令或数据没有在 L1/L2 Cache 中命中（Cache Miss）时，就必须通过内存控制器（Memory Controller）穿过物理总线，直接去 DDR 中拉取数据。  
 
 
-## Bandwidth
+## Bandwidth Validation
+带宽一致性校验（Bandwidth Validation）通过比较底层/硬件边缘计数（Ground Truth，基准值）与上层/着色器核心统计（Actual，实测估算值）之间的偏差，来校验数据流量建模或硬件监控（Hardware Counters）的准确性。  
+
+| 符号 | 含义与说明 |
+| :---  | :--- |
+| $N_{\text{slice}}$ | L2 Cache 切片（Slice）总数 |
+| $N_{\text{sc}}$ | Shader Core（着色器核心）总数 |
+| $W_{\text{AXI}}$ | AXI 总线宽度（Bits 或 Bytes） |
+| $S_{\text{beat}}$ | 单次传输 Beat 的数据大小（128 Bytes） |
+| $B_{\text{L2\_EXT\_RD}}$ | L2 观测到的外部读传输 Beat 数 |
+| $B_{\text{L2\_EXT\_WR}}$ | L2 观测到的外部写传输 Beat 数 |
+| $\sum B_{\text{SC\_RD\_EXT}}$ | 各 Shader 单元（RTU, FTC, LSC, TEX）发起的外部读 Beat 总和 |
+| $\sum B_{\text{SC\_WR}}$ | 各 Shader 单元（LSC_OTHER, TIB, LSC_WB）发起的写传输 Beat 总和 |
+| $M_{\text{L2\_IN\_TOTAL}}$ | L2 接收到的内部请求消息总数 |
+| $M_{\text{NON\_DATA}}$ | 非数据/管理类开销消息（Eviction, Cache Coherency, MMU Table Reads 等） |
+| $\sum B_{\text{L2\_INT\_RD}}$ | 各 Shader 单元（FTC, LSC, TEX, OTHER）发起的 L2 内部读 Beat 总和 |
+
+---
+
+### 1. DDR 读带宽校验 (DDR Read Bandwidth Validation)
+跨视角对比内存读带宽：将 **L2 Cache 观测到的外部内存读流量** 与 **Shader Core 各子单元发起的读请求量** 进行交叉校验，以捕获模型中的计数遗漏或接口不一致。
+
+* **Ground Truth (基准值):**
+  $$BW_{\text{DDR\_RD, GT}} = B_{\text{L2\_EXT\_RD}} \times N_{\text{slice}} \times W_{\text{AXI}}$$
+
+* **Actual (测量估算值):**
+  $$BW_{\text{DDR\_RD, ACT}} = \left( \sum B_{\text{SC\_RD\_EXT}} \right) \times N_{\text{sc}} \times S_{\text{beat}}$$
+
+* **Relative Error (相对误差):**
+  $$\text{Error}_{\text{DDR\_RD}} = \frac{BW_{\text{DDR\_RD, ACT}} - BW_{\text{DDR\_RD, GT}}}{BW_{\text{DDR\_RD, GT}}}$$
+
+
+
+### 2. DDR 写带宽校验 (DDR Write Bandwidth Validation)
+验证 DDR 写带宽一致性：核对 **L2 写回外部存储的数据量** 与 **Shader Core（如 Tile Buffer/TIB, LSC Writeback 等）刷出的数据量** 是否匹配，确保写通路（Write Path）建模正确。
+
+* **Ground Truth (基准值):**
+  $$BW_{\text{DDR\_WR, GT}} = B_{\text{L2\_EXT\_WR}} \times N_{\text{slice}} \times W_{\text{AXI}}$$
+
+* **Actual (测量估算值):**
+  $$BW_{\text{DDR\_WR, ACT}} = \left( \sum B_{\text{SC\_WR}} \right) \times N_{\text{sc}} \times S_{\text{beat}}$$
+
+* **Relative Error (相对误差):**
+  $$\text{Error}_{\text{DDR\_WR}} = \frac{BW_{\text{DDR\_WR, ACT}} - BW_{\text{DDR\_WR, GT}}}{BW_{\text{DDR\_WR, GT}}}$$
+
+
+### 3. L2 内部带宽校验 (L2 Internal Bandwidth Validation)
+评估 L2 缓存内部有效数据吞吐率：排除 Cache 逐出 (Eviction)、缓存一致性消息 (Coherency) 及 MMU 页表查询等非有效数据流量后，验证 **L2 内部真实数据读流量** 的准确性。
+
+* **Ground Truth (基准值):**
+  $$BW_{\text{L2\_INT, GT}} = \left( M_{\text{L2\_IN\_TOTAL}} - M_{\text{NON\_DATA}} \right) \times N_{\text{slice}} \times 512$$
+
+* **Actual (测量估算值):**
+  $$BW_{\text{L2\_INT, ACT}} = \left( \sum B_{\text{L2\_INT\_RD}} \right) \times N_{\text{sc}} \times S_{\text{beat}} + \text{BUS\_READ} \times S_{\text{beat}}$$
+
+
 
 ## Cache
 

@@ -3,7 +3,7 @@
 San Diego, CA | 517-899-1570 | [wxjmsu@gmail.com](mailto:wxjmsu@gmail.com) | [linkedin.com/in/xiaojun-wang](https://www.linkedin.com/in/xiaojun-wang) | [github.com/gpuwangge](https://github.com/gpuwangge)
 
 ## Professional Summary
-Staff GPU Engineer with 8+ years of industry experience developing GPU models, fixed-function graphics features, validation infrastructure, and GPU IP integrations. Combines a deep background in hardware simulation and graphics with active research/practice in NPU/AI accelerator architectures and AI Agent workflows.
+Staff GPU Engineer with 8+ years of industry experience spanning GPU architecture, functional modeling, fixed-function graphics, validation, and GPU IP integration. Deep background in GPU simulation and graphics pipelines, with hands-on experience in architectural feature development, performance analysis, hardware/software co-design, and graphics software.
 
 ## Professional Experience
 
@@ -31,11 +31,10 @@ Staff GPU Engineer with 8+ years of industry experience developing GPU models, f
 - Built more than 10 Python tools for image analysis, log analysis, regression triage, and workflow automation, improving engineering productivity and reducing human error.
 
 ## Other Professional & Open-Source Projects
-**LuminError | Open-Source Real-Time Rendering & Game Engine** 
+**LuminError | Open-Source Vulkan Rendering & GPU Architecture Experimentation Framework** 
 [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError) | C++, Vulkan, Custom Ray Tracing (Oct 2025 – Present)  
 - Engine Architecture: Engineered a modular C++ Vulkan rendering engine with decoupled subsystems (core_renderer, core_resource, pipeline management) for hybrid graphics/compute workloads.
 - Ray Tracing & AS Management: Implemented Vulkan KHR Ray Tracing, managing BLAS/TLAS builds, intersection shaders, and Next Event Estimation (NEE) sampling.
-- Performance Optimization: Optimized descriptor sets, ray divergence, and memory bandwidth for complex scenes like Sponza.  
 
 **Microsoft / Microsoft Research Asia** — Software Engineering & Research Intern  
 Sunnyvale, CA | Beijing, China | 2008, 2009, 2013  

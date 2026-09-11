@@ -3,7 +3,6 @@
 San Diego, CA | 517-899-1570 | [wxjmsu@gmail.com](mailto:wxjmsu@gmail.com) | [linkedin.com/in/xiaojun-wang](https://www.linkedin.com/in/xiaojun-wang) | [github.com/gpuwangge](https://github.com/gpuwangge)
 
 ## Professional Summary
-
 Staff GPU Engineer with 8+ years of industry experience developing GPU models, fixed-function graphics features, validation infrastructure, and GPU IP integrations. Combines a deep background in hardware simulation and graphics with active research/practice in NPU/AI accelerator architectures and AI Agent workflows.
 
 ## Professional Experience
@@ -19,7 +18,6 @@ Staff GPU Engineer with 8+ years of industry experience developing GPU models, f
 ### Senior GPU Engineer
 **Qualcomm** — San Diego / Santa Clara, CA  
 **January 2018 – May 2023**
-
 - Conducted accurate high-level modeling and analysis for a large-scale C++ GPU simulator across Linux and Windows environments.
 - Owned and trained engineers on two major fixed-function graphics blocks: **Tessellation** and **Primitive Control**.
 - Developed features for the **CCU (Cache and Compression Unit)** and maintained source code across five fixed-function blocks in the graphics pipeline.
@@ -32,38 +30,32 @@ Staff GPU Engineer with 8+ years of industry experience developing GPU models, f
 - Expanded the image-comparison framework to support two additional image formats.
 - Built more than 10 Python tools for image analysis, log analysis, regression triage, and workflow automation, improving engineering productivity and reducing human error.
 
-## Earlier Experience
+## Other Professional & Open-Source Projects
+**LuminError | Open-Source Real-Time Rendering & Game Engine** 
+[https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError) | C++, Vulkan, Custom Ray Tracing (Oct 2025 – Present)  
+- Engine Architecture: Engineered a modular C++ Vulkan rendering engine with decoupled subsystems (core_renderer, core_resource, pipeline management) for hybrid graphics/compute workloads.
+- Ray Tracing & AS Management: Implemented Vulkan KHR Ray Tracing, managing BLAS/TLAS builds, intersection shaders, and Next Event Estimation (NEE) sampling.
+- Performance Optimization: Optimized descriptor sets, ray divergence, and memory bandwidth for complex scenes like Sponza.  
 
-**Microsoft / Microsoft Research Asia** — Software Engineering & Research Intern | Sunnyvale, CA | Beijing, China | 2008–2013  
-Built data-quality automation for the Windows 8 News app (SQL Server, C, JavaScript, HTML5), achieving 89% acceptance and 100% mitigation of targeted issues.  
-Developed gyroscope-based HCI prototypes, multithreaded interaction software, and C#/WPF prototypes for Windows Mobile and Microsoft Surface.
-
-## Open Source Project
-**Vulkan Game Engine** [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError)  
-Built an open-source C++/Vulkan rendering engine featuring explicit GPU resource and synchronization management, PBR/IBL, and ray tracing with acceleration structures, SBTs, reflections, and shadows.  
+**Microsoft / Microsoft Research Asia** — Software Engineering & Research Intern  
+Sunnyvale, CA | Beijing, China | 2008, 2009, 2013  
+- Built automated data-quality pipelines (SQL Server, C) for the Windows 8 News app and developed multithreaded HCI prototypes for Microsoft Surface.
 
 ## Education
-
-**Ph.D., Computer Science (Computer Graphics)**  Michigan State University, East Lansing, MI, September 2009 – December 2017  
+**Ph.D., Computer Science (Computer Graphics)**  Michigan State University  
+East Lansing, MI, September 2009 – December 2017  
 Dissertation: *Fluid Animation on Deforming Surface Meshes*. Research in geometric processing, fluid simulation, deformable materials, and 3D mesh representation.   
 **B.S., Automation**  Beihang University, Beijing, China, September 2004 – July 2008  
 
 ## Publications
-
 **Xiaojun Wang, Shiguang Liu, Yiying Tong.**  “Stain Formation on Deforming Inelastic Cloth.”  
 *IEEE Transactions on Visualization and Computer Graphics.*  
 DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.  
-
 **Ze Zhang, Xiaojun Wang, Yiying Tong.**  “Angle-Based Representation of Triangulated Surfaces.”  
 *International Conference on Computer Graphics and Image Processing (CGIP), 2024.*
 
 ## Technical Skills
-
-- **Programming:** C++/C, Python, C#, Matlab, SystemC, TLM
-- **Graphics/Compute API:** Vulkan, DirectX 11/12, OpenGL/ES, CUDA, GLSL/HLSL, OpenCL
-- **GPU:** GPU architecture/modeling/driver/verification, Ray tracing, Parallel Computing 
-- **Platforms & Tools:** Linux, Windows, Android, MacOS, iOS, Git, VSCode, Xcode, Perforce, Visual Studio
-- **AI:** AI Agent, AI Infrastructure, NPU Concepts
-- **Profiling:** PVRTune, RenderDoc
-
-
+- Languages: C++/C, Python, SystemC, TLM, GLSL/HLSL
+- Graphics & Compute: Vulkan, DirectX 11/12, OpenGL/ES, CUDA, OpenCL, Ray Tracing
+- GPU Domains: Microarchitecture, Modeling, Driver Development, HW Verification, Parallel Computing, Performance Profiling (RenderDoc, PVRTune)
+- AI & Infrastructure: AI Agents, AI Infrastructure, NPU Architecture Concepts

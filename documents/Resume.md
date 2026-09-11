@@ -23,18 +23,17 @@ Staff GPU Engineer with 8+ years of industry experience spanning GPU architectur
 - Developed features for the **CCU (Cache and Compression Unit)** and maintained source code across five fixed-function blocks in the graphics pipeline.
 - Delivered two major features and more than 10 minor features spanning the 6th, 7th, and 8th generations of Adreno GPUs.
 - Resolved more than 1,000 modeling bugs across multiple Qualcomm SoCs, improving simulation correctness and platform readiness.
-- Partnered closely with RTL, design verification, and architecture teams to debug GPU issues and evaluate novel graphics features.
 - Created and delivered more than 200 bit-accurate unit tests using DirectX 11, DirectX 12, and Vulkan, strengthening functional coverage for next-generation Qualcomm GPUs.
 - Maintained a legacy sanity-regression test list containing more than 4,000 tests across multiple GPU performance tiers and release milestones.
 - Developed and maintained an image-comparison tool used by more than 50% of relevant test cases, reducing test-development effort by approximately 15% and lowering manual-analysis errors.
-- Expanded the image-comparison framework to support two additional image formats.
 - Built more than 10 Python tools for image analysis, log analysis, regression triage, and workflow automation, improving engineering productivity and reducing human error.
 
 ## Other Professional & Open-Source Projects
-**LuminError | Open-Source Vulkan Rendering & GPU Architecture Experimentation Framework** 
-[https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError) | C++, Vulkan, Custom Ray Tracing (Oct 2025 – Present)  
-- Engine Architecture: Engineered a modular C++ Vulkan rendering engine with decoupled subsystems (core_renderer, core_resource, pipeline management) for hybrid graphics/compute workloads.
-- Ray Tracing & AS Management: Implemented Vulkan KHR Ray Tracing, managing BLAS/TLAS builds, intersection shaders, and Next Event Estimation (NEE) sampling.
+**LuminError | Open-Source Vulkan Rendering & GPU Experimentation Framework** 
+[https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError) | C++, Vulkan, GLSL (Oct 2025 – Present)  
+- Engine Architecture: Engineered a modular C++ Vulkan rendering engine with 9 decoupled subsystems, directly managing GPU resources, synchronization, descriptor sets, and command submission for hybrid graphics/compute workloads.
+- Rendering Pipeline: Implemented 35 example programs across graphics, compute, and ray-tracing pipelines, covering rasterization, shadow mapping, MSAA, PBR materials, glTF/GLB asset loading, and GEMM compute.
+- Ray Tracing & Path Tracing: Built Vulkan KHR ray-tracing pipelines with BLAS/TLAS acceleration structures, Whitted-style ray tracing (Stanford Dragon, 870K triangles), and Monte Carlo path tracing with Next Event Estimation (Sponza scene, multi-material glTF validation).  
 
 **Microsoft / Microsoft Research Asia** — Software Engineering & Research Intern  
 Sunnyvale, CA | Beijing, China | 2008, 2009, 2013  
@@ -56,5 +55,5 @@ DOI: 10.1109/TVCG.2017.2789203. Corpus ID: 51612072.
 ## Technical Skills
 - Languages: C++/C, Python, SystemC, TLM, GLSL/HLSL
 - Graphics & Compute: Vulkan, DirectX 11/12, OpenGL/ES, CUDA, OpenCL, Ray Tracing
-- GPU Domains: Microarchitecture, Modeling, Driver Development, HW Verification, Parallel Computing, Performance Profiling (RenderDoc, PVRTune)
+- GPU Domains: Modeling, Driver Development, HW Verification, Parallel Computing, Performance Profiling (RenderDoc, PVRTune)
 - AI & Infrastructure: AI Agents, AI Infrastructure, NPU Architecture Concepts

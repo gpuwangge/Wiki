@@ -384,7 +384,8 @@ ALU 硬件管线的时间累加
 - 在 ALU 算术逻辑单元内部，各类指令在流水线上按发射吞吐依次消耗周期。将它们乘系数后的结果相加，算出的总和就是：ALU 硬件单元把这批指令全部执行完所需要的总时钟周期数。
 
 参与 Roofline 的 Bottleneck 竞争
-- 计算出的 ALU 周期总数，会被送入 Shader Core 的顶级选大器（MAX 函数）：$$\text{Shader\_Core} = \text{Async\_Ratio} \times \max(\text{ALU}, \text{Texture}, \text{Blend}, \text{RTU}, \dots)$$
+- 计算出的 ALU 周期总数，会被送入 Shader Core 的顶级选大器（MAX 函数）：  
+$$\text{Shader\_Core} = \text{Async\_Ratio} \times \max(\text{ALU}, \text{Texture}, \text{Blend}, \text{RTU}, \dots)$$
 - 如果算出来的 ALU 周期数高于 Texture 或 Blend，那么 ALU 的计算能力就成为了限制 Shader Core 性能的真实主导瓶颈（Dominant Bottleneck）；反之，若 Texture 周期更大，ALU 的周期数就只是一个潜在瓶颈指标。
 
 因此，这里的 ALU 公式不是单纯在数指令，而是计算ALU 硬件单元的瓶颈执行周期

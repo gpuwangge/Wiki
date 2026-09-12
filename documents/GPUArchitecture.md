@@ -394,16 +394,9 @@ ALU 硬件管线的时间累加
 
 A-Model 采用了基于 **Roofline** 的瓶颈分析范式。GPU 的总活跃周期（`Predicted_GPU_ACTIVE`）由微控制器（MCU）的串行开销与各并行处理单元中的**最大瓶颈周期**相加得到：
 
-$$\text{Predicted\_GPU\_ACTIVE} = \text{MCU\_ACTIVE} + \max \left(
-\begin{array}{l}
-\text{Shader\_Core\_Bottleneck}, \\
-\text{Tiler\_Bottleneck}, \\
-\text{L2\_Cache\_Bottleneck}, \\
-\text{Memory\_Bottleneck}
-\end{array}
-\right)$$
+$${Predicted GPU ACTIVE} = {MCU ACTIVE} + \max ( {Shader Core Bottleneck}, {Tiler Bottleneck}, {L2 Cache Bottleneck}, {Memory Bottleneck})$$
 
-* **$\text{MCU\_ACTIVE}$**：前端微控制器/主机命令处理器的串行固定开销。
+* **${MCU ACTIVE}$**：前端微控制器/主机命令处理器的串行固定开销。
 * **Pipeline Bottleneck Net**：主执行流水线遵循“木桶效应”（$\max$ 运算符），即整体性能由最慢的硬件资源瓶颈决定。
 
 ### 2. 核心子系统计算公式

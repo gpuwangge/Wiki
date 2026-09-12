@@ -229,8 +229,8 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 
 
 ## GPU 吞吐量计算算法解析 (Throughput Calculation Algorithms)
-
-本文档综合分析了 GPU 性能模型中的两个核心吞吐量计算算法：**内存延迟转换为 GPU 周期** 与 **ALU 吞吐量计算**。这两个公式是 GPU 硬件性能建模与抽象吞吐量计算中的核心模块，主要用于将硬件底层的物理指标转化为统一的性能评估指标。
+ GPU 性能模型中的两个核心吞吐量计算算法：**内存延迟转换为 GPU 周期** 与 **ALU 吞吐量计算**。  
+ 这两个公式是 GPU 硬件性能建模与抽象吞吐量计算中的核心模块，主要用于将硬件底层的物理指标转化为统一的性能评估指标。  
 
 ### 内存延迟转换为 GPU 周期 (Memory Latency to GPU Cycles)
 
@@ -258,14 +258,14 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 
 该模块的核心逻辑是基于硬件指令计数器（Instruction Counters）和不同功能单元的硬件开销权重，统计总体 ALU 计算吞吐量和资源占用。计算步骤如下：
 
-*   **FMA 吞吐**：乘加指令权重为 $0.5$，分摊到各个子核（$num\_sc$）并考虑异步发射比（$async\_ratio$）。
-    $$fma = \left( \frac{{EXEC INSTR FMA} \times 0.5}{num\_sc} \right) \times async\_ratio$$
+*   **FMA 吞吐**：乘加指令权重为 $0.5$，分摊到各个子核（$num sc$）并考虑异步发射比（$async ratio$）。
+    $$fma = \left( \frac{{EXEC INSTR FMA} \times 0.5}{num sc} \right) \times async ratio$$
 *   **CVT 吞吐**：数据类型转换指令，引入架构特定的微架构因子（如 $cvt\_pe$）。
-    $$cvt = \left( \frac{{EXEC INSTR CVT} \times cvt\_pe}{num\_sc} \right) \times async\_ratio$$
+    $$cvt = \left( \frac{{EXEC INSTR CVT} \times cvt pe}{num sc} \right) \times async ratio$$
 *   **MSG 吞吐**：消息/访存交互指令，权重为 $1.0$。
-    $$msg = \left( \frac{{EXEC INSTR MSG} \times 1.0}{num\_sc} \right) \times async\_ratio$$
+    $$msg = \left( \frac{{EXEC INSTR MSG} \times 1.0}{num sc} \right) \times async ratio$$
 *   **SFU 吞吐**：特殊函数单元（如超越函数等）计算复杂度较高，权重设定为 $4.0$。
-    $$sfu = \left( \frac{{EXEC INSTR SFU} \times 4.0}{num\_sc} \right) \times async\_ratio$$
+    $$sfu = \left( \frac{{EXEC INSTR SFU} \times 4.0}{num sc} \right) \times async ratio$$
 *   **总 ALU 开销**：累加所有功能单元的归一化开销。
     $$alu\_total = fma + cvt + msg + sfu$$
 

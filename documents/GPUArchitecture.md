@@ -405,30 +405,28 @@ $${Predicted GPU ACTIVE} = {MCU ACTIVE} + \max ( {Shader Core Bottleneck}, {Tile
 
 Shader Core 的瓶颈周期由内部各子模块的最大周期决定，并通过 `Async_Ratio` 进行跨时钟域归一化：
 
-$$\text{Shader\_Core} = \text{Async\_Ratio} \times \max \left(
-\begin{array}{l}
-\text{Texture\_Bottleneck}, \\
-\text{Blend\_Bottleneck}, \\
-\text{Rasterizer\_Bottleneck}, \\
-\text{ASN\_Bus\_Bottleneck}, \\
-\text{ALU\_Bottleneck}, \\
-\text{RTU\_Bottleneck}, \\
-\text{LSC\_L1\_Cache\_Bottleneck}
-\end{array}
-\right)$$
+$${Shader Core} = {Async Ratio} \times \max 
+{Texture Bottleneck}, \\
+{Blend Bottleneck}, \\
+{Rasterizer Bottleneck}, \\
+{ASN Bus Bottleneck}, \\
+{ALU Bottleneck}, \\
+{RTU Bottleneck}, \\
+{LSC L1 Cache Bottleneck}
+)$$
 
 其中时钟频率异步比率（Async Ratio）公式为：
 
-$$\text{Async\_Ratio} = \frac{\text{CSF\_Freq}}{\text{SC\_Freq}}$$
+$${Async Ratio} = \frac{{CSF Freq}}{{SC Freq}}$$
 
-* **$\text{CSF\_Freq}$**：核心系统频率（Core System Frequency，MHz）。
-* **$\text{SC\_Freq}$**：着色器核心频率（Shader Core Frequency，MHz）。
+* **${CSF Freq}$**：核心系统频率（Core System Frequency，MHz）。
+* **${SC Freq}$**：着色器核心频率（Shader Core Frequency，MHz）。
 
 #### 2.2 ALU 计算瓶颈（ALU Bottleneck）
 
 ALU 瓶颈由各类指令的执行次数乘以其对应的单指令周期系数（Issue Latency）累加得到：
 
-$$\text{ALU} = 0.5 \times \text{EXEC\_INSTR\_FMA} + 0.5 \times \text{EXEC\_INSTR\_CVT} + 1.0 \times \text{EXEC\_INSTR\_MSG} + 4.0 \times \text{EXEC\_INSTR\_SFU}$$
+$${ALU} = 0.5 \times {EXEC INSTR FMA} + 0.5 \times {EXEC INSTR CVT} + 1.0 \times {EXEC INSTR MSG} + 4.0 \times {EXEC INSTR SFU}$$
 
 ##### 指令权重系数说明：
 
@@ -443,13 +441,13 @@ $$\text{ALU} = 0.5 \times \text{EXEC\_INSTR\_FMA} + 0.5 \times \text{EXEC\_INSTR
 
 内存瓶颈综合评估了系统级缓存（SLC）的总线传输效率与外部 DRAM 带宽限制：
 
-$$\text{Memory\_Bottleneck} = \max(\text{SLC\_Bottleneck}, \text{DDR\_Bottleneck})$$
+$${Memory Bottleneck} = \max({SLC Bottleneck}, {DDR Bottleneck})$$
 
 ##### 1. SLC 瓶颈计算公式
-$$\text{SLC\_Bottleneck} = \text{Num\_L2} \times \left(\frac{10^{-9}}{150}\right) \times \left(\frac{\text{AXI\_Width}}{8}\right) \times (\text{CSF\_Freq} \times 10^6) \times (\text{L2\_EXT\_READ\_BEATS} + \text{L2\_EXT\_WRITE\_BEATS})$$
+$${SLC Bottleneck} = {Num L2} \times (\frac{10^{-9}}{150}) \times (\frac{{AXI Width}}{8}) \times ({CSF Freq} \times 10^6) \times ({L2 EXT READ BEATS} + {L2 EXT WRITE BEATS})$$
 
 ##### 2. DDR 瓶颈计算公式
-$$\text{DDR\_Bottleneck} = (\text{CSF\_Freq} \times 10^6) \times \left(\frac{10^{-9}}{\text{DDR\_BW}}\right) \times (\text{DRAMC\_R\_BYTE} + \text{DRAMC\_W\_BYTE})$$
+$${DDR Bottleneck} = ({CSF Freq} \times 10^6) \times (\frac{10^{-9}}{{DDR BW}}) \times ({DRAMC R BYTE} + {DRAMC W BYTE})$$
 
 ### 3. Cache 命中率计算（Cache Hit Rate Calculations）
 
@@ -467,13 +465,13 @@ $$\text{DDR\_Bottleneck} = (\text{CSF\_Freq} \times 10^6) \times \left(\frac{10^
 根据系统时钟频率与 GPU 活跃周期，计算实际帧率（Golden FPS）、预测帧率（A-Model FPS）以及相对误差：
 
 * **实际帧率 (Golden FPS)**：
-  $$\text{Golden\_FPS} = \frac{\text{CSF\_Freq} \times 10^6}{\text{GPU\_ACTIVE}}$$
+  $${Golden FPS} = \frac{{CSF Freq} \times 10^6}{{GPU ACTIVE}}$$
 
 * **预测帧率 (A-Model FPS)**：
-  $$\text{A\_Model\_FPS} = \frac{\text{CSF\_Freq} \times 10^6}{\sum \text{Predicted\_GPU\_ACTIVE\_per\_segment}}$$
+  $${A Model FPS} = \frac{{CSF Freq} \times 10^6}{\sum {Predicted GPU ACTIVE per segment}}$$
 
 * **相对误差率 (Error Rate)**：
-  $$\text{Error} = \frac{|\text{Golden\_FPS} - \text{A\_Model\_FPS}|}{\text{Golden\_FPS}} \times 100\%$$
+  $${Error} = \frac{|{Golden FPS} - {A Model FPS}|}{{Golden FPS}} \times 100\%$$
 
 ### 5. 瓶颈自动识别算法（Bottleneck Identification）
 

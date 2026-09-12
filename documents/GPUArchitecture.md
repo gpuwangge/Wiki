@@ -227,69 +227,12 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 
 在 GPU 架构中，当计算单元（Shader Core）所需的指令或数据没有在 L1/L2 Cache 中命中（Cache Miss）时，就必须通过内存控制器（Memory Controller）穿过物理总线，直接去 DDR 中拉取数据。  
 
-## Bandwidth Validation
-带宽一致性校验（Bandwidth Validation）通过比较底层/硬件边缘计数（Ground Truth，基准值）与上层/着色器核心统计（Actual，实测估算值）之间的偏差，来校验数据流量建模或硬件监控（Hardware Counters）的准确性。  
-
-| 符号              | 含义与说明                                                     |
-| :-------------- | :-------------------------------------------------------- |
-| `N_slice`       | L2 Cache 切片（Slice）总数                                      |
-| `N_sc`          | Shader Core（着色器核心）总数                                      |
-| `W_AXI`         | AXI 总线宽度（Bits 或 Bytes）                                    |
-| `S_beat`        | 单次传输 Beat 的数据大小                                |
-| `B_L2_EXT_RD`   | L2 观测到的外部读传输 Beat 数                                       |
-| `B_L2_EXT_WR`   | L2 观测到的外部写传输 Beat 数                                       |
-| `Σ B_SC_RD_EXT` | 各 Shader 单元（RTU, FTC, LSC, TEX）发起的外部读 Beat 总和             |
-| `Σ B_SC_WR`     | 各 Shader 单元（LSC_OTHER, TIB, LSC_WB）发起的写传输 Beat 总和         |
-| `M_L2_IN_TOTAL` | L2 接收到的内部请求消息总数                                           |
-| `M_NON_DATA`    | 非数据/管理类开销消息（Eviction, Cache Coherency, MMU Table Reads 等） |
-| `Σ B_L2_INT_RD` | 各 Shader 单元（FTC, LSC, TEX, OTHER）发起的 L2 内部读 Beat 总和       |
-
-### 1. DDR 读带宽校验 (DDR Read Bandwidth Validation)
-跨视角对比内存读带宽：将 **L2 Cache 观测到的外部内存读流量** 与 **Shader Core 各子单元发起的读请求量** 进行交叉校验，以捕获模型中的计数遗漏或接口不一致。
-* **Ground Truth (基准值)**
-```
-BW_DDR_RD_GT = B_L2_EXT_RD × N_slice × W_AXI
-```
-* **Actual (测量估算值)**
-```
-BW_DDR_RD_ACT = (Σ B_SC_RD_EXT) × N_sc × S_beat
-```
-* **Relative Error (相对误差)**
-```
-Error_DDR_RD = (BW_DDR_RD_ACT - BW_DDR_RD_GT) / BW_DDR_RD_GT
-```
-
-### 2. DDR 写带宽校验 (DDR Write Bandwidth Validation)
-验证 DDR 写带宽一致性：核对 **L2 写回外部存储的数据量** 与 **Shader Core（如 Tile Buffer/TIB, LSC Writeback 等）刷出的数据量** 是否匹配，确保写通路（Write Path）建模正确。
-* **Ground Truth (基准值)**
-```
-BW_DDR_WR_GT = B_L2_EXT_WR × N_slice × W_AXI
-```
-* **Actual (测量估算值)**
-```
-BW_DDR_WR_ACT = (Σ B_SC_WR) × N_sc × S_beat
-```
-* **Relative Error (相对误差)**
-```
-Error_DDR_WR = (BW_DDR_WR_ACT - BW_DDR_WR_GT) / BW_DDR_WR_GT
-```
-
-### 3. L2 内部带宽校验 (L2 Internal Bandwidth Validation)
-评估 L2 缓存内部有效数据吞吐率：排除 Cache 逐出（Eviction）、缓存一致性消息（Coherency）及 MMU 页表查询等非有效数据流量后，验证 **L2 内部真实数据读流量** 的准确性。
-* **Ground Truth (基准值)**
-```
-BW_L2_INT_GT = (M_L2_IN_TOTAL - M_NON_DATA) × N_slice × 512
-```
-* **Actual (测量估算值)**
-```
-BW_L2_INT_ACT = (Σ B_L2_INT_RD) × N_sc × S_beat + BUS_READ × S_beat
-```
 
 ## GPU 吞吐量计算算法解析 (Throughput Calculation Algorithms)
 
 本文档综合分析了 GPU 性能模型中的两个核心吞吐量计算算法：**内存延迟转换为 GPU 周期** 与 **ALU 吞吐量计算**。这两个公式是 GPU 硬件性能建模与抽象吞吐量计算中的核心模块，主要用于将硬件底层的物理指标转化为统一的性能评估指标。
 
-### 2.1 内存延迟转换为 GPU 周期 (Memory Latency to GPU Cycles)
+### 内存延迟转换为 GPU 周期 (Memory Latency to GPU Cycles)
 
 #### 1. 公式与计算逻辑
 
@@ -309,7 +252,7 @@ BW_L2_INT_ACT = (Σ B_L2_INT_RD) × N_sc × S_beat + BUS_READ × S_beat
 *   **定量评估访存瓶颈**：通过将外部 DDR 访存的数据量、AXI 总线位宽和标定带宽转化为 $gpu\_cycles$，能够精确模拟当 GPU 发生缓存未命中（Cache Miss）或存在大量访存时，流水线需要等待的时钟周期数。
 *   **硬件带宽约束建模**：算法中对带宽进行了硬编码上限设定（如最高限制在 55 GB/s），这用于模拟实际芯片设计中受限的内存通道带宽，避免理想化计算导致过高估计硬件性能。
 
-### 2.2 ALU 吞吐量计算 (ALU Throughput)
+### ALU 吞吐量计算 (ALU Throughput)
 
 #### 1. 公式与计算逻辑
 
@@ -331,8 +274,7 @@ BW_L2_INT_ACT = (Σ B_L2_INT_RD) × N_sc × S_beat + BUS_READ × S_beat
 *   **异构指令开销归一化**：GPU 执行的指令类型繁杂（如乘加、类型转换、消息交互、特殊函数），它们的硬件执行周期各不相同。该公式通过给不同指令赋予特定的权重因子，将复杂的指令计数器折算为一个可统一比对的总体吞吐量消耗。
 *   **微架构差异适配**：通过引入架构特定的 PE 因子（例如 Titan/Turse 与 Krake/Drage 的差异系数），该算法能够灵活适配不同代际 GPU 内部子核的硬件微架构吞吐差异，从而实现高层抽象模拟器对多种不同硬件配置的兼容。
 
-
-### 2.3 Roofline Model (Predicted GPU Active) 分析报告
+### Roofline Model (Predicted GPU Active) 分析报告
 
 **核心概述**
 该公式定义了用于识别GPU各子系统中主要性能瓶颈的基础 Roofline 模型。其核心逻辑基于：GPU 的整体性能上限由耗时最长的子系统（即最慢环节）决定。
@@ -497,8 +439,6 @@ function identifyBottleneck(formula) {
     return sorted.filter(item => item.confidence >= 0.75 * top_confidence);
 }
 ```
-
----
 
 ## 6. 总结与架构启发
 

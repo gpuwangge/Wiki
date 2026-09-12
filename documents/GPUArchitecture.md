@@ -369,7 +369,8 @@ Command Stream Frontend (命令流前端) 的开销独立于并行流水线的 m
 此时，整个系统或子系统的最终执行时间，取决于耗时最长的那个硬件模块。  
 模型中计算出的每一个 ${Subsystem}$ 数值，代表该硬件单元“在吞吐量受限下独自完成工作所需的周期上限”。因此在代码和公式定义中，直接将这些模块算出来的周期数命名为该模块的 Bottleneck（瓶颈）。  
 
-以 ALU 计算公式为例：$${ALU} = 0.5 \times {EXEC INSTR FMA} + 0.5 \times {EXEC INSTR CVT} + 1.0 \times {EXEC INSTR MSG} + 4.0 \times {EXEC INSTR SFU}$$  
+以 ALU 计算公式为例：  
+$${ALU} = 0.5 \times {EXEC INSTR FMA} + 0.5 \times {EXEC INSTR CVT} + 1.0 \times {EXEC INSTR MSG} + 4.0 \times {EXEC INSTR SFU}$$  
 
 把各类指令乘以各自系数后相加，本质上是在做硬件资源消耗的量纲转换与时间累加：
 

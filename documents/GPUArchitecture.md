@@ -316,13 +316,13 @@ BW_L2_INT_ACT = (Σ B_L2_INT_RD) × N_sc × S_beat + BUS_READ × S_beat
 该模块的核心逻辑是基于硬件指令计数器（Instruction Counters）和不同功能单元的硬件开销权重，统计总体 ALU 计算吞吐量和资源占用。计算步骤如下：
 
 *   **FMA 吞吐**：乘加指令权重为 $0.5$，分摊到各个子核（$num\_sc$）并考虑异步发射比（$async\_ratio$）。
-    $$fma = \left( \frac{\text{EXEC\_INSTR\_FMA} \times 0.5}{num\_sc} \right) \times async\_ratio$$
+    $$fma = \left( \frac{{EXEC INSTR FMA} \times 0.5}{num\_sc} \right) \times async\_ratio$$
 *   **CVT 吞吐**：数据类型转换指令，引入架构特定的微架构因子（如 $cvt\_pe$）。
-    $$cvt = \left( \frac{\text{EXEC\_INSTR\_CVT} \times cvt\_pe}{num\_sc} \right) \times async\_ratio$$
+    $$cvt = \left( \frac{{EXEC INSTR CVT} \times cvt\_pe}{num\_sc} \right) \times async\_ratio$$
 *   **MSG 吞吐**：消息/访存交互指令，权重为 $1.0$。
-    $$msg = \left( \frac{\text{EXEC\_INSTR\_MSG} \times 1.0}{num\_sc} \right) \times async\_ratio$$
+    $$msg = \left( \frac{{EXEC INSTR MSG} \times 1.0}{num\_sc} \right) \times async\_ratio$$
 *   **SFU 吞吐**：特殊函数单元（如超越函数等）计算复杂度较高，权重设定为 $4.0$。
-    $$sfu = \left( \frac{\text{EXEC\_INSTR\_SFU} \times 4.0}{num\_sc} \right) \times async\_ratio$$
+    $$sfu = \left( \frac{{EXEC INSTR SFU} \times 4.0}{num\_sc} \right) \times async\_ratio$$
 *   **总 ALU 开销**：累加所有功能单元的归一化开销。
     $$alu\_total = fma + cvt + msg + sfu$$
 
@@ -367,9 +367,9 @@ Command Stream Frontend (命令流前端) 的开销独立于并行流水线的 m
 在 GPU 分析性能模型（A-Model）中，Bottleneck（瓶颈周期数） 指的是某个特定硬件子系统在处理完给定工作负载时，所需要消耗的理论最小时钟周期数（Cycles）。  
 在 Roofline 性能模型中，模型假设各个硬件模块（如 ALU、Texture、L2 Cache、DDR 等）在理想状态下是完全并行重叠（Overlap）执行的。  
 此时，整个系统或子系统的最终执行时间，取决于耗时最长的那个硬件模块。  
-模型中计算出的每一个 $\text{Subsystem}$ 数值，代表该硬件单元“在吞吐量受限下独自完成工作所需的周期上限”。因此在代码和公式定义中，直接将这些模块算出来的周期数命名为该模块的 Bottleneck（瓶颈）。  
+模型中计算出的每一个 ${Subsystem}$ 数值，代表该硬件单元“在吞吐量受限下独自完成工作所需的周期上限”。因此在代码和公式定义中，直接将这些模块算出来的周期数命名为该模块的 Bottleneck（瓶颈）。  
 
-以 ALU 计算公式为例：$$\text{ALU} = 0.5 \times \text{EXEC\_INSTR\_FMA} + 0.5 \times \text{EXEC\_INSTR\_CVT} + 1.0 \times \text{EXEC\_INSTR\_MSG} + 4.0 \times \text{EXEC\_INSTR\_SFU}$$  
+以 ALU 计算公式为例：$${ALU} = 0.5 \times {EXEC INSTR FMA} + 0.5 \times {EXEC INSTR CVT} + 1.0 \times {EXEC INSTR MSG} + 4.0 \times {EXEC INSTR SFU}$$  
 
 把各类指令乘以各自系数后相加，本质上是在做硬件资源消耗的量纲转换与时间累加：
 
@@ -455,10 +455,10 @@ $${DDR Bottleneck} = ({CSF Freq} \times 10^6) \times (\frac{10^{-9}}{{DDR BW}}) 
 
 | 缓存类型 | 层级 / 目标 | 计算公式 | 说明 |
 | :--- | :--- | :--- | :--- |
-| **LSC (Load Store Cache)** | L1 Cache 命中率 | $\frac{\text{LSC\_READ\_HIT}}{\text{LSC\_READ\_HIT} + \text{LSC\_LINE\_FILL}}$ | L1 读命中数占总读与 Fill 次数的比例 |
-| **LSC (Load Store Cache)** | L2 Cache 命中率 | $1 - \frac{\text{BEATS\_RD\_LSC\_EXT}}{\text{BEATS\_RD\_LSC}}$ | $1 - \text{外部总线读 Beat 占比}$ |
-| **Texture Cache** | L1 纹理缓存命中率 | $1 - \frac{\text{TEX\_TPCH\_NUM\_PARKED\_MISS}}{\text{TEX\_TPCH\_NUM\_PARKED\_PASSES}}$ | $1 - \text{挂起 Miss 占总 Pass 的比例}$ |
-| **Texture Cache** | L2 纹理缓存命中率 | $1 - \frac{\text{BEATS\_RD\_TEX\_EXT}}{\text{BEATS\_RD\_TEX}}$ | $1 - \text{纹理外部读 Beat 占比}$ |
+| **LSC (Load Store Cache)** | L1 Cache 命中率 | $\frac{{LSC READ HIT}}{{LSC READ HIT} + {LSC LINE FILL}}$ | L1 读命中数占总读与 Fill 次数的比例 |
+| **LSC (Load Store Cache)** | L2 Cache 命中率 | $1 - \frac{{BEATS RD LSC EXT}}{{BEATS RD LSC}}$ | $1 - {外部总线读 Beat 占比}$ |
+| **Texture Cache** | L1 纹理缓存命中率 | $1 - \frac{{TEX TPCH NUM PARKED MISS}}{{TEX TPCH NUM PARKED PASSES}}$ | $1 - {挂起 Miss 占总 Pass 的比例}$ |
+| **Texture Cache** | L2 纹理缓存命中率 | $1 - \frac{{BEATS RD TEX EXT}}{{BEATS RD TEX}}$ | $1 - {纹理外部读 Beat 占比}$ |
 
 ### 4. 帧率（FPS）计算与误差分析
 

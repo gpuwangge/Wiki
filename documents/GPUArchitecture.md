@@ -296,13 +296,13 @@ BW_L2_INT_ACT = (Σ B_L2_INT_RD) × N_sc × S_beat + BUS_READ × S_beat
 该模块的核心逻辑是将外部内存（DDR）的传输延迟折算为 GPU 的时钟周期数，用于模拟带宽受限场景下的流水线停顿或传输开销。计算步骤如下：
 
 *   **单拍字节数**：根据 AXI 总线位宽计算每拍传输的字节数。
-    $$beats\_size\_bytes = \frac{axi\_width}{8}$$
+    $${beats size bytes} = \frac{axi width}{8}$$
 *   **总传输字节**：结合 DDR 拍数和 L2 缓存切片数计算总访存量。
-    $$total\_bytes = ddr\_beats \times beats\_size\_bytes \times num\_l2s$$
+    $${total bytes} = {ddr beats} \times {beats size bytes} \times {num l2s}$$
 *   **传输时间**：利用标定后的 DDR 带宽计算实际传输耗时。
-    $$transfer\_time\_sec = \frac{total\_bytes}{bandwidth\_bps}$$
+    $${transfer time sec} = \frac{total bytes}{bandwidth bps}$$
 *   **周期换算**：将耗时乘以 GPU 顶峰运行频率（Top Frequency）得到对应的 GPU 周期数。
-    $$gpu\_cycles = transfer\_time\_sec \times top\_freq\_hz$$
+    $${gpu cycles} = {transfer time sec} \times {top freq hz}$$
 
 #### 2. 核心作用与应用场景
 

@@ -26,6 +26,11 @@
 ## [GPU ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUISA.md)   
 ## [Warp Divergence](https://github.com/gpuwangge/Wiki/blob/main/documents/WarpDivergence.md)  
 ## [Register File](https://github.com/gpuwangge/Wiki/blob/main/documents/RegisterFile.md)  
+## [AXI](https://github.com/gpuwangge/Wiki/blob/main/documents/AXI.md)  
+## [BandwidthThrouput](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthThrouput.md)  
+## [Roofline Model](https://github.com/gpuwangge/Wiki/blob/main/documents/RooflineModel.md)  
+## [Cache](https://github.com/gpuwangge/Wiki/blob/main/documents/Cache.md)  
+
 
 # TOOLS
 ## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMake.md)  

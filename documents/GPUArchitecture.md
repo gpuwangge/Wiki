@@ -144,107 +144,6 @@ SP内部含有上百个CUDA Core，但Shader Core里只有两个EE(Valhall)。�
 **`ZS & Blend Unit`**    
 
 # GPU Performance分析
-## Cache Line
-Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）与主内存（DDR/LPDDR）之间进行数据交换的最小基本单位。  
-即便程序在代码里只读取或修改了一个 4 字节的整数（int），底层硬件也不会只从内存中搬运这 4 个字节，而是会把包含这 4 字节在内的一整行数据（通常为 64 字节或 128 字节）一次性加载进 Cache 中。  
-- CPU：常见的 Cache Line 大小通常为 64 Bytes（如 x86、ARM 架构）。  
-- GPU：为了适应大规模并行与高带宽需求，GPU 的 L2 Cache Line 或 Sector 通常更大，常见为 128 Bytes 或被划分为 32/64 Bytes 的子块（Sector）。  
-
-为什么选择以 L2 Cache 作为缓存行（Cache Line）与带宽校验的核心：主要由 硬件架构角色、物理分布 以及 缓存一致性边界 决定。  
-不选择 L1 的原因：太分散、噪音多、存在合并机制  
-- 物理分布分散： L1 是各个计算核心（Shader Core / Compute Unit）私有的。GPU 内部可能有数十甚至上百个 L1 缓存，每个 L1 只能看到本核心的局部访问，无法提供全芯片统一的视图。
-- 访问请求被合并（Coalescing）： 线程发起的频繁小粒度内存请求（如 4/16 字节），在经过 L1 阶段时会被合并或过滤。L1 看到的请求数无法直接映射为真实的物理内存 Line 数量。
-- 单位粒度不匹配： L1 为了支持高效的线程并行，常采用按 Sector（如 32 Bytes）或更小粒度的管理机制，而系统级总线（AXI）是以完整 Cache Line（如 128 Bytes）为基本传输单位的。
-
-不选择 L3 的原因：GPU 架构特性与物理边界  
-- 许多 GPU 架构压根没有传统的 L3： 在经典 GPU 架构（如 NVIDIA、AMD 或移动端 GPU）中，通常只有两级缓存结构——L1（核心私有）和 L2（全芯片共享）。L2 往下就直接通过 Memory Controller 连接外存 DDR/LPDDR。
-- 即使存在 L3，它也位于校验边界之外： 部分支持系统级缓存（SLC / System Level Cache）的架构将 SLC 称为 L3。但 SLC 通常位于 GPU 芯片外部或系统级总线上（由 CPU/GPU/NPU 共享）。
-- L2 是 GPU 内部控制的物理极限： L2 Cache 是 GPU 芯片内部最后一个由 GPU 逻辑完全控制的缓存层。在 L2 界面进行数据校验，能最精准地划分“GPU 内部 Shader 请求流量”与“实际压入外存的物理流量”。  
-
-即使是读取uniform和vertex buffer，GPU的访问请求在物理上都会经过L2 Cache.即使在某些模式下可以让L2不保存数据，仍必须走它的路由和仲裁单元。  
-
-| 缓存层级 | 物理属性 | 缺点/不适用的原因 |
-| --- | --- | --- |
-| **L1 Cache** | 核心私有 (Private) | 过于分散，包含大量未合并的局部小请求，缺乏全局视角 |
-| **L2 Cache** | 全局共享 (Shared) | **最佳选择**：物理独立、全局统一，是连接 GPU 内部与外部总线的最终“网关” |
-| **L3 / SLC** | 系统级共享 (System-wide) | 许多 GPU 无此层级；若有则受 CPU/其他外设流量干扰，无法独立校验 GPU 模型 |
-
-空间局部性原理（Spatial Locality）：硬件采用 Cache Line 机制的主要依据是局部性原理——如果程序访问了内存地址 $A$，那么它极大概率很快就会访问地址 $A$ 附近的变量（例如遍历数组）。一次性拉取一整行数据，可以大幅提升后续内存访问的缓存命中率（Cache Hit）。  
-
-对齐机制（Alignment）：Cache Line 在物理内存中是严格按其大小对齐的。例如在 64 字节 Cache Line 的系统中，内存地址 $0x00 \sim 0x3F$ 属于同一行，下一个 Cache Line 必然从 $0x40$ 开始。  
-
-## Cache Eviction
-Cache 逐出 (Eviction) 是指当缓存（Cache）空间已满，而 CPU/GPU 又需要载入新的数据时，缓存控制器强制将某一条已存在的缓存数据（Cache Line）移除或写回主存，从而为新数据腾出空间的机制。  
-
-工作原理  
-命中（Cache Hit）： 请求的数据已在 Cache 中，直接快速读取。  
-未命中（Cache Miss）与替换： 请求的数据不在 Cache 中，需要从更慢的下一级存储（如 L3 Cache 或 DDR/内存）读取。如果此时 Cache 没有空余位置，就必须触发 Eviction。  
-Dirty / Clean 状态处理：  
-- Clean Line（未修改数据）： 该缓存数据与下一级内存中的内容一致，逐出时直接丢弃/覆盖（Discard），不产生额外的写回开销。
-- Dirty Line（已修改数据）： 该缓存数据被处理器写过，与内存不一致。逐出时必须先将其写回（Write-back）到下一级存储，这会产生额外的内存总线流量（写开销）。  
-
-### 常见的替换策略（Eviction Policies）  
-决定“哪一条数据该被逐出”由硬件/软件的算法控制
-- LRU (Least Recently Used)： 逐出最近最少使用的数据，假设越久没用过的未来越不可能用（最常用的算法）。
-- FIFO (First-In, First-Out)： 逐出最先载入的数据，不考虑后续使用频率。
-- LFU (Least Frequently Used)： 逐出使用频率最低的数据。
-- Random（随机）： 随机挑选一条数据逐出，实现成本低，常用于某些硬件硬件简化的缓存结构。
-
-对系统性能的影响
-- Cache Thrashing（缓存抖动）： 如果频繁触发 Eviction（例如程序循环访问的数据量大于 Cache 容量），会导致数据不断被“载入-逐出-写回-再载入”，引发大量的内存带宽开销，显著拖慢系统性能。
-- 带宽开销： 在硬件性能建模（如 GPU 仿真）中，Eviction 产生的 Dirty Line 写回属于非有效数据请求（Overhead Traffic），通常需要在计算核心有效数据吞吐率时予以剔除。
-
-## Cache Coherency
-缓存一致性消息（Cache Coherency Messages） 是多核处理器或 GPU 多 Slot/Core 架构中，各个 Cache 控制器之间为了保证不同缓存中同一份数据完全一致而发送的控制信号或数据数据包。  
-
-核心痛点：为什么需要 Consistency/Coherency？  
-在多核系统（例如 GPU 的多个 L2 Cache Slice 或 Shader Core）中，主存（DDR）中的同一个内存地址 $A$ 可能会同时被复制并缓存到多个核心的私有/局部 Cache 中：  
-1. Core 0 读取了地址 $A$（值 = 10），并在本地缓存。
-2. Core 1 也读取了地址 $A$（值 = 10），并在本地缓存。
-3. Core 0 将地址 $A$ 修改为 20。此时，Core 0 的 Cache 里 $A=20$，但 Core 1 的 Cache 里依然是过期的旧值 $10$。
-4. 如果 Core 1 再次读取地址 $A$，就会读到脏数据（Stale Data）。
-
-为了解决这个冲突，系统必须在硬件层面引入缓存一致性协议。  
-
-常见的 Coherency 消息类型为了维护数据的一致状态（如 MESI、MOESI 协议），各 Cache 节点之间会频繁广播或点对点发送以下控制消息：
-- Invalidate（失效消息）： 当某个核心写数据时，向其他所有持有该数据 Cache Line 的核心发送“失效通知”，强制它们将本地副本标记为无效（Invalid）。
-- Read Shared / Read Exclusive（读请求消息）： 核心申请以“只读”或“独占/准备写入”的状态获取数据。
-- Writeback / Probe Response（写回与响应消息）： 当核心 $A$ 申请最新的数据，而最新的数据刚好在核心 $B$ 的 Dirty 状态 Cache 里时，核心 $B$ 会响应并将最新数据发送给核心 $A$ 或写回下一级 Cache。
-- Snoop Request / Probe（总线嗅探/探测消息）： 检查其他核心的 Cache 中是否包含指定内存地址的副本。
-
-对系统与性能建模的影响
-- 总线带宽开销（Control Overhead）： 一致性消息本身通常不包含完整的 64B/128B 用户数据，而是简短的控制命令包（Header/Address/State）。但在频繁进行跨核数据共享和并发写入时，这些消息会占用相当一部分片上网络（NoC）或总线带宽。
-- 性能模型剔除：这类计数器统计的就是与 Cache Coherency / Compute Unit 协议通信相关的非数据消息。在计算真正的有效数据传输带宽时，需要将这些一致性控制消息占用的流量剔除。
-
-## Cache Slice
-Cache Slice（缓存切片）：是现代 CPU 和 GPU 为了解决高并发访问冲突与布线拥堵（Routing Congestion），将一个原本庞大的集中式大缓存（通常是 L2 或 L3 Cache）在物理和逻辑上拆分成的多个平行、独立的工作单元。每个独立的切片就被称为一个 Cache Slice。  
-
-为什么需要 Cache Slice？  
-- 在多核 CPU 或包含数十上百个 Shader Core 的 GPU 中，如果所有核心同时去读写同一个集中式的 L2 Cache，会产生两个严重的物理瓶颈：
-- 端口竞争（Bank Conflict / Access Bottleneck）： 几百个线程同时发请求，单个 Cache 接口处理不过来，导致严重的等待延迟。
-- 物理布线困难（Physical Layout）： 芯片面积很大，所有核心的信号线如果都挤向芯片中央的同一个 Cache 模块，会导致芯片内部布线极其拥堵。
-
-Cache Slice 的工作机制  
-- 分布式布局： 硬件设计时，将 L2 Cache 的总容量（比如 32MB）均匀切分成 8 个各 4MB 的 Slice，并把它们物理散布在芯片的不同位置，就近连接不同的计算核心（Shader Core / Compute Unit）。
-- 哈希散列寻址（Address Hashing）： 内存地址在进入 L2 之前，硬件会通过一个交错的 Hash 函数对地址进行计算，决定这个地址的数据应该归属于哪一个 Slice。  
-例如：地址 0x1000 映射到 Slice 0，地址 0x1040 映射到 Slice 1。  
-- 独立并行处理： 每一个 Cache Slice 都拥有自己独立的控制逻辑、TAG 比较器和数据阵列（Data Array）。只要两个核心访问的数据被 Hash 到不同的 Slice，它们就能完全并行读写，互不干涉。
-
-## L2 Cache的内部和外部读写
-对 GPU 的 L2 Cache 来说，“内部”与“外部”是以 L2 Cache 本身所在的层级（或 GPU 核心边界）来划分的：  
-
-内部读写（Internal Access）  
-- 主体： GPU 内部的计算单元（如着色器核心 / SM / WGP）、纹理采样单元、光栅化引擎等。
-- 内部读： 当着色器或纹理单元需要读取数据（如顶点数据、纹理贴图、常量缓冲区、本地共享内存溢出数据）时，首先会向 L2 Cache 发起读请求。如果命中（Hit），这就是一次内部读。
-- 内部写： 着色器完成计算后，将渲染结果、片元颜色或 UAV（Unordered Access View）写入缓存。
-
-外部读写（External Access）
-- 主体： L2 Cache 与 GPU 芯片外部的物理显存（如 VRAM / GDDR6 / HBM）之间的交互。
-- 外部读（L2 Miss / Fill）： 当内部单元请求的数据在 L2 Cache 中未命中（L2 Miss）时，L2 Cache 必须通过内存控制器向外部显存发起读取请求，把数据加载到 L2 中。公式中的 BW_DDR_RD（或 B_L2_EXT_RD）指的就是这部分流量。
-- 外部写（Write-back / Evict）： 当 L2 Cache 中的脏数据（Dirty Data）因为缓存替换（Eviction）策略需要被清理腾出空间时，或者遇到非 缓存一致性直写（Write-through）操作时，L2 会把数据写回到外部显存中。
-
-内部读写是内部的block读写L2；外部读写是L2读写外部的memory。  
-
 ## MMU 页表查询(MMU Page Table Walk)
 当内存管理单元 (MMU) 无法在本地缓存中完成转换时，**亲自访问多级页表数据结构，将虚拟内存地址 (Virtual Address, VA) 转换为物理内存地址 (Physical Address, PA)** 的过程。
 
@@ -271,41 +170,6 @@ GPU/CPU 硬件性能建模中，Beat（通常译为“拍”或“数据拍”�
 - 如果总线单次数据传输能力（Beat）为 16 字节（128-bit 总线）；(或者说一个beat的大小就是总线的宽度)  
 - 那么传输这 1 个 Cache Line 的数据就需要占用 8 个 Beats（$128 / 16 = 8$ 拍突发传输）。 
 
-## AXI
-AXI 全称为 Advanced eXtensible Interface（高级可扩展接口），是由 ARM 公司推出的一套高性能、高带宽、低延迟的片上通信协议（属于 AMBA 标准的一部分）。在现代 GPU（尤其是移动端 GPU 如 ARM Mali 或特定架构加速器）中，它被广泛用于实现各个内部 IP 模块（如着色器核心、纹理单元、DMA 引擎、缓存和内存控制器）之间的高效数据交互与协同工作。  
-
-AXI 与“总线”（Bus）的区别  
-- 概念层级： “总线”是一个宏观的架构概念，泛指连接计算机或芯片内各部件的物理传输干线；而 AXI 是一种具体的通信协议与接口标准，它规定了信号握手、时序和通道管理的严密规则。  
-- 传输机制： 传统总线多采用共享、仲裁式的并行线路，容易产生带宽瓶颈。而 AXI 采用点对点（Point-to-Point）拓扑，并拥有五个独立的独立传输通道（读地址、读数据、写地址、写数据、写响应），支持高并发、全双工通信以及乱序传输（Out-of-Order）。  
-
-AXI 的宽度是多少？
-- AXI 协议的数据总线宽度（Data Bus Width）在设计时是高度可配置的，并没有单一的固定数值。根据 GPU 的性能定位和带宽需求，其单条 AXI 接口的数据宽度通常有以下几种常见规格：
-- 常见配置： 32-bit、64-bit、128-bit、256-bit、512-bit。在极高性能的计算单元或内部互连 fabric 中，甚至会扩展至更高宽度。
-- 为什么不统一axi的宽度: GPU 内部不同模块的数据流速差异巨大。纹理单元或光栅化引擎需要极高的吞吐量（适合 256-bit/512-bit），而配置状态寄存器或温度传感器等控制单元每秒只需传输几个字节（32-bit 完全足够）。按需分配宽度才能实现最优的 PPA（功耗、性能、面积）平衡。
-
-AXI 宽度与总线宽度的关系
-- AXI 的数据宽度本质上就是该接口总线的数据通路宽度，但它不一定等同于整个芯片的外部显存总线宽度。
-- 内部与外部的差异： GPU 内部的不同模块可能各自连接着不同宽度的 AXI 子总线（例如 128-bit 或 256-bit）。这些内部 AXI 流量最终会通过片上互连网络（NoC / Crossbar）汇聚，再对接外部物理显存总线（如独立显卡的 256-bit/512-bit GDDR6 或 HBM 接口）。
-- 协同工作： AXI 宽度决定了单个时钟周期内在芯片内部模块间传输的数据量，而外部显存总线宽度决定了 GPU 与物理显存芯片之间的数据吞吐能力。两者通过内存控制器进行协议转换与带宽匹配。
-
-AXI 并不是只存在于 GPU 内部，但它严格属于片上（On-Chip）通信协议，其应用范围止步于芯片内部或同一个 SoC（片上系统）的不同模块之间。  
-AXI 在 GPU 外部的延伸（SoC 芯片内部）  
-在集成显卡或移动端 GPU（如手机 SoC 中的 Mali、Apple Silicon GPU）中，GPU 只是整个大芯片（SoC）里的一个 IP 模块。此时，AXI 会延伸到 GPU 外部、其他模块内部：  
-- 连接系统互连网络（NoC）： GPU 通过其外部接口的 AXI 总线，接入整个 SoC 的中央互连网络（例如 ARM 的 CoreLink / CMN / NIC 系列）。
-- 跨模块通信： 通过这个外部的 AXI 链路，GPU 可以访问系统的共享内存（通过 SoC 的内存控制器）、与 CPU 交换控制指令、或者将渲染结果传递给显示控制器（Display Controller）和 NPU。
-
-芯片外部（Off-Chip）完全没有 AXI  
-AXI 协议的电气特性和设计规范只适用于硅片内部的金属连线，绝对无法直接连到芯片外部。当数据需要离开 GPU 芯片或 SoC 芯片时，必须通过物理层协议（PHY）进行转换：
-- 连接外部显存/内存： GPU 的内存控制器将 AXI 协议的数据转换为物理层的时序信号，去驱动芯片外侧的物理内存颗粒（如 LPDDR、GDDR6 或 HBM）。
-- 独立显卡的总线接口： 像高性能独立显卡（如 NVIDIA / AMD 独显），它们与主板 CPU 通信走的是 PCIe 协议，而不是 AXI。不过，在显卡芯片（GPU Die）内部，各个子模块之间依然可能采用 AXI 或类似的高性能片上互连协议。
-
-不是所有的芯片内部总线都是 AXI 总线。  
-现代复杂的 SoC（片上系统）或 GPU 芯片内部通常采用多总线/多协议共存的异构互连架构。  
-芯片内部常见的其他总线协议  
-- APB (Advanced Peripheral Bus)： 专为低速、低功耗外设（如 UART、I2C、GPIO、定时器）设计的简单低成本总线，不具备 AXI 的复杂流水线和高性能特性。
-- AHB (Advanced High-performance Bus)： 介于 APB 和 AXI 之间，常用于性能要求适中、单发射操作的模块（如某些 DMA 控制器或简单的内部存储器）。
-- CHI (Coherent Hub Interface)： ARM 推出的更新一代、更高级的片上一致性协议，常用于多核 CPU 集群与高性能缓存一致性（Cache Coherency）网络中，比传统的 AXI 更适合超大规模片上互连。
-- 专用/私有总线： 许多芯片厂商（如 NVIDIA、AMD、Apple 或大厂的自研 IP）在内部高性能计算单元（如 GPU 内部的 SIMD/ALU 阵列、矢量寄存器与缓存之间）会使用高度定制的、非标准的私有互连网络或点对点连线，以追求极致的吞吐量和极低的面积/功耗开销。
 
 ## Ground Truth and Actual
 在硬件性能建模、仿真测试以及数据校验中，Ground Truth（底层基准值） 和 Actual（上层累加值） 是用来做交叉验证（Cross-Validation）的两个对比测量维度。  
@@ -421,9 +285,233 @@ BW_L2_INT_GT = (M_L2_IN_TOTAL - M_NON_DATA) × N_slice × 512
 BW_L2_INT_ACT = (Σ B_L2_INT_RD) × N_sc × S_beat + BUS_READ × S_beat
 ```
 
+## GPU 吞吐量计算算法解析 (Throughput Calculation Algorithms)
 
-## Cache
+本文档综合分析了 GPU 性能模型中的两个核心吞吐量计算算法：**内存延迟转换为 GPU 周期** 与 **ALU 吞吐量计算**。这两个公式是 GPU 硬件性能建模与抽象吞吐量计算中的核心模块，主要用于将硬件底层的物理指标转化为统一的性能评估指标。
 
+### 2.1 内存延迟转换为 GPU 周期 (Memory Latency to GPU Cycles)
+
+#### 1. 公式与计算逻辑
+
+该模块的核心逻辑是将外部内存（DDR）的传输延迟折算为 GPU 的时钟周期数，用于模拟带宽受限场景下的流水线停顿或传输开销。计算步骤如下：
+
+*   **单拍字节数**：根据 AXI 总线位宽计算每拍传输的字节数。
+    $$beats\_size\_bytes = \frac{axi\_width}{8}$$
+*   **总传输字节**：结合 DDR 拍数和 L2 缓存切片数计算总访存量。
+    $$total\_bytes = ddr\_beats \times beats\_size\_bytes \times num\_l2s$$
+*   **传输时间**：利用标定后的 DDR 带宽计算实际传输耗时。
+    $$transfer\_time\_sec = \frac{total\_bytes}{bandwidth\_bps}$$
+*   **周期换算**：将耗时乘以 GPU 顶峰运行频率（Top Frequency）得到对应的 GPU 周期数。
+    $$gpu\_cycles = transfer\_time\_sec \times top\_freq\_hz$$
+
+#### 2. 核心作用与应用场景
+
+*   **定量评估访存瓶颈**：通过将外部 DDR 访存的数据量、AXI 总线位宽和标定带宽转化为 $gpu\_cycles$，能够精确模拟当 GPU 发生缓存未命中（Cache Miss）或存在大量访存时，流水线需要等待的时钟周期数。
+*   **硬件带宽约束建模**：算法中对带宽进行了硬编码上限设定（如最高限制在 55 GB/s），这用于模拟实际芯片设计中受限的内存通道带宽，避免理想化计算导致过高估计硬件性能。
+
+### 2.2 ALU 吞吐量计算 (ALU Throughput)
+
+#### 1. 公式与计算逻辑
+
+该模块的核心逻辑是基于硬件指令计数器（Instruction Counters）和不同功能单元的硬件开销权重，统计总体 ALU 计算吞吐量和资源占用。计算步骤如下：
+
+*   **FMA 吞吐**：乘加指令权重为 $0.5$，分摊到各个子核（$num\_sc$）并考虑异步发射比（$async\_ratio$）。
+    $$fma = \left( \frac{\text{EXEC\_INSTR\_FMA} \times 0.5}{num\_sc} \right) \times async\_ratio$$
+*   **CVT 吞吐**：数据类型转换指令，引入架构特定的微架构因子（如 $cvt\_pe$）。
+    $$cvt = \left( \frac{\text{EXEC\_INSTR\_CVT} \times cvt\_pe}{num\_sc} \right) \times async\_ratio$$
+*   **MSG 吞吐**：消息/访存交互指令，权重为 $1.0$。
+    $$msg = \left( \frac{\text{EXEC\_INSTR\_MSG} \times 1.0}{num\_sc} \right) \times async\_ratio$$
+*   **SFU 吞吐**：特殊函数单元（如超越函数等）计算复杂度较高，权重设定为 $4.0$。
+    $$sfu = \left( \frac{\text{EXEC\_INSTR\_SFU} \times 4.0}{num\_sc} \right) \times async\_ratio$$
+*   **总 ALU 开销**：累加所有功能单元的归一化开销。
+    $$alu\_total = fma + cvt + msg + sfu$$
+
+#### 2. 核心作用与应用场景
+
+*   **异构指令开销归一化**：GPU 执行的指令类型繁杂（如乘加、类型转换、消息交互、特殊函数），它们的硬件执行周期各不相同。该公式通过给不同指令赋予特定的权重因子，将复杂的指令计数器折算为一个可统一比对的总体吞吐量消耗。
+*   **微架构差异适配**：通过引入架构特定的 PE 因子（例如 Titan/Turse 与 Krake/Drage 的差异系数），该算法能够灵活适配不同代际 GPU 内部子核的硬件微架构吞吐差异，从而实现高层抽象模拟器对多种不同硬件配置的兼容。
+
+
+### 2.3 Roofline Model (Predicted GPU Active) 分析报告
+
+**核心概述**
+该公式定义了用于识别GPU各子系统中主要性能瓶颈的基础 Roofline 模型。其核心逻辑基于：GPU 的整体性能上限由耗时最长的子系统（即最慢环节）决定。
+
+**模型公式**
+```c
+predicted_gpu_active = max( max(tex, blend, alu, asn, quad, lsc, rtu), // Shader bound
+                            max(l2, ddr), // Memory bound
+                            tiler // Geometry bound
+                          ) + csf
+```
+
+子系统分类与瓶颈分析
+- Shader Bound (着色器瓶颈): max(tex, blend, alu, asn, quad, lsc, rtu)
+评估着色器核心内部的计算与局部数据处理极限。涵盖了纹理映射 (tex)、混合 (blend)、算术逻辑单元 (alu)、加载/存储控制 (lsc)、光线追踪/渲染目标 (rtu) 以及其他核心级操作 (asn, quad)。
+- Memory Bound (显存/内存瓶颈): max(l2, ddr)
+确定存储层级的带宽限制，对比 L2 缓存 (l2) 传输限制与外部 DDR 内存 (ddr) 的带宽消耗，取其最大值。
+- Geometry Bound (几何瓶颈): tiler
+代表几何处理流水线中的约束，特别是基于分块渲染 (Tile-based rendering) 架构中的 Tiler 处理开销。
+- CSF (命令流前端开销): + csf
+Command Stream Frontend (命令流前端) 的开销独立于并行流水线的 max() 比较。它作为线性的命令调度与分发开销，直接叠加在底层硬件的并发瓶颈时间上。
+
+架构评估逻辑
+- 模型首先在三个主要硬件域（Shader、Memory、Geometry）内部计算出最大执行时间或周期成本。
+- 对比这三个域的最大值，找出全局并发执行时的绝对瓶颈（即重叠执行后暴露的最长关键路径）。
+- 最后将 CSF 带来的前端串行指令调度开销附加到全局瓶颈之上，得出最终的 predicted_gpu_active 预测活跃周期。
+
+
+
+## GPU Roofline 瓶颈模型分析举例
+什么是 Bottleneck？  
+在 GPU 分析性能模型（A-Model）中，Bottleneck（瓶颈周期数） 指的是某个特定硬件子系统在处理完给定工作负载时，所需要消耗的理论最小时钟周期数（Cycles）。  
+在 Roofline 性能模型中，模型假设各个硬件模块（如 ALU、Texture、L2 Cache、DDR 等）在理想状态下是完全并行重叠（Overlap）执行的。  
+此时，整个系统或子系统的最终执行时间，取决于耗时最长的那个硬件模块。  
+模型中计算出的每一个 $\text{Subsystem}$ 数值，代表该硬件单元“在吞吐量受限下独自完成工作所需的周期上限”。因此在代码和公式定义中，直接将这些模块算出来的周期数命名为该模块的 Bottleneck（瓶颈）。  
+
+以 ALU 计算公式为例：$$\text{ALU} = 0.5 \times \text{EXEC\_INSTR\_FMA} + 0.5 \times \text{EXEC\_INSTR\_CVT} + 1.0 \times \text{EXEC\_INSTR\_MSG} + 4.0 \times \text{EXEC\_INSTR\_SFU}$$  
+
+把各类指令乘以各自系数后相加，本质上是在做硬件资源消耗的量纲转换与时间累加：
+
+量纲统一（指令数 $\rightarrow$ 周期数）：
+- EXEC_INSTR_x 的单位是指令数（Instruction Count）。
+- 前面的系数（0.5, 1.0, 4.0）单位是指令周期倒数（Cycles / Instruction），代表硬件管线的发射/执行能力。
+- 例如：FMA 硬件发射吞吐是 2 ops/cycle，因此 1 条 FMA 占用 $1 / 2 = 0.5$ 个周期；SFU 属于慢速超越函数（Transcendental Function）管线，1 条 SFU 指令需要占用 4 个周期。
+- 指令数乘以系数后，消去了“指令”单位，统一变成了周期数（Cycles）。
+
+ALU 硬件管线的时间累加
+- 在 ALU 算术逻辑单元内部，各类指令在流水线上按发射吞吐依次消耗周期。将它们乘系数后的结果相加，算出的总和就是：ALU 硬件单元把这批指令全部执行完所需要的总时钟周期数。
+
+参与 Roofline 的 Bottleneck 竞争
+- 计算出的 ALU 周期总数，会被送入 Shader Core 的顶级选大器（MAX 函数）：$$\text{Shader\_Core} = \text{Async\_Ratio} \times \max(\text{ALU}, \text{Texture}, \text{Blend}, \text{RTU}, \dots)$$
+- 如果算出来的 ALU 周期数高于 Texture 或 Blend，那么 ALU 的计算能力就成为了限制 Shader Core 性能的真实主导瓶颈（Dominant Bottleneck）；反之，若 Texture 周期更大，ALU 的周期数就只是一个潜在瓶颈指标。
+
+因此，这里的 ALU 公式不是单纯在数指令，而是计算ALU 硬件单元的瓶颈执行周期
+
+该模型主要通过从 Emulator/模拟器采集的硬件计数器（Hardware Counters）数据，预测 GPU 执行周期、识别系统性能瓶颈、评估 Cache 命中率以及计算帧率（FPS）。
+
+### 1. 顶层性能预测模型（Main Performance Model）
+
+A-Model 采用了基于 **Roofline** 的瓶颈分析范式。GPU 的总活跃周期（`Predicted_GPU_ACTIVE`）由微控制器（MCU）的串行开销与各并行处理单元中的**最大瓶颈周期**相加得到：
+
+$$\text{Predicted\_GPU\_ACTIVE} = \text{MCU\_ACTIVE} + \max \left(
+\begin{array}{l}
+\text{Shader\_Core\_Bottleneck}, \\
+\text{Tiler\_Bottleneck}, \\
+\text{L2\_Cache\_Bottleneck}, \\
+\text{Memory\_Bottleneck}
+\end{array}
+\right)$$
+
+* **$\text{MCU\_ACTIVE}$**：前端微控制器/主机命令处理器的串行固定开销。
+* **Pipeline Bottleneck Net**：主执行流水线遵循“木桶效应”（$\max$ 运算符），即整体性能由最慢的硬件资源瓶颈决定。
+
+### 2. 核心子系统计算公式
+
+#### 2.1 着色器核心瓶颈（Shader Core Bottleneck）
+
+Shader Core 的瓶颈周期由内部各子模块的最大周期决定，并通过 `Async_Ratio` 进行跨时钟域归一化：
+
+$$\text{Shader\_Core} = \text{Async\_Ratio} \times \max \left(
+\begin{array}{l}
+\text{Texture\_Bottleneck}, \\
+\text{Blend\_Bottleneck}, \\
+\text{Rasterizer\_Bottleneck}, \\
+\text{ASN\_Bus\_Bottleneck}, \\
+\text{ALU\_Bottleneck}, \\
+\text{RTU\_Bottleneck}, \\
+\text{LSC\_L1\_Cache\_Bottleneck}
+\end{array}
+\right)$$
+
+其中时钟频率异步比率（Async Ratio）公式为：
+
+$$\text{Async\_Ratio} = \frac{\text{CSF\_Freq}}{\text{SC\_Freq}}$$
+
+* **$\text{CSF\_Freq}$**：核心系统频率（Core System Frequency，MHz）。
+* **$\text{SC\_Freq}$**：着色器核心频率（Shader Core Frequency，MHz）。
+
+#### 2.2 ALU 计算瓶颈（ALU Bottleneck）
+
+ALU 瓶颈由各类指令的执行次数乘以其对应的单指令周期系数（Issue Latency）累加得到：
+
+$$\text{ALU} = 0.5 \times \text{EXEC\_INSTR\_FMA} + 0.5 \times \text{EXEC\_INSTR\_CVT} + 1.0 \times \text{EXEC\_INSTR\_MSG} + 4.0 \times \text{EXEC\_INSTR\_SFU}$$
+
+##### 指令权重系数说明：
+
+| 指令类型 | 周期系数（Cycles/Inst） | 硬件含义与吞吐说明 |
+| :--- | :---: | :--- |
+| **FMA** (Fused Multiply-Add) | `0.5` | 融合乘加指令（等价于 2 ops/cycle 吞吐） |
+| **CVT** (Conversion) | `0.5` | 数据类型转换指令 |
+| **MSG** (Message) | `1.0` | 核心间通信与消息同步指令 |
+| **SFU** (Special Function Unit) | `4.0` | 特殊功能单元指令（如 $\sin, \cos, \log, \sqrt{x}$ 等慢速超越函数） |
+
+#### 2.3 内存子系统瓶颈（Memory Bottleneck）
+
+内存瓶颈综合评估了系统级缓存（SLC）的总线传输效率与外部 DRAM 带宽限制：
+
+$$\text{Memory\_Bottleneck} = \max(\text{SLC\_Bottleneck}, \text{DDR\_Bottleneck})$$
+
+##### 1. SLC 瓶颈计算公式
+$$\text{SLC\_Bottleneck} = \text{Num\_L2} \times \left(\frac{10^{-9}}{150}\right) \times \left(\frac{\text{AXI\_Width}}{8}\right) \times (\text{CSF\_Freq} \times 10^6) \times (\text{L2\_EXT\_READ\_BEATS} + \text{L2\_EXT\_WRITE\_BEATS})$$
+
+##### 2. DDR 瓶颈计算公式
+$$\text{DDR\_Bottleneck} = (\text{CSF\_Freq} \times 10^6) \times \left(\frac{10^{-9}}{\text{DDR\_BW}}\right) \times (\text{DRAMC\_R\_BYTE} + \text{DRAMC\_W\_BYTE})$$
+
+### 3. Cache 命中率计算（Cache Hit Rate Calculations）
+
+各级缓存的命中率评估指标如下表所示：
+
+| 缓存类型 | 层级 / 目标 | 计算公式 | 说明 |
+| :--- | :--- | :--- | :--- |
+| **LSC (Load Store Cache)** | L1 Cache 命中率 | $\frac{\text{LSC\_READ\_HIT}}{\text{LSC\_READ\_HIT} + \text{LSC\_LINE\_FILL}}$ | L1 读命中数占总读与 Fill 次数的比例 |
+| **LSC (Load Store Cache)** | L2 Cache 命中率 | $1 - \frac{\text{BEATS\_RD\_LSC\_EXT}}{\text{BEATS\_RD\_LSC}}$ | $1 - \text{外部总线读 Beat 占比}$ |
+| **Texture Cache** | L1 纹理缓存命中率 | $1 - \frac{\text{TEX\_TPCH\_NUM\_PARKED\_MISS}}{\text{TEX\_TPCH\_NUM\_PARKED\_PASSES}}$ | $1 - \text{挂起 Miss 占总 Pass 的比例}$ |
+| **Texture Cache** | L2 纹理缓存命中率 | $1 - \frac{\text{BEATS\_RD\_TEX\_EXT}}{\text{BEATS\_RD\_TEX}}$ | $1 - \text{纹理外部读 Beat 占比}$ |
+
+### 4. 帧率（FPS）计算与误差分析
+
+根据系统时钟频率与 GPU 活跃周期，计算实际帧率（Golden FPS）、预测帧率（A-Model FPS）以及相对误差：
+
+* **实际帧率 (Golden FPS)**：
+  $$\text{Golden\_FPS} = \frac{\text{CSF\_Freq} \times 10^6}{\text{GPU\_ACTIVE}}$$
+
+* **预测帧率 (A-Model FPS)**：
+  $$\text{A\_Model\_FPS} = \frac{\text{CSF\_Freq} \times 10^6}{\sum \text{Predicted\_GPU\_ACTIVE\_per\_segment}}$$
+
+* **相对误差率 (Error Rate)**：
+  $$\text{Error} = \frac{|\text{Golden\_FPS} - \text{A\_Model\_FPS}|}{\text{Golden\_FPS}} \times 100\%$$
+
+### 5. 瓶颈自动识别算法（Bottleneck Identification）
+
+算法通过计算各硬件组件在 GPU 活跃时间中的占比（置信度），提取出排名前列的主导瓶颈：
+
+```javascript
+function identifyBottleneck(formula) {
+    // 1. 提取各硬件组件的周期数值
+    const bottlenecks = { mcu, tiler, l2, slc, ddr, tex, blend, alu, rtu, lsc };
+
+    // 2. 计算各组件的置信度 (Confidence)，上限封顶为 0.99
+    for (const [component, value] of Object.entries(bottlenecks)) {
+        component.confidence = Math.min(0.99, value / gpu_active);
+    }
+
+    // 3. 按置信度降序排序，获取最高置信度值
+    const sorted = Object.values(bottlenecks).sort((a, b) => b.confidence - a.confidence);
+    const top_confidence = sorted[0].confidence;
+
+    // 4. 筛选并返回所有达到最高置信度 75% 以上的主要瓶颈组件
+    return sorted.filter(item => item.confidence >= 0.75 * top_confidence);
+}
+```
+
+---
+
+## 6. 总结与架构启发
+
+1. **分层 Roofline 拓扑**：模型从最底层的存储/算力单元（SLC、DDR、ALU、TEX）到 Shader Core，再到顶层 GPU，均采用了多层级的 `MAX()` 取极大值逻辑，准确捕捉单点硬件瓶颈对系统吞吐的制约。
+2. **异步时钟域解耦**：引入 `Async_Ratio` 参数，完美屏蔽了 CSF（系统时钟）和 SC（Shader Core 时钟）在 DVFS（动态频率缩放）下的频率差异。
+3. **容错性瓶颈诊断**：瓶颈识别算法设置了 `0.75 * top_confidence` 的相对阈值，能够同时揭示主瓶颈及紧随其后的次要瓶颈，为性能优化提供更全面的指引。
 
 
 # Reference

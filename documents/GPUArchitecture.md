@@ -249,7 +249,7 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 
 #### 2. 核心作用与应用场景
 
-*   **定量评估访存瓶颈**：通过将外部 DDR 访存的数据量、AXI 总线位宽和标定带宽转化为 $gpu\_cycles$，能够精确模拟当 GPU 发生缓存未命中（Cache Miss）或存在大量访存时，流水线需要等待的时钟周期数。
+*   **定量评估访存瓶颈**：通过将外部 DDR 访存的数据量、AXI 总线位宽和标定带宽转化为 ${gpu cycles}$，能够精确模拟当 GPU 发生缓存未命中（Cache Miss）或存在大量访存时，流水线需要等待的时钟周期数。
 *   **硬件带宽约束建模**：算法中对带宽进行了硬编码上限设定（如最高限制在 55 GB/s），这用于模拟实际芯片设计中受限的内存通道带宽，避免理想化计算导致过高估计硬件性能。
 
 ### ALU 吞吐量计算 (ALU Throughput)
@@ -258,21 +258,21 @@ DDR 是 Double Data Rate（双倍数据速率） 的缩写，在日常计算机�
 
 该模块的核心逻辑是基于硬件指令计数器（Instruction Counters）和不同功能单元的硬件开销权重，统计总体 ALU 计算吞吐量和资源占用。计算步骤如下：
 
-*   **FMA 吞吐**：乘加指令权重为 $0.5$，分摊到各个子核（$num sc$）并考虑异步发射比（$async ratio$）。
-    $$fma = \left( \frac{{EXEC INSTR FMA} \times 0.5}{num sc} \right) \times async ratio$$
-*   **CVT 吞吐**：数据类型转换指令，引入架构特定的微架构因子（如 $cvt\_pe$）。
-    $$cvt = \left( \frac{{EXEC INSTR CVT} \times cvt pe}{num sc} \right) \times async ratio$$
+*   **FMA 吞吐**：乘加指令权重为 $0.5$，分摊到各个子核（${num sc}$）并考虑异步发射比（${async ratio}$）。
+    $$fma = \left( \frac{{EXEC INSTR FMA} \times 0.5}{num sc} \right) \times {async ratio}$$
+*   **CVT 吞吐**：数据类型转换指令，引入架构特定的微架构因子（如 ${cvt pe}$）。
+    $$cvt = \left( \frac{{EXEC INSTR CVT} \times {cvt pe}}{num sc} \right) \times {async ratio}$$
 *   **MSG 吞吐**：消息/访存交互指令，权重为 $1.0$。
-    $$msg = \left( \frac{{EXEC INSTR MSG} \times 1.0}{num sc} \right) \times async ratio$$
+    $$msg = \left( \frac{{EXEC INSTR MSG} \times 1.0}{num sc} \right) \times {async ratio}$$
 *   **SFU 吞吐**：特殊函数单元（如超越函数等）计算复杂度较高，权重设定为 $4.0$。
-    $$sfu = \left( \frac{{EXEC INSTR SFU} \times 4.0}{num sc} \right) \times async ratio$$
+    $$sfu = \left( \frac{{EXEC INSTR SFU} \times 4.0}{num sc} \right) \times {async ratio}$$
 *   **总 ALU 开销**：累加所有功能单元的归一化开销。
     $$alu\_total = fma + cvt + msg + sfu$$
 
 #### 2. 核心作用与应用场景
 
 *   **异构指令开销归一化**：GPU 执行的指令类型繁杂（如乘加、类型转换、消息交互、特殊函数），它们的硬件执行周期各不相同。该公式通过给不同指令赋予特定的权重因子，将复杂的指令计数器折算为一个可统一比对的总体吞吐量消耗。
-*   **微架构差异适配**：通过引入架构特定的 PE 因子（例如 Titan/Turse 与 Krake/Drage 的差异系数），该算法能够灵活适配不同代际 GPU 内部子核的硬件微架构吞吐差异，从而实现高层抽象模拟器对多种不同硬件配置的兼容。
+*   **微架构差异适配**：通过引入架构特定的 PE 因子，该算法能够灵活适配不同代际 GPU 内部子核的硬件微架构吞吐差异，从而实现高层抽象模拟器对多种不同硬件配置的兼容。
 
 ### Roofline Model (Predicted GPU Active) 分析报告
 

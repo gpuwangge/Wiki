@@ -269,9 +269,92 @@ GPU 内部确实还有许多其他部件，但 Shader, Memory, Geometry, CSF 是
 在进行性能优化时，盯着这四个部分通常能解决 90% 以上的帧率问题；而其他部件更多涉及功耗、稳定性、安全或特定功能(如视频播放)的优化。  
 
 
+```
+59  +-----------------------------------------------------------------------------+
+60  |                        主板 / 封装外部 (Outside Package)                    |
+61  |                                                                             |
+62  |   +-------------+                                                           |
+63  |   |     DDR     |     <--- 物理内存颗粒 (DRAM)                              |
+64  |   | (System Memory) |                                                     |
+65  |   +-------------+                                                           |
+66  |         ^ (引脚/焊球)                                                       |
+67  +---------|-------------------------------------------------------------------+
+68            |
+69  +---------v-------------------------------------------------------------------+
+70  |                        SoC 芯片内部 (Inside SoC Die)                          |
+71  | +-------------------------------------------------------------------------+ |
+72  | |                        系统互联与共享资源 (Shared Resources)            | |
+73  | |   +-------------+        +-------------+        +-------------+         | |
+74  | |   |     CPU     |        |     SLC     |        | Memory Ctrl |         | |
+75  | |   | (Compute Core)|        | (System Cache)|        | (DDR 控制器)|         | |
+76  | |   +-------------+        +-------------+        +-------------+         | |
+77  | |         | AXI                  ^  ^                   ^                 | |
+78  | |         | Master               |  | (Snooping)        | AXI             | |
+79  | |         v                      |  |                   |                 | |
+80  | +-------------------------------------------------------------------------+ |
+81  | |                        SoC 系统互联 (NoC / Interconnect)                  | |
+82  | |                             (基于 AXI 协议的高速总线)                     | |
+83  | +-------------------------------------------------------------------------+ |
+84  | |                                ^                                          | |
+85  | |                                | AXI Master Interface                     | |
+86  | +--------------------------------|----------------------------------------+ |
+87  | |                                |                                        | |
+88  | +--------------------------------v----------------------------------------+ |
+89  | |                        GPU IP 模块 (GPU Block)                          | |
+90  | +-------------------------------------------------------------------------+ |
+91  | |                        GPU 内部组件 (GPU Internal)                        | |
+92  | |   +-------------+    +------------------------------------------------+ | |
+93  | |   |     CSF     |    |                Geometry (Tiler)                | | |
+94  | |   | (命令流前端)  |    |                 (几何处理引擎)                 | | |
+95  | |   +-------------+    +------------------------------------------------+ | |
+96  | |         |                                     |                         | |
+97  | |   +-----v-------+    +------------------------v-----------------------+ | |
+98  | |   |     MMU     |    |                Shader Core Cluster             | | |
+99  | |   | (地址翻译单元)|    +------------------------------------------------+ | |
+100 | |   +-------------+    |  ALU | TEX | Blend | ASN | LSC                 | | |
+101 | |         |            +------------------------------------------------+ | |
+102 | |   +-----v-------+    |                RAC (光栅/渲染)                 | | |
+103 | |   |     L2      |    +------------------------------------------------+ | |
+104 | |   | (GPU 私有缓存)|                                                       | |
+105 | |   +-------------+---------------------------------------------------------+ |
+106 | |   |                  (GPU 内部互联 / 内部总线)                            | |
+107 | |   +-----------------------------------------------------------------------+ |
+108 | +---------------------------------------------------------------------------+ |
+109 | |   | (AXI Master 接口,穿过 GPU 边界)                                       | |
+110 | +---|-----------------------------------------------------------------------+
+111       |
+112       v
+113       (连接到 SoC 系统互联 NoC)
+```
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/gpu_arch.png" alt="alt text">  
+</p>  
 
+## GPU Bottleneck模型
+### 顶层性能预测模型(Main Performance Model)
+PredictedGPUACTIVE = MCUACTIVE + max(ShaderCoreBottleneck, TilerBottleneck, L2CacheBottleneck, MemoryBottleneck)
 
+### 着色器核心瓶颈(Shader Core Bottleneck)
+ShaderCore = AsyncRatio * max(TextureBottleneck, BlendBottleneck, RasterizerBottleneck, ASNBusBottleneck, ALUBottleneck, RTUBottleneck, LSCL1CacheBottleneck)
 
+### ALU 计算瓶颈(ALU Bottleneck)
+ALU = 0.5 * EXECINSTRFMA + 0.5 * EXECINSTRCVT + 1.0 * EXECINSTRMSG + 4.0 * EXECINSTRSFU
+
+### 内存子系统瓶颈(Memory Bottleneck)
+#### SLC 瓶颈计算公式
+SLCBottleneck = NumL2 * (10^-9 * 150) * (AXIWidth / 8) * (CSFFreq * 10^6) * (L2EXTREADBEATS + L2EXTWRITEBEATS)
+#### DDR 瓶颈计算公式
+DDR Bottleneck = (CSFFreq * 10^6) * (10^-9 / DDRBW) * (DRAMCRBYTE + DRAMCWBYTE)
+
+### 帧率(FPS)计算与误差分析
+实际帧率 (Golden FPS):  
+GoldenFPS = (CSFFreq * 10^6) / GPUACTIVE  
+
+预测帧率 (A-Model FPS):  
+AModelFPS = (CSFFreq * 10^6) / Σ(PredictedGPUACTIVE per segment)  
+
+相对误差率 (Error Rate):  
+Error = (|GoldenFPS - AModelFPS| / GoldenFPS) * 100  
 
 # Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  

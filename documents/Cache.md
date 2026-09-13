@@ -1,5 +1,5 @@
 <p float="left">
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cache.png" alt="alt text" width="600" height="450">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cache.jpg" alt="alt text" width="600" height="450">  
 </p>  
 
 ## Cache Line

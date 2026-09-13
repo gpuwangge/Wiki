@@ -83,8 +83,47 @@ roles这一栏如果不写，默认就是chat。写了autocomplete并且模型�
 
  
 ## Steps to Build a AI Agent
-首先AI Agent对模型有更强的需求。这里选取Llama-3.1:8b作为基础模型。  
-大模型介绍：Llama-3  
+首先AI Agent对模型有更强的需求。  
+这里选择32B，3位的Qwen2.5-Coder-32B-Instruct-GGUF:IQ3_XS  
+```
+ollama run hf.co/bartowski/Qwen2.5-Coder-32B-Instruct-GGUF:IQ3_XS
+```
+下载大小：13GB。  
+run之后显存占用为：14.6/16GB  
+无法读写文件
+
+```
+ollama run qwen2.5-coder:14b
+```
+下载大小：9GB。  
+run之后显存占用为：10/16GB  
+无法读写文件
+
+Issue：看起来本地读写可能不能直接做。  
+
+vscode+continue如何搭建本地ai agent读写文件  
+直接返回了  
+{ "name": "read_file", "arguments": { "filepath":   "C:\Workspace2025\github_repo\Wiki\aitest.txt" } }  
+(用Gemini 3 Flash Preview可以读写)  
+猜测qwen2.5-coder:14b没有使用正确的tool calling格式，或者还有什么没有设置正确  
+
+
+然后确认在continue底部左下角的mode选中的是Agent。  
+根据Continue的说明，如果模型有某个工具调用的能力，就可以直接调用，不需要你教他怎么使用。  
+可以先让模型读一个文件测试一下，然后写入文件，然后读一个工作区所有文件并列出目录，确认功能正常后再赋予复杂的任务。  
+到这里**免费的无限使用的不依赖网络的**通用AI Agent做完成了。  
+
+## 大模型介绍：DeepSeek-R1
+定位： 强推理/逻辑链模型（Reasoning Model）。  
+特点： 在出厂时就经过大规模强化学习训练，回答编码问题前会先进行内部“思考（Chain of Thought）”。擅长解决复杂 Bug、算法设计、重构底座架构等需要深度逻辑推理的场景。  
+在 Continue 中的角色： 适合放在 Chat（对话）模式下，当你遇到极其晦涩的代码报错或复杂的逻辑需求时调用。 
+## 大模型介绍：Qwen2.5
+WIP
+## 大模型介绍：GLM 系列 (智谱 AI - Zhipu AI)
+WIP
+## 大模型介绍：Kimi / Moonshot 系列开源蒸馏版/轻量版 (月之暗面)
+WIP
+## 大模型介绍：Llama-3  
 定位： 全能通用开源大模型。  
 特点： 具有极高的响应速度、出色的指令遵循能力和极强的代码生成基础。  
 其中llama3.1:8b是入门级AI Agent模型。(Agent Mode需要tool/function calling)  
@@ -105,21 +144,7 @@ models:
         capabilities:
             - tool_use
 ```
-然后确认在continue底部左下角的mode选中的是Agent。  
-根据Continue的说明，如果模型有某个工具调用的能力，就可以直接调用，不需要你教他怎么使用。  
-可以先让模型读一个文件测试一下，然后写入文件，然后读一个工作区所有文件并列出目录，确认功能正常后再赋予复杂的任务。  
-到这里**免费的无限使用的不依赖网络的**通用AI Agent做完成了。  
-
-## 大模型介绍：DeepSeek-R1
-定位： 强推理/逻辑链模型（Reasoning Model）。  
-特点： 在出厂时就经过大规模强化学习训练，回答编码问题前会先进行内部“思考（Chain of Thought）”。擅长解决复杂 Bug、算法设计、重构底座架构等需要深度逻辑推理的场景。  
-在 Continue 中的角色： 适合放在 Chat（对话）模式下，当你遇到极其晦涩的代码报错或复杂的逻辑需求时调用。 
-## 大模型介绍：Qwen2.5
-WIP
-## 大模型介绍：GLM 系列 (智谱 AI - Zhipu AI)
-WIP
-## 大模型介绍：Kimi / Moonshot 系列开源蒸馏版/轻量版 (月之暗面)
-WIP
+实际使用经验：chat和补全还行，但是tool_use简单的读取和写文件也不能保证。  
 
 ## Ollama使用Notes
 ### 自动加载模型
@@ -149,6 +174,9 @@ ollama ps
 ```
 ollama stop model_name
 ```
-
+用如下命令可以看到已经下载过的所有模型
+```
+ollama list
+```
 
 

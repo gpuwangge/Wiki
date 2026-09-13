@@ -1,3 +1,7 @@
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cache.png" alt="alt text" width="600" height="450">  
+</p>  
+
 ## Cache Line
 Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）与主内存（DDR/LPDDR）之间进行数据交换的最小基本单位。  
 即便程序在代码里只读取或修改了一个 4 字节的整数（int），底层硬件也不会只从内存中搬运这 4 个字节，而是会把包含这 4 字节在内的一整行数据（通常为 64 字节或 128 字节）一次性加载进 Cache 中。  

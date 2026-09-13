@@ -84,6 +84,12 @@ Cache Slice 的工作机制
 例如：地址 0x1000 映射到 Slice 0，地址 0x1040 映射到 Slice 1。  
 - 独立并行处理： 每一个 Cache Slice 都拥有自己独立的控制逻辑、TAG 比较器和数据阵列（Data Array）。只要两个核心访问的数据被 Hash 到不同的 Slice，它们就能完全并行读写，互不干涉。
 
+## Cache Bank
+Cache Bank（缓存库） 是位于单个 Slice 内部的物理 SRAM 阵列划分。  
+Cache Bank是SRAM 阵列的物理切分。一个 Bank 内部包含成千上万个 Cache Line。  
+目的：提供伪多端口能力。单端口 SRAM 同一周期只能响应一个读或写请求。通过将 Cache 切分为多个 Bank（如 16 个或 32 个），只要同一周期到达的多个访存请求指向不同的 Bank，硬件就可以并行处理它们，从而提供高吞吐量。  
+交错映射（Interleaving）：为了最大化并发概率，物理地址通常会做 Bank 交错。例如，地址空间中相邻的 Cache Line 会被物理映射到连续的 Bank 0, Bank 1, Bank 2 中。  
+
 ## L2 Cache的内部和外部读写
 对 GPU 的 L2 Cache 来说，“内部”与“外部”是以 L2 Cache 本身所在的层级（或 GPU 核心边界）来划分的：  
 

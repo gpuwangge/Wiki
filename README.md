@@ -31,6 +31,7 @@
 ## [Roofline Model](https://github.com/gpuwangge/Wiki/blob/main/documents/RooflineModel.md)  
 ## [Cache](https://github.com/gpuwangge/Wiki/blob/main/documents/Cache.md)  
 ## [Bandwidth Validation](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthValidation.md)  
+## [GPU Power](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUPower.md)  
 
 # TOOLS
 ## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMake.md)  

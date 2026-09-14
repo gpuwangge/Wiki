@@ -42,6 +42,6 @@ Domain AI Agent跟AI Coding, AI Agent的区别如下：
 | AI Agent for Coding | 能围绕编码目标规划并调用代码工具的 Agent | 通常需要 | 搜索代码、读写文件、运行命令、修复局部错误、生成测试 | 多文件 diff、命令结果、修复建议 | 应该有，但可能只做局部 build/test |
 | SWE Agent | 面向完整软件工程任务闭环的 Domain AI Agent | 必须或基本必须 | Issue → 定位 → 修改 → build/test → 迭代 → PR/review | 可审查 patch、测试结果、commit 或 PR | 必须依赖外部工程证据验证 |
 
-# 使用Python实现第一个简单的Domain AI Agent
-
+# 使用Python实现一个简单的Domain AI Agent
+https://github.com/gpuwangge/AIAgentSandbox/tree/main   
 

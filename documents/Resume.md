@@ -29,7 +29,7 @@ Staff GPU Engineer with 8+ years of industry experience spanning GPU architectur
 - Built more than 10 Python tools for image analysis, log analysis, regression triage, and workflow automation, improving engineering productivity and reducing human error.
 
 ## Other Professional & Open-Source Projects
-**LuminError | Open-Source Vulkan Rendering & GPU Experimentation Framework** 
+**LuminEvolution | Open-Source Vulkan Rendering & GPU Experimentation Framework** 
 [https://github.com/gpuwangge/LuminError](https://github.com/gpuwangge/LuminError) | C++, Vulkan, GLSL (Oct 2025 – Present)  
 - Engine Architecture: Engineered a modular C++ Vulkan rendering engine with 9 decoupled subsystems, directly managing GPU resources, synchronization, descriptor sets, and command submission for hybrid graphics/compute workloads.
 - Rendering Pipeline: Implemented 35 example programs across graphics, compute, and ray-tracing pipelines, covering rasterization, shadow mapping, MSAA, PBR materials, glTF/GLB asset loading, and GEMM compute.

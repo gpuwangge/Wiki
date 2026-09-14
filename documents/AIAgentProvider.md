@@ -40,17 +40,35 @@ Cursor 是基于 VS Code Fork 开发的。
 - Git 与 CI/CD 集成
 - 多平台与权限模式
 ### 费用
-- Claude Code 免费：有限使用,额度很少  
+付费网站：https://platform.claude.com/  
+- Claude Code 免费：可以申请API Key，但是不充钱的话完全没有用处。
+- Claude Code: $5/月
 - Claude Code Pro: $20/月，额度标准  
 - Claude Code Max 5x: $100/月，额度标准的五倍  
-- Claude Code Max 20x: $200/月，额度标准的二十倍  
 
-目前 Pro 的机制是：  
-每 5 小时一个 usage window  
-Pro 在高峰期至少提供 免费版的 5 倍 session usage  
-达到 5 小时额度后，需要等窗口重置  
-另外还有 weekly limit  
-Claude 网页版 + Claude Code 共用这个额度，不是 Claude Code 单独给你一份额度  
+实际使用按量消费。  
+获得API Key后的测试方法(windows):
+创建一个test.json，内容如下
+```
+{
+  "model": "claude-sonnet-4-6",
+  "max_tokens": 1024,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hello, world"
+    }
+  ]
+}
+```
+运行如下指令(把YOUR_API_KEY换成实际的api key)  
+```
+curl.exe https://api.anthropic.com/v1/messages --header "x-api-key: YOUR_API_KEY" --header "anthropic-version: 2023-06-01" --header "content-type: application/json" --data-binary "@test.json"
+```
+如果能连上就成功了。如果这时候没充值，会得到如下信息：
+```
+Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits.
+```
 
 ## Codex
 开发公司：OpenAI
@@ -80,6 +98,7 @@ Codex 本身不单独收费，包含在 ChatGPT 套餐中
 - 生态兼容（MCP）：支持 Model Context Protocol，可扩展接轨各类外部数据库与第三方 API 服务。
 - 云端集成：开箱即用集成在 Google Cloud Shell 中，也可在 macOS、Linux、Windows 本地命令行中安装。
 ### 费用
+付费网站：https://aistudio.google.com/  
 - 免费额度 (Google AI Studio)：个人开发者使用来自 AI Studio 的 API Key 时，享有高限额的免费调用额度，足以覆盖日常终端命令交互与轻度开发需求。
 - 按量付费 (Pay-As-You-Go)：按 API Token 计费，超出免费额度或绑定 Google Cloud 账单后，按调用的具体模型（如 Gemini Flash / Pro）的输入/输出 Token 计费（例如 Gemini Flash 输入低至 $0.10 - $0.50 / 百万 Token）。
 - Google Cloud Shell：免费使用，在 Google Cloud Shell 环境中提供默认免费配额（云环境每周提供 50 小时免费使用时长）。  

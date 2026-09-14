@@ -82,8 +82,40 @@ roles这一栏如果不写，默认就是chat。写了autocomplete并且模型�
 到这里我们就用Continue+Ollama+Qwen2.5 Coder 7B搭建了一个**免费的无限使用的不依赖网络的**AI聊天和代码补全环境。  
 
  
+## 让大模型使用Tool
+使用模型来聊天和补全仅仅是普通AI Chatbot的能力，要升级为AI Agent，需要有使用工具的能力。比如，read/write file的能力。  
+如果使用Gemini 3 Flash Preview可以读写本地文件。
+以read_file为例：  
+```
+Continue
+   │
+   │ tools = read_file
+   ▼
+Ollama
+   │
+   │ tools 参数正确传入
+   ▼
+Qwen 2.5 Coder 14B
+   │
+   │ 理解了应该调用 read_file
+   ▼
+生成json：
+{
+    "name": "read_file",
+    "arguments": {...}
+}
+之后发给message.tool_calls
+```
+
+本地模型目前的Issue：  
+模型错误地把json放在 message.content  
+而不是 message.tool_calls  
+
+换句话说，Qwen 2.5 Coder 14B 在你当前 Ollama 模型模板/版本组合下，没有把工具调用输出成 Ollama API 所需要的结构化 tool_calls。
+
+
 ## Steps to Build a AI Agent
-首先AI Agent对模型有更强的需求。  
+首先AI Agent对模型有更强的需求。需要测试更多的模型。    
 这里选择32B，3位的Qwen2.5-Coder-32B-Instruct-GGUF:IQ3_XS  
 ```
 ollama run hf.co/bartowski/Qwen2.5-Coder-32B-Instruct-GGUF:IQ3_XS
@@ -99,19 +131,14 @@ ollama run qwen2.5-coder:14b
 run之后显存占用为：10/16GB  
 无法读写文件
 
-Issue：看起来本地读写可能不能直接做。  
-
 vscode+continue如何搭建本地ai agent读写文件  
 直接返回了  
 { "name": "read_file", "arguments": { "filepath":   "C:\Workspace2025\github_repo\Wiki\aitest.txt" } }  
 (用Gemini 3 Flash Preview可以读写)  
-猜测qwen2.5-coder:14b没有使用正确的tool calling格式，或者还有什么没有设置正确  
+猜测qwen2.5-coder:14b没有使用正确的tool calling格式    
 
 
-然后确认在continue底部左下角的mode选中的是Agent。  
-根据Continue的说明，如果模型有某个工具调用的能力，就可以直接调用，不需要你教他怎么使用。  
-可以先让模型读一个文件测试一下，然后写入文件，然后读一个工作区所有文件并列出目录，确认功能正常后再赋予复杂的任务。  
-到这里**免费的无限使用的不依赖网络的**通用AI Agent做完成了。  
+
 
 ## 大模型介绍：DeepSeek-R1
 定位： 强推理/逻辑链模型（Reasoning Model）。  
@@ -144,7 +171,7 @@ models:
         capabilities:
             - tool_use
 ```
-实际使用经验：chat和补全还行，但是tool_use简单的读取和写文件也不能保证。  
+
 
 ## Ollama使用Notes
 ### 自动加载模型
@@ -162,6 +189,10 @@ models:
 - 同时加载两者之后占用为11.4/16GB。  
 
 ### 常用Ollama命令
+以下命令列出所有Ollama可用的指令
+```
+ollama help
+```
 除了
 ```
 ollama run model_name
@@ -178,5 +209,8 @@ ollama stop model_name
 ```
 ollama list
 ```
-
+如下命令显示Ollama version
+```
+ollama -v
+```
 

@@ -42,6 +42,265 @@ Domain AI Agent跟AI Coding, AI Agent的区别如下：
 | AI Agent for Coding | 能围绕编码目标规划并调用代码工具的 Agent | 通常需要 | 搜索代码、读写文件、运行命令、修复局部错误、生成测试 | 多文件 diff、命令结果、修复建议 | 应该有，但可能只做局部 build/test |
 | SWE Agent | 面向完整软件工程任务闭环的 Domain AI Agent | 必须或基本必须 | Issue → 定位 → 修改 → build/test → 迭代 → PR/review | 可审查 patch、测试结果、commit 或 PR | 必须依赖外部工程证据验证 |
 
-# 使用Python实现一个简单的Domain AI Agent
+# 如何实现Domain AI Agent
+项目实践：  
 https://github.com/gpuwangge/AIAgentSandbox/tree/main   
+
+## 连接模型的方式
+Native 连接模型和通过 OpenAI 方式连接模型，它们都能实现“用户输入一句话 → 模型回复一句话”。  
+真正差别主要体现在：代码通用性和能否使用某家模型的特色功能。  
+
+### Native API
+直接按每家模型厂商自己的“母语”去调用它。  
+你分别学日语、法语、意大利语，直接按每家餐厅自己的菜单和规则点菜。  
+想完整发挥某一家模型的能力：选 native API。  
+
+通过 native API 连接模型的本质，就是你的程序按模型提供商定义的网络协议，构造 HTTP 请求（header + JSON body），发送给模型服务；然后接收并解析它定义格式的 JSON 响应或流式数据。  
+
+以本地 Ollama 为例，它默认把 API 暴露在 http://localhost:11434/api，其中聊天接口是 POST /api/chat。Ollama 官方也说明其接口可用于运行和交互模型，并默认提供流式响应。  
+
+```
+┌───────────────────────┐
+│ VS Code + Continue    │
+│ 或你自己的 C++ 程序    │
+└───────────┬───────────┘
+            │
+            │ 1. 构造 HTTP Request
+            │    - URL
+            │    - HTTP method: POST
+            │    - headers
+            │    - JSON request body
+            ▼
+┌───────────────────────┐
+│ Ollama HTTP Server    │
+│ localhost:11434       │
+└───────────┬───────────┘
+            │
+            │ 2. 校验并解析 JSON
+            │    model、messages、options、stream...
+            │
+            ▼
+┌───────────────────────┐
+│ Ollama Runtime        │
+│ 模型加载、KV cache、   │
+│ tokenization、采样     │
+└───────────┬───────────┘
+            │
+            │ 3. CPU / GPU 做推理
+            ▼
+┌───────────────────────┐
+│ 本地 LLM 模型          │
+│ Qwen / Llama / ...    │
+└───────────┬───────────┘
+            │
+            │ 4. 返回 JSON 或一串流式 JSON
+            ▼
+┌───────────────────────┐
+│ Continue / 你的程序    │
+│ 解析结果、累积文本、    │
+│ 更新 VS Code UI        │
+└───────────────────────┘
+```
+
+### OpenAI-compatible API
+大家都假装讲同一种“OpenAI 口音”，你的聊天机器人用一套代码就能连不同家的模型。  
+OpenAI-compatible API：这些餐厅都额外提供了一份英文菜单。你不一定能点到所有当地隐藏菜，但基本菜都能统一地点。  
+想最快支持多个模型、方便切换：选 OpenAI-compatible。  
+
+OpenAI-compatible 是事实上的行业标准（de facto standard），不是由 ISO、IETF、W3C 等正式标准组织制定的强制标准。  
+它之所以像“标准”，是因为大量模型托管商、本地推理框架和 Agent 应用，都愿意兼容 OpenAI 的请求/响应格式。这样开发者能复用已有 SDK、代码和工具链，只改少量配置就更换模型或推理后端。  
+
+以 VS Code + Continue + Ollama 为例：模型仍由本地 Ollama 在 CPU/GPU 上运行，只是 Continue 不再使用 Ollama 的 /api/chat 原生协议，而改用 OpenAI 风格的 /v1/chat/completions 协议。  
+
+```
+┌───────────────────────┐
+│ VS Code + Continue    │
+│ 或你自己的 C++ 程序    │
+└───────────┬───────────┘
+            │
+            │ 1. 构造 OpenAI-compatible HTTP Request
+            │    - URL: /v1/chat/completions
+            │    - HTTP method: POST
+            │    - headers: Content-Type / Authorization
+            │    - OpenAI 风格 JSON request body
+            ▼
+┌──────────────────────────────────┐
+│ Ollama OpenAI-compatible API 层  │
+│ http://localhost:11434/v1        │
+│                                  │
+│ 接收 OpenAI 风格请求并做协议适配  │
+└───────────┬──────────────────────┘
+            │
+            │ 2. 转换/映射为 Ollama runtime 所需的请求
+            │    model、messages、sampling、stream...
+            ▼
+┌───────────────────────┐
+│ Ollama Runtime        │
+│ 模型加载、KV cache、   │
+│ tokenization、采样     │
+└───────────┬───────────┘
+            │
+            │ 3. CPU / GPU 做推理
+            ▼
+┌───────────────────────┐
+│ 本地 LLM 模型          │
+│ Qwen / Llama / ...    │
+└───────────┬───────────┘
+            │
+            │ 4. Ollama 将结果包装为 OpenAI 风格 response
+            │    - 非流式：完整 JSON
+            │    - 流式：SSE chunks
+            ▼
+┌───────────────────────┐
+│ Continue / 你的程序    │
+│ 解析 OpenAI schema：   │
+│ choices[].message      │
+│ choices[].delta        │
+│ 并更新 VS Code UI      │
+└───────────────────────┘
+```
+
+
+### 对比两种API
+Native API
+```
+VS Code
+  │  提问或要求修改
+  ▼
+Continue
+  │
+  │  POST http://localhost:11434/api/chat
+  │  使用 Ollama 原生请求格式
+  ▼
+Ollama 本地模型
+  │
+  │  调 qwen2.5-coder / deepseek-coder / llama 等
+  ▼
+Continue 在 VS Code 展示回答或 diff
+```
+OpenAI-compatible API
+```
+VS Code
+  │
+  ▼
+Continue
+  │  认为它连接的是“OpenAI 风格服务”
+  │
+  │  POST http://localhost:11434/v1/chat/completions
+  │  使用 OpenAI Chat Completions JSON
+  ▼
+Ollama 的 OpenAI-compatible 层
+  │  将兼容请求交给 Ollama runtime
+  ▼
+Ollama 本地模型
+  │
+  ▼
+Continue 在 VS Code 展示回答或 diff
+```
+
+## LangChain
+LangChain 是一个帮助你搭建 LLM 应用和 AI Agent 的开源开发框架。它把“调用模型、组织上下文、调用工具、循环执行、管理状态”等常见工作封装起来；但它不是实现 AI Agent 的必须组件。你完全可以直接用 Ollama/OpenAI/Anthropic 的 HTTP API，自己写一个几十到几百行的 Agent loop。  
+
+对你正在理解的 VS Code + Continue + Ollama 这类本地模型链路来说，可以把 LangChain 看成“位于 Chatbot/Agent 与模型 API 中间的一套通用 runtime 工具箱”。LangChain 官方把其 Agent 定义概括为：Agent = Model + Harness；这里的 harness 就是模型循环周围的 prompt、tools 和控制逻辑。  
+
+最简单的 Chatbot 只需做一件事：
+```
+用户输入
+  ↓
+发 HTTP JSON 给 Ollama / OpenAI
+  ↓
+收到模型回答
+  ↓
+显示回答
+```
+这不需要 LangChain。
+```
+┌───────────┐        HTTP + JSON        ┌────────────┐
+│ Chat UI   │ ─────────────────────────▶│ LLM Server │
+│ / 后端    │◀───────────────────────── │ Ollama等   │
+└───────────┘         回答 JSON         └────────────┘
+```
+但你一旦希望它成为 Agent，事情开始增加：
+- 需要查本地文件、数据库或网页。
+- 需要调用 shell、编译器、Git、CI、内部 REST API。
+- 需要由模型决定“这一步该调用哪个工具”。
+- 工具执行失败后，希望模型看到错误并自行重试。
+- 要做 RAG，把代码库或文档检索结果塞进上下文。
+- 要管理多轮对话、token budget、状态、日志、追踪和人工确认。
+- 复杂任务要拆成规划、执行和验证步骤。
+
+LangChain 的目标就是减少这些“模型周边胶水代码”。它提供面向模型、消息、tools、retrieval、middleware 和 Agent 的统一抽象，并对接多个模型提供商。  
+
+下面这张图能说明 LangChain 不等于模型，也不等于工具；它更像一层 Agent runtime /  
+```
+┌─────────────────────────────┐
+│ 用户 / VS Code / Web Chat UI │
+└──────────────┬──────────────┘
+               │ 用户任务
+               ▼
+┌───────────────────────────────────────────┐
+│ LangChain                                  │
+│                                           │
+│ - 组织 system prompt / 历史消息 / 上下文   │
+│ - 把 tools 描述交给模型                    │
+│ - 收到 tool call 后执行工具                │
+│ - 将 tool result 回传模型                  │
+│ - 重复循环，直到任务完成                    │
+│ - 可加入 memory、RAG、guardrail、日志      │
+└───────┬──────────────────────┬────────────┘
+        │                      │
+        │ 调模型               │ 调工具
+        ▼                      ▼
+┌─────────────────┐   ┌─────────────────────┐
+│ Ollama / OpenAI │   │ 文件、Git、数据库、  │
+│ Claude / Gemini │   │ 搜索、shell、CI/API  │
+└─────────────────┘   └─────────────────────┘
+```
+模型通常只负责两种决策：
+```
+A. 直接回复用户
+B. 说“请调用某个工具，并给出参数”
+```
+LangChain 或你自己写的 Agent loop 负责后续动作：
+```
+模型返回 tool call
+  ↓
+执行对应的真实函数/API
+  ↓
+把执行结果放回对话
+  ↓
+再次请求模型
+  ↓
+模型决定下一步
+```
+官方文档也将 Agent 描述为“模型在循环中调用工具，直至任务完成”；工具本质是有明确输入输出的可调用函数，模型依据上下文决定何时调用和提供什么参数。  
+
+LangChain 是否必须?  
+完全不必须。
+AI Agent 的最小定义不是“用了 LangChain”，而是：
++ 可调用工具
++ 调用工具后的观察结果
++ 必要时反复决策的循环
+
+你可以用任意语言、任意模型 SDK、直接 HTTP，甚至用 C++ 自己实现。
+
+| 需求                                   | 是否建议 LangChain | 原因                       |
+| ------------------------------------ | -------------- | ------------------------ |
+| 简单 Chatbot                           | 否              | 直接请求模型 API 即可            |
+| 单个模型、单个简单工具                          | 通常否            | 手写循环非常短，依赖少、可控性高         |
+| VS Code 内部小型 coding helper           | 视情况而定          | 先手写 adapter/loop 往往更利于调试 |
+| 快速验证 RAG + 多种模型 + 多工具                | 是              | 可少写大量连接与编排代码             |
+| 要同时支持 Ollama、OpenAI、Anthropic、Gemini | 常常值得           | provider 抽象能减少适配工作       |
+| 工作流有显式状态机、重试、审批、长期任务                 | 更应考虑 LangGraph | 这类问题需要更强的状态与编排能力         |
+| 产品级高风险写操作                            | 不能只靠 LangChain | 必须额外做权限、审批、审计、幂等和策略层     |
+
+LangChain 可以快速连接不同模型和工具；LangChain 自身也强调其用途是从 model、tools、prompt、middleware 组合出合适的 agent，而不是规定唯一 Agent 架构。  
+
+## LangGraph
+LangChain = 偏高层、方便快速搭 Agent 的抽象和组件库  
+LangGraph = 偏底层、显式管理 Agent 状态、节点、边、恢复和人工介入的编排框架  
+
+对于“模型调用工具形成循环”的一般 Agent，LangChain 足够；对于长期运行、可暂停恢复、有审批节点、失败分支明确的业务 Agent，LangGraph 更接近状态机/任务图的思路。  
+LangGraph 官方定位就是面向可靠 Agent 的低层 orchestration runtime，强调状态、memory、human-in-the-loop 等能力。  
+
 

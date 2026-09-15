@@ -54,7 +54,7 @@ python -m flask --app app run
 # Run Flask
 VSCode terminal:
 ```
-python -m flask --app app run
+python -m flask run
 ```
 可能的运行结果：
 ```

@@ -155,6 +155,48 @@ my_flask_project/
 ```
 不过如果返回的是纯文本，没有 HTML 页面，暂时不需要处理。
 
+# 数据库Database
+安装插件：
+```
+pip install flask-sqlalchemy
+```
+创建数据库"data.db"：
+```
+python -m flask shell
+>>> from app import db
+>>> db.create_all()
+(Ctrl+Z退出flask shell)
+```
+上面打开 Python Shell 使用的是 flask shell命令，而不是 python。使用这个命令启动的 Python Shell 激活了“程序上下文”，它包含一些特殊变量，这对于某些操作是必须的。  
+删除数据库：
+```
+db.drop_all()
+```
+另一个创建数据库的方法,在app.py内写：
+```
+@app.cli.command('init-db')  # 注册为命令，传入自定义命令名
+@click.option('--drop', is_flag=True, help='Create after drop.')  # 设置选项
+def init_database(drop):
+    """Initialize the database."""
+    if drop:  # 判断是否输入了选项
+        db.drop_all()
+    db.create_all()
+    click.echo('Initialized database.')  # 输出提示信息
+```
+然后执行
+```
+python -m flask init-db
+```
+或者执行 (先删除，再重建数据库)
+```
+python -m flask init-db --drop
+```
+
+# Python创建命令行界面
+import click 是用于在 Python 中创建命令行界面的第三方库。通过装饰器（如 @click.command、@click.option 等）把普通函数变成可在命令行执行的工具，支持多命令、自动帮助信息、参数解析等功能。简而言之，它让写命令行工具更简单、可组合且易维护。  
+
+
+
 # Reference
 https://tutorial.helloflask.com/  
 

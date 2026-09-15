@@ -1,3 +1,13 @@
+Flask 是一个用 Python 构建网站、Web 后端和 REST API 的轻量级框架。它核心很小，上手快，但可以通过扩展逐步加入数据库、认证、表单、缓存等能力；很适合做原型、小中型服务、内部工具和 AI/模型服务的 HTTP 接口。Flask 官方将其定位为轻量的 WSGI Web 应用框架，并强调“快速入门、可扩展到复杂应用”。  
+
+Flask 被称为“微框架”（microframework），不是说它只能做小项目，而是指它只内置 Web 开发最必要的部分，不强制你采用某种数据库、ORM、目录结构或用户认证方案。项目结构与技术选型通常由开发者决定。  
+
+它主要建立在这些组件之上：
+- Werkzeug：处理 HTTP 请求、响应、路由等底层 WSGI 能力
+- Jinja：HTML 模板引擎，用 Python 数据动态生成网页
+- Flask CLI：本地开发时启动服务、配置应用等命令行能力
+
+
 # Download Flask
 ```
 pip install Flask
@@ -138,5 +148,6 @@ my_flask_project/
 ```
 不过如果返回的是纯文本，没有 HTML 页面，暂时不需要处理。
 
-
+# Reference
+https://tutorial.helloflask.com/  
 

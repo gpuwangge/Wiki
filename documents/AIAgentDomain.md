@@ -57,7 +57,8 @@ Native 连接模型和通过 OpenAI 方式连接模型，它们都能实现“�
 
 通过 native API 连接模型的本质，就是你的程序按模型提供商定义的网络协议，构造 HTTP 请求（header + JSON body），发送给模型服务；然后接收并解析它定义格式的 JSON 响应或流式数据。  
 
-以本地 Ollama 为例，它默认把 API 暴露在 http://localhost:11434/api，其中聊天接口是 POST /api/chat。Ollama 官方也说明其接口可用于运行和交互模型，并默认提供流式响应。  
+以本地 Ollama 为例，它默认把 API 暴露在 http://localhost:11434/api  
+其中聊天接口是 POST /api/chat。Ollama 官方也说明其接口可用于运行和交互模型，并默认提供流式响应。  
 
 ```
 ┌───────────────────────┐

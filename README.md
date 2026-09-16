@@ -32,6 +32,7 @@
 ## [Cache](https://github.com/gpuwangge/Wiki/blob/main/documents/Cache.md)  
 ## [Bandwidth Validation](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthValidation.md)  
 ## [GPU Power](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUPower.md)  
+## [Shader Processor](https://github.com/gpuwangge/Wiki/blob/main/documents/ShaderProcessor.md)  
 
 # TOOLS
 ## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMake.md)  

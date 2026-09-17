@@ -30,6 +30,8 @@ Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）�
 所有L1/L2/L3都是SRAM材料做的。速度分别为, 几个cycle，十几cycle~几十cycle，?cycle。  
 Register File也是SRAM，速度最快1cycle。  
 顺便说一句TBDR的Tile Buffer(or imageblock)也是SRAM，但是它不是Cache。  
+GMEM 的物理本质是 DRAM（GDDR / HBM / LPDDR），在架构和编程模型上它是全局可寻址的虚拟内存空间，读写会经过 SRAM 构建的 L1/L2 Cache 硬件层级。  
+在高通 Adreno GPU 的 TBR/TBDR（Tile-Based [Deferred] Rendering）分块渲染架构 中，GMEM 指的是紧挨着 GPU 核心的一块高速片上 SRAM 缓存（On-Chip SRAM），其实就是Tile Buffer。  
 
 空间局部性原理（Spatial Locality）：硬件采用 Cache Line 机制的主要依据是局部性原理——如果程序访问了内存地址 $A$，那么它极大概率很快就会访问地址 $A$ 附近的变量（例如遍历数组）。一次性拉取一整行数据，可以大幅提升后续内存访问的缓存命中率（Cache Hit）。  
 

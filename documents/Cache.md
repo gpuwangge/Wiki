@@ -122,3 +122,114 @@ Cache Bank是SRAM 阵列的物理切分。一个 Bank 内部包含成千上万�
 - 外部写（Write-back / Evict）： 当 L2 Cache 中的脏数据（Dirty Data）因为缓存替换（Eviction）策略需要被清理腾出空间时，或者遇到非 缓存一致性直写（Write-through）操作时，L2 会把数据写回到外部显存中。
 
 内部读写是内部的block读写L2；外部读写是L2读写外部的memory。  
+
+## CCU(Cache & Compression Unit)
+CCU（Cache & Compression Unit，缓存与压缩单元） 是现代 GPU（特别是移动端 GPU 如 Arm Mali、Qualcomm Adreno，以及部分桌面级/嵌入式图形 IP）管线中的关键硬件模块。  
+
+L1.5：CCU 内部的 Cache 既不完全等同于传统的通用 L1，也不属于全局共享的 L2，而是一个紧贴着 ROP(Raster Operations Unit) / Tile Buffer 的“专用级缓存”（Specialized/Dedicated Cache）。  
+
+| 厂商/架构 | CCU (Compression Control Unit) 代表性压缩技术 | 说明 |
+| :--- | :--- | :--- |
+| **Arm Mali** | **AFBC** (Arm Frame Buffer Compression) / **AFRC** | 业界广泛使用的无损/可控损帧缓冲压缩，支持 Color/Depth 并延伸至 Display 接口。 |
+| **Qualcomm Adreno** | **UBWC** (Universal Bandwidth Compression) | 高通 Adreno 架构中的通用带宽压缩技术，覆盖 GPU 渲染、Camera、Video Decoder 与 Display DPU。 |
+| **NVIDIA** | **DCC** (Delta Color Compression) | NVIDIA GPU 片上 ROP/L2 层的无损增量颜色压缩技术。 |
+| **AMD** | **DCC** (Delta Color Compression) | AMD GCN/RDNA 架构中的片上无损增量颜色压缩电路。 |
+
+### CCU在TBDR中的位置
+在 **TBDR（Tile-Based Deferred Rendering）** 架构（如 Qualcomm Adreno、Arm Mali 等移动端 GPU）中，**CCU（Cache & Compression Unit）** 与 **Tile** 有着极其紧密的物理与逻辑绑定关系。
+
+简单来说：**CCU 是专门服务于单个或一组 Tile 的片上后端缓存与压缩处理单元。**
+
+#### CCU 与 Tile 的具体绑定关系
+
+在 TBDR 架构中，屏幕被分割为固定大小的小方块（Tile，如 $32\times32$ 或 $64\times64$ 像素）：
+
+##### 1. 逻辑绑定：以 Tile 内的 Block 为单位处理
+* TBDR 的核心思想是 **“在片上（On-Chip）把一个 Tile 彻底画完，再写回主存”**。
+* CCU 内部的无损压缩引擎（如 UBWC/AFBC）**必须以 Tile 内的微型像素块（Block / Micro-Tile，如 $4\times4$ 或 $8\times8$ 像素）为基本单位**进行压缩。它不能跨 Tile 处理，也不能按单像素处理。
+
+##### 2. 物理数据流：Tile 渲染的最后一个出口
+在 Tile 渲染的完整生命周期中，CCU 扮演的角色如下：
+
+* **In-Tile 渲染阶段（Tile Buffer 内）**
+  当 Fragment Shader 在绘制当前 Tile 时，所有的深度测试、Color 输出、Alpha 混合都在片上 SRAM（如 Adreno 的 **GMEM / Tile Buffer**）中高速完成。此时 CCU 的 Cache 在旁随时准备接收和汇总 ROP 输出的数据。
+
+* **Tile Resolve / Store 阶段（写回 DRAM 时）**
+  当当前 Tile 渲染完毕，要执行 **Resolve / Store**（将 Tile 结果存入片外 DRAM 帧缓冲区）时，数据**必须经过 CCU**：
+  1. **CCU 抓取 Tile 缓存中的数据**。
+  2. **CCU 的 Compression 硬件对该 Tile 进行实时无损压缩**。
+  3. **压缩后的 Tile 数据被一次性写入 DRAM**。
+
+
+
+#### 概念区分：Tile Buffer (GMEM) vs CCU
+
+在高通等 TBDR 架构中，Tile Buffer 与 CCU 的分工非常明确：
+
+| 模块 | 物理本质 | 在 TBDR 中的角色 | 运作范围 |
+| :--- | :--- | :--- | :--- |
+| **Tile Buffer (GMEM)** | 片上大容量 SRAM | **“画板”**<br>存放当前正在绘制的 Tile 的全量像素/深度数据。 | **Tile 内部**<br>（Pixel 级频繁读写与 Blend） |
+| **CCU (Cache & Compression Unit)** | 专用 Cache + 硬件压缩电路 | **“打包出库通道”**<br>把画板上画好的 Tile 数据压缩打包发送给 DRAM；或者把之前压缩过的 Tile 解压读取回来。 | **Tile 出入口**<br>（Block 级的压缩/解压与 Burst 传输） |
+
+
+在 TBDR 架构里，**CCU 是 Tile 数据出入片上 SRAM 的“关卡”**：
+
+$$
+\text{Tile Buffer (GMEM)} \xrightarrow[\text{Block 组装}]{\text{Tile 结束}} \text{CCU (Cache)} \xrightarrow[\text{实时无损压缩}]{\text{Compression}} \text{L2 Cache / System DRAM}
+$$
+
+只要 GPU 在以 TBDR 方式逐块渲染，**CCU 就是以 Tile（或 Tile 内部的 Block）为单位**在片上完成数据收集，并在刷入显存的前一刻完成硬件压缩。
+
+
+### CCU 的两大核心功能
+1. Cache（缓存功能）
+Pixel/Attachment 缓存：CCU 负责暂存 ROP（Render Output Unit）写入的颜色（Color Target）、深度（Depth/Stencil Buffer）数据。  
+合并与解耦（Merging & Decoupling）：当像素着色器（Fragment Shader）计算出大量的 Render Target 输出时，CCU 作为中间缓冲区，将分散的小块像素读写合并为大块的连贯 Burst 传输，极大地改善了内存访问效率。  
+2. Compression（无损帧缓冲压缩）
+这是 CCU 最核心的物理价值所在。图形渲染中大量的数据（如 Render Target、MSAA 采样点、Depth Buffer）存在极高的空间局部性与冗余度。CCU 内置了专用硬件算法电路，提供实时无损压缩/解压缩（Lossless Framebuffer Compression）：  
+写入路径（Write Path）：ROP 输出像素数据 $\rightarrow$ CCU 硬件算法进行块压缩（Block-based Compression） $\rightarrow$ 较小的体积写入 DRAM/L2。  
+读取路径（Read Path）：后期 Pass（如 Post-Processing、Blend、Texture Sampling 或 Display Controller）读取数据 $\rightarrow$ CCU/纹理单元硬件解压 $\rightarrow$ 还原为原始像素。  
+
+### CCU 的关键设计收益
+1. 大幅降低移动端功耗：
+在移动 GPU（TBR/TBDR 架构）中，访问片外 DRAM 的功耗远高于片内计算。CCU 的硬件压缩通常能带来 20% ~ 50% 的内存带宽节省，直接显著延长设备续航并降低发热。  
+
+2. 加速 MSAA（多采样抗锯齿）：
+MSAA 会导致 Depth/Color 缓冲区大小翻倍（如 4x MSAA）。CCU 可以通过专门的深/模板压缩算法（如 Delta/Clear Compression），将未被边缘覆盖的覆盖块压缩到极小尺寸。  
+
+3. 跨系统组件的“零解压”流转：
+在现代 SoC（如 Snapdragon 或 Dimensity）中，CCU 压缩的数据不仅 GPU 自己看懂，甚至可以直接传给 DPU（Display Processing Unit，显示控制器） 或 VPU（Video Engine）。显示硬件直接读取 UBWC/AFBC 压缩流并解码显示，彻底消除了跨 Chiplet/IP 间的无谓解压开销。  
+
+### 为什么 Cache 要和 Compression（压缩）合并在一起？
+将缓存和硬件无损压缩电路打包成一个统一的 CCU 模块，是图形芯片设计中非常经典且高效的硬件协同设计（Co-design），原因主要有以下三点：  
+1. 算法逻辑：无损压缩必须以“Block（数据块）”为单位操作  
+2. 数据流的最佳流水线位置（Pipe Pipeline Bottleneck）  
+3. 内存元数据（Metadata / Header）的协同管理  
+
+### 压缩效果
+统计数据表明，在现代 3D 游戏或 UI 渲染中：约 30%~50% 的像素块是纯色或极高一致性的（压缩率 > 80%）；  
+约 40% 的像素块是平滑渐变或线性深度的（压缩率 50%~75%）；  
+只有不到 10%~20% 的复杂纹理边缘块是难以压缩的（压缩率 0%）。  
+因此，对 $4\times4$ 这 64 字节的小块进行压缩，平均能为整个场景节省 20%~50% 的带宽，而在 Depth Buffer 和背景区域，轻松突破 80% 甚至 90%。  
+
+### 为什么 GPU 的压缩 Block 偏偏选用 $4\times4$（64 字节）等微型尺寸？
+虽然直觉上数据块越大，整体找到冗余并进行高倍率压缩的潜力越大，但在硬件层面，**$4\times4$ 或 $8\times8$ 这种微型 Block 是经过严密权衡后得出的最佳工程解**。原因主要包含以下三个核心维度：  
+
+1. 对齐 Cache Line（缓存行物理匹配）  
+
+* **硬件传输单位**：GPU 片外 DDR 内存或片上 L2 Cache 的基本传输单位（Cache Line）通常就是 **64 字节** 或 **128 字节**。
+* **1:1 完美映射**：一个 $4\times4$ 的 RGBA8 像素块正好是 $16 \times 4 \text{ Bytes} = 64 \text{ Bytes}$，能**完美 1:1 映射到一个 Cache Line**。
+* **粒度适配**：如果解压或写回的单位过大（如 1KB），哪怕上层仅读取了其中一个像素，硬件也不得不从显存调取整个庞大的数据块，这反而会引发严重的数据搬运浪费（Bus Amplification）。
+
+2. 空间局部性（Spatial Locality）的最佳平衡  
+
+* **高一致性保证**：$4\times4$ 的物理尺寸极其微小，在绝大多数情况下，这 16 个像素都会完全处于**同一个三角形或者同一块材质内部**，像素间的颜色/深度关联性极强（极易进行 Delta 增量压缩）。
+* **跨越边缘风险**：如果 Block 尺寸扩大（例如 $32\times32$），一个块内极易跨越物体的几何边缘（如一部分是高对比度的树叶，一部分是背景墙面）。颜色一旦发生剧烈跳变，高阶压缩算法就会失效，导致**完全压不动**。
+
+3. 硬件电路成本与延迟（Hardware Area & Latency）  
+
+* **零延迟流水线**：CCU 必须在每个 Clock Cycle（时钟周期）内对数据进行**实时、无缝的无损压缩与解压**，不能阻塞渲染管线。
+* **晶体管开销控制**：处理 16 个像素（$4\times4$）的增量计算与编码，其并行逻辑电路非常轻量；若扩大到 256 个像素（$16\times16$），硬件压缩/解压电路的逻辑复杂度、晶体管占用面积以及计算延迟将呈指数级上升，这在芯片设计中是不可接受的。
+
+
+

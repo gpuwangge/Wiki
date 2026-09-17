@@ -27,6 +27,10 @@ Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）�
 | **L2 Cache** | 全局共享 (Shared) | **最佳选择**：物理独立、全局统一，是连接 GPU 内部与外部总线的最终“网关” |
 | **L3 / SLC** | 系统级共享 (System-wide) | 许多 GPU 无此层级；若有则受 CPU/其他外设流量干扰，无法独立校验 GPU 模型 |
 
+所有L1/L2/L3都是SRAM材料做的。速度分别为, 几个cycle，十几cycle~几十cycle，?cycle。  
+Register File也是SRAM，速度最快1cycle。  
+顺便说一句TBDR的Tile Buffer(or imageblock)也是SRAM，但是它不是Cache。  
+
 空间局部性原理（Spatial Locality）：硬件采用 Cache Line 机制的主要依据是局部性原理——如果程序访问了内存地址 $A$，那么它极大概率很快就会访问地址 $A$ 附近的变量（例如遍历数组）。一次性拉取一整行数据，可以大幅提升后续内存访问的缓存命中率（Cache Hit）。  
 
 对齐机制（Alignment）：Cache Line 在物理内存中是严格按其大小对齐的。例如在 64 字节 Cache Line 的系统中，内存地址 $0x00 \sim 0x3F$ 属于同一行，下一个 Cache Line 必然从 $0x40$ 开始。  

@@ -331,30 +331,36 @@ GPU 内部确实还有许多其他部件，但 Shader, Memory, Geometry, CSF 是
 </p>  
 
 ## GPU Bottleneck模型
-### 顶层性能预测模型(Main Performance Model)
-PredictedGPUACTIVE = MCUACTIVE + max(ShaderCoreBottleneck, TilerBottleneck, L2CacheBottleneck, MemoryBottleneck)
+计算Bottleneck(Bound)有两种方法：
+### 1 指令数法：单位时间alu指令数 vs memory throughput(or bandwidth) x arithmatic intensity  
 
-### 着色器核心瓶颈(Shader Core Bottleneck)
-ShaderCore = AsyncRatio * max(TextureBottleneck, BlendBottleneck, RasterizerBottleneck, ASNBusBottleneck, ALUBottleneck, RTUBottleneck, LSCL1CacheBottleneck)
+假设一个算法每秒做64FLOP，读写global memory 16B，算术强度=64/16=4
+ALU每秒Peak运算1T条指令(1TFLOP)  
+Memory Bandwidth=300GB/s  
+(1TB=10^12B)  
+(1GB=10^9B)  
+ALU指令数 = 1000G/s  
+Memory Bandwidth x arithmatic intensity = 300 * 4 = 1200G/s  
+换句话说，memory传输拉满300GB/s之后，需要处理1200G条指令的能力才匹配，但ALU只能处理1000G，所以是ALU bound or compute bound。  
 
-### ALU 计算瓶颈(ALU Bottleneck)
-ALU = 0.5 * EXECINSTRFMA + 0.5 * EXECINSTRCVT + 1.0 * EXECINSTRMSG + 4.0 * EXECINSTRSFU
+### 2 周期数法：即指令消耗了多少周期 vs mem消耗了多少周期
+- 顶层性能预测模型(Main Performance Model)  
+  - PredictedGPUACTIVE = MCUACTIVE + max(ShaderCoreBottleneck, TilerBottleneck, L2CacheBottleneck, MemoryBottleneck)
 
-### 内存子系统瓶颈(Memory Bottleneck)
-#### SLC 瓶颈计算公式
-SLCBottleneck = NumL2 * (10^-9 * 150) * (AXIWidth / 8) * (CSFFreq * 10^6) * (L2EXTREADBEATS + L2EXTWRITEBEATS)
-#### DDR 瓶颈计算公式
-DDR Bottleneck = (CSFFreq * 10^6) * (10^-9 / DDRBW) * (DRAMCRBYTE + DRAMCWBYTE)
+- 着色器核心瓶颈(Shader Core Bottleneck)  
+  - ShaderCore = AsyncRatio * max(TextureBottleneck, BlendBottleneck, RasterizerBottleneck, ASNBusBottleneck, ALUBottleneck, RTUBottleneck, LSCL1CacheBottleneck)
 
-### 帧率(FPS)计算与误差分析
-实际帧率 (Golden FPS):  
-GoldenFPS = (CSFFreq * 10^6) / GPUACTIVE  
+- ALU 计算瓶颈(ALU Bottleneck)  
+  - ALU = 0.5 * EXECINSTRFMA + 0.5 * EXECINSTRCVT + 1.0 * EXECINSTRMSG + 4.0 * EXECINSTRSFU
 
-预测帧率 (A-Model FPS):  
-AModelFPS = (CSFFreq * 10^6) / Σ(PredictedGPUACTIVE per segment)  
+- 内存子系统瓶颈(Memory Bottleneck)  
+  - SLC 瓶颈计算公式 SLCBottleneck = NumL2 * (10^-9 * 150) * (AXIWidth / 8) * (CSFFreq * 10^6) * (L2EXTREADBEATS + L2EXTWRITEBEATS)
+  - DDR 瓶颈计算公式 DDR Bottleneck = (CSFFreq * 10^6) * (10^-9 / DDRBW) * (DRAMCRBYTE + DRAMCWBYTE)
 
-相对误差率 (Error Rate):  
-Error = (|GoldenFPS - AModelFPS| / GoldenFPS) * 100  
+- 帧率(FPS)计算与误差分析  
+  - 实际帧率 (Golden FPS): GoldenFPS = (CSFFreq * 10^6) / GPUACTIVE  
+  - 预测帧率 (A-Model FPS): AModelFPS = (CSFFreq * 10^6) / Σ(PredictedGPUACTIVE per segment)  
+  - 相对误差率 (Error Rate): Error = (|GoldenFPS - AModelFPS| / GoldenFPS) * 100  
 
 # Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  

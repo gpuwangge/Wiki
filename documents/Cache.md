@@ -31,7 +31,15 @@ Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）�
 Register File也是SRAM，速度最快1cycle。  
 顺便说一句TBDR的Tile Buffer(or imageblock)也是SRAM，但是它不是Cache。  
 GMEM 的物理本质是 DRAM（GDDR / HBM / LPDDR），在架构和编程模型上它是全局可寻址的虚拟内存空间，读写会经过 SRAM 构建的 L1/L2 Cache 硬件层级。  
+
 在高通 Adreno GPU 的 TBR/TBDR（Tile-Based [Deferred] Rendering）分块渲染架构 中，GMEM 指的是紧挨着 GPU 核心的一块高速片上 SRAM 缓存（On-Chip SRAM），其实就是Tile Buffer。  
+
+Apple的统一内存（Unified Memory）：统一数据池：CPU、GPU、NPU（Neural Engine）、Media Engine 共同共享同一块物理 DRAM。  
+- 零拷贝（Zero-Copy）：数据在内存中只有一份，CPU 处理完后，GPU 可以直接使用该内存地址读写，完全消除了 PCIe 总线的搬运延迟和重复占用。  
+- 极高总线位宽与带宽：传统 PC 的双通道内存位宽通常只有 128-bit，而 Apple 的 M 系列芯片（尤其是 Pro / Max / Ultra 版本）采用了极宽的封装位宽（如 512-bit 到 2048-bit），提供惊人的内存带宽（M 系列芯片带宽可达 150GB/s 到 1.2TB/s 以上），直接达到了普通显存（VRAM）的吞吐水平。  
+
+Apple的大缓存SLC（System Level Cache，系统级缓存）：为了让 CPU 和 GPU 能顺畅地抢着用同一块主存，而不发生严重的“抢道”和高延迟，Apple 在芯片内部设计了非常激进且庞大的 Cache 结构：位于芯片中央、服务于所有计算核心（CPU, GPU, NPU, ISP）的公共超大 Cache。    
+- GPU的L1大小适中，但L2也是超大  
 
 空间局部性原理（Spatial Locality）：硬件采用 Cache Line 机制的主要依据是局部性原理——如果程序访问了内存地址 $A$，那么它极大概率很快就会访问地址 $A$ 附近的变量（例如遍历数组）。一次性拉取一整行数据，可以大幅提升后续内存访问的缓存命中率（Cache Hit）。  
 

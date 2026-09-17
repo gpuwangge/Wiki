@@ -48,6 +48,44 @@ Parallelism: Parallelism is when tasks literally run at the same time, e.g., on 
 指令级并行（ILP, Instruction Level Parallelism）是指利用流水级并行和多指令发射等方式提高程序执行的并行度；   
 数据级并行（DLP, Data Level Parallelism）是指处理器能够同时处理多条数据的并行方式，即SIMD。  
 
+# RenderDoc
+RenderDoc 是一款开源的图形 API 帧分析器（Graphics Frame Debugger），主要用于捕捉并分析单个渲染帧的 GPU 调用、管线状态、纹理和 Buffer 数据。  
 
+## 核心面板与分析工作流
+- Event Browser（事件浏览器）
+按时间顺序列出当前帧调用的所有 Draw Call（绘制指令）。可以使用搜索框按名称或渲染 API 筛选特定 Draw Call。
+
+- Texture Viewer（纹理查看器）
+查看 Render Target、Depth Buffer 及 Bind 到管线上的纹理。支持切换 RGB/Alpha 通道、调节 Gamma/曝光度以及测量像素颜色值。
+
+- Pipeline State（管线状态）
+查看当前选中 Draw Call 在 GPU 管线各个阶段（IA, VS, RS, PS/FS, OM 等）的绑定的 Shader、Buffer 资源以及 Blend/Depth/Stencil 设置。
+
+- Mesh Viewer（网格查看器）
+可视化顶点着色器（VS）处理前后的网格几何结构，帮助排查顶点变幻、裁剪或法线计算错误。
+
+- Resource Inspector（资源检查器）
+列出当前帧用到的所有 Texture、Buffer、Sampler 及 Shader 资源，可快速跳转到对应的使用点。
+
+## 高级调试功能
+- Pixel History（像素历史）：在 Texture Viewer 中右键点击某个像素，选择 Pixel History，可排查该像素为何被覆盖、过度绘制（Overdraw）或被 Depth Test 裁掉。
+- Shader Debugging（Shader 调试）：在 Pipeline State 中选择对应的 Shader，可对特定顶点或像素逐行单步调试（Debug Shader Execution）。
+- Resource Inspection & Export：可将抓取的 3D 网格导出为 .obj 文件，或将 Render Target 导出为 .png/.exr 格式。
+
+## 图例
+设定Executable Path和Working Directory，点击Launch运行程序  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_Launch.PNG" alt="alt text">  
+运行的时候点击Capture Frame(s) Immediately捕捉当前帧，然后可以关闭程序  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_Capture.PNG" alt="alt text">  
+点击捕捉的帧会列出详细信息，左侧是Event Browser，记录了API级别的commands，右侧面便可以查看Mesh  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_Mesh.PNG" alt="alt text">  
+在Texture View界面可以点开Inputs查看shadowmap  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_Texture_Input.PNG" alt="alt text">  
+也可以查看Outputs的渲染结果  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_Texture_Output.PNG" alt="alt text">  
+打开Pipeline State会列出Graphics/Compute Pipeline的所有阶段，点击获得详细信息
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_Pipeline.PNG" alt="alt text">  
+打开Shader Module查看器可以看SPIR-V的代码  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/RenderDoc_SPIRV.PNG" alt="alt text">  
 
 

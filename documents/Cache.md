@@ -123,6 +123,10 @@ Cache Bank是SRAM 阵列的物理切分。一个 Bank 内部包含成千上万�
 
 内部读写是内部的block读写L2；外部读写是L2读写外部的memory。  
 
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/GPU_Memory_Hierachy.jpg" alt="alt text">  
+</p> 
+
 ## CCU(Cache & Compression Unit)
 CCU（Cache & Compression Unit，缓存与压缩单元） 是现代 GPU（特别是移动端 GPU 如 Arm Mali、Qualcomm Adreno，以及部分桌面级/嵌入式图形 IP）管线中的关键硬件模块。  
 

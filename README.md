@@ -33,6 +33,10 @@
 ## [Bandwidth Validation](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthValidation.md)  
 ## [GPU Power](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUPower.md)  
 ## [Shader Processor](https://github.com/gpuwangge/Wiki/blob/main/documents/ShaderProcessor.md)  
+## [Graphics Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GraphicsArchitecture.md)  
+
+# NPU
+## [NPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/NPUArchitecture.md)  
 
 # TOOLS
 ## [CMake](https://github.com/gpuwangge/Wiki/blob/main/documents/CMake.md)  

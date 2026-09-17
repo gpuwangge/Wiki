@@ -1,3 +1,11 @@
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/ShaderCore1.png" alt="alt text">  
+</p> 
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/ShaderCore2.png" alt="alt text">  
+</p> 
+
 # 各厂商Shader Processor
 
 | 厂商 / GPU            | 名称                                                                                 | 更细粒度的执行单元                                             | 关键理解                                            |

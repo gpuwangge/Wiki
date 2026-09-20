@@ -344,23 +344,23 @@ Memory Bandwidth x arithmatic intensity = 300 * 4 = 1200G/s
 换句话说，memory传输拉满300GB/s之后，需要处理1200G条指令的能力才匹配，但ALU只能处理1000G，所以是ALU bound or compute bound。  
 
 ### 2 周期数法：即指令消耗了多少周期 vs mem消耗了多少周期
-- 顶层性能预测模型(Main Performance Model)  
-  - PredictedGPUACTIVE = MCUACTIVE + max(ShaderCoreBottleneck, TilerBottleneck, L2CacheBottleneck, MemoryBottleneck)
+异步频率比例 = 前端指令流频率 / 着色器核心频率  
 
-- 着色器核心瓶颈(Shader Core Bottleneck)  
-  - ShaderCore = AsyncRatio * max(TextureBottleneck, BlendBottleneck, RasterizerBottleneck, ASNBusBottleneck, ALUBottleneck, RTUBottleneck, LSCL1CacheBottleneck)
+纹理单元负载 = max(纹理消息输入微片数, 纹理微片操作数, 纹理缓存提取操作数)  
+AXI总线节点负载 = max(发送的读地址请求数, 发送的写数据请求数)  
+算术逻辑单元负载 = 0.5 * 乘加指令执行数 + 0.5 * 数据转换指令执行数 + 1.0 * 消息指令执行数 + 4.0 * 特殊函数指令执行数  
+光线追踪单元负载 = max(包围盒求交发射周期数, 三角形求交发射周期数)  
+一级缓存与加载存储负载 = 加载存储输入节拍数 + 0.5 * 加载存储输出节拍数  
 
-- ALU 计算瓶颈(ALU Bottleneck)  
-  - ALU = 0.5 * EXECINSTRFMA + 0.5 * EXECINSTRCVT + 1.0 * EXECINSTRMSG + 4.0 * EXECINSTRSFU
+着色器核心瓶颈 = 异步频率比例 * max(纹理单元负载, 混合着色器调用数, 粗粒度片元四边形数, AXI总线节点负载, 算术逻辑单元负载, 光线追踪单元负载, 一级缓存与加载存储负载)  
 
-- 内存子系统瓶颈(Memory Bottleneck)  
-  - SLC 瓶颈计算公式 SLCBottleneck = NumL2 * (10^-9 * 150) * (AXIWidth / 8) * (CSFFreq * 10^6) * (L2EXTREADBEATS + L2EXTWRITEBEATS)
-  - DDR 瓶颈计算公式 DDR Bottleneck = (CSFFreq * 10^6) * (10^-9 / DDRBW) * (DRAMCRBYTE + DRAMCWBYTE)
+图元处理瓶颈 = 三角形数量 + 线段数量 + 顶点数量  
 
-- 帧率(FPS)计算与误差分析  
-  - 实际帧率 (Golden FPS): GoldenFPS = (CSFFreq * 10^6) / GPUACTIVE  
-  - 预测帧率 (A-Model FPS): AModelFPS = (CSFFreq * 10^6) / Σ(PredictedGPUACTIVE per segment)  
-  - 相对误差率 (Error Rate): Error = (|GoldenFPS - AModelFPS| / GoldenFPS) * 100  
+二级缓存瓶颈 = max(二级缓存读消息输入, 二级缓存写数据输入, 内存管理单元请求数)  
+
+显存(DDR)瓶颈 = max(二级缓存外部读节拍数, 二级缓存外部写节拍数)  
+
+预测GPU总活跃周期 = 微控制器活跃周期 + max(着色器核心瓶颈, 图元处理瓶颈, 二级缓存瓶颈, 显存瓶颈)  
 
 # Reference
 https://developer.nvidia.com/zh-cn/blog/nvidia-hopper-architecture-in-depth/  

@@ -18,8 +18,6 @@ vkCmdDispatch(1024/16,1024/16,1)
 这10485786个workitem可以组成很多(4096个)workgroup，叫做工作组集(可以看作由很多方块搭起来的三维方块矩阵，类似魔方)，但workgroup之间不能并行，执行顺序是乱序  
 假如把workgroup index为w1,w2,w3...它们是不能并行的。有可能先执行w1,也可能w2或w3  
 
-
-
 **`为什么要引入workgroup的概念，因为只有同一个workgroup里的workitem是保证并行的`**  
 
 ## Device端代码
@@ -134,10 +132,455 @@ Host和Device的数据交换的介质是Storage Buffer。这是GPU可读写的�
 
 
 
-## Reference
-https://www.khronos.org/opengl/wiki/Compute_Shader  
-https://zhuanlan.zhihu.com/p/124251944  
-https://www.bilibili.com/video/BV1yG4y1E7ot/?spm_id_from=333.788&vd_source=e9d9bc8892014008f20c4e4027b98036  
+# Vulkan Compute Shader：矩阵乘法中的 Workgroup、Invocation 和 Warp
+
+本文使用两个简单例子说明：
+
+- 如何估算 GEMM 的 FMA 和 FLOP 数
+- Host 端如何设置 `vkCmdDispatch`
+- Device 端如何设置 compute shader 的 `local_size`
+- 如何计算 invocation 和 warp 数
+
+假设使用最简单的映射：
+
+```text
+1 invocation 计算 C 矩阵中的 1 个元素。
+```
+
+并假设 NVIDIA 风格的：
+
+```text
+warp size = 32
+```
+
+> Vulkan 的通用术语是 subgroup。这里为便于讨论，假设 subgroup size 为 32，并称它为 warp。
+
+---
+
+## 基本规则
+
+矩阵乘法：
+
+```text
+C[M][N] = A[M][K] × B[K][N]
+```
+
+每个输出元素：
+
+```text
+C[row][col] = sum(A[row][k] * B[k][col])
+```
+
+其中 `k` 从 `0` 循环到 `K - 1`。
+
+因此：
+
+```text
+一个输出元素需要 K 次 FMA。
+总 FMA = M × N × K。
+```
+
+如果使用：
+
+```glsl
+acc = fma(a, b, acc);
+```
+
+在 GPU 峰值算力和 GEMM 性能统计中，通常认为：
+
+```text
+1 FMA = 1 multiply + 1 add = 2 FLOPs
+```
+
+因此：
+
+```text
+总 FLOPs = 总 FMA × 2
+```
+
+注意：
+
+```text
+FLOP 是总运算量。
+FLOPS 是每秒运算量。
+```
+
+只有用总 FLOP 除以 kernel 实际运行时间，才能得到 GFLOPS 或 TFLOPS。
+
+---
+
+## 例子 1：16×16 矩阵乘法
+
+计算：
+
+```text
+C[16][16] = A[16][16] × B[16][16]
+```
+
+### 第一步：计算量估算
+
+输出矩阵有：
+
+```text
+16 × 16 = 256 个输出元素
+```
+
+每个输出元素需要计算 16 次 FMA：
+
+```text
+C[row][col] = sum(A[row][k] * B[k][col])
+k = 0 ... 15
+```
+
+所以：
+
+```text
+总 FMA = 16 × 16 × 16
+        = 4096 FMA
+```
+
+按 `1 FMA = 2 FLOPs`：
+
+```text
+总 FLOPs = 4096 × 2
+          = 8192 FLOPs
+```
+
+这表示一次矩阵乘法的总工作量。
+
+### 第二步：Host 端设置 workgroup 数
+
+一个 workgroup 计算完整的 `16×16` 输出矩阵：
+
+```cpp
+vkCmdDispatch(commandBuffer, 1, 1, 1);
+```
+
+所以总共有：
+
+```text
+1 × 1 × 1 = 1 个 workgroup
+```
+
+### 第三步：Device 端设置 workgroup size
+
+```glsl
+layout(local_size_x = 16,
+       local_size_y = 16,
+       local_size_z = 1) in;
+```
+
+一个 workgroup 中的 invocation 数量：
+
+```text
+16 × 16 × 1 = 256 个 invocations
+```
+
+每个 invocation 计算一个输出元素：
+
+```text
+1 invocation -> 1 个 C[row][col]
+```
+
+每个 invocation 做 16 次 FMA：
+
+```text
+256 invocations × 16 FMA/invocation
+= 4096 FMA
+```
+
+和前面的计算量估算相同。
+
+### Warp 视角
+
+假设：
+
+```text
+warp size = 32
+```
+
+一个 workgroup 有：
+
+```text
+256 invocations / 32 lanes per warp
+= 8 warps
+```
+
+也就是说：
+
+```text
+1 workgroup
+= 256 invocations
+= 8 warps
+= 8 × 32 lanes
+```
+
+每个 lane 对应一个输出元素，并做 16 次 FMA。
+
+每个 warp 的 FMA 数：
+
+```text
+32 lanes × 16 FMA/lane
+= 512 FMA/warp
+```
+
+整个 workgroup 的 FMA 数：
+
+```text
+8 warps × 512 FMA/warp
+= 4096 FMA
+```
+
+### 调度说明
+
+- `16×16×1` 是一个 workgroup，不是一个 warp。
+- 这个 workgroup 在 warp size 为 32 时包含 8 个 warp。
+- 同一个 warp 中的 32 个 lanes 执行相同的指令流。
+- SM 的 warp scheduler 会从可执行的 resident warps 中选择 warp 发射指令。
+- 因此这 8 个 warp 逻辑上并行，但不保证每个时钟周期都由 8 个 warp 同时发射指令。
+
+如果只执行：
+
+```cpp
+vkCmdDispatch(commandBuffer, 1, 1, 1);
+```
+
+那么整个 GPU 只有一个 workgroup 可做，通常只会用到一个 SM 的部分资源，GPU 利用率很低。
+
+---
+
+## 例子 2：1024×1024 矩阵乘法
+
+计算：
+
+```text
+C[1024][1024] = A[1024][1024] × B[1024][1024]
+```
+
+仍使用相同的映射：
+
+```text
+1 invocation -> 计算 1 个输出元素
+1 workgroup  -> 计算 1 个 16×16 输出 tile
+```
+
+### 第一步：计算量估算
+
+输出矩阵有：
+
+```text
+1024 × 1024 = 1,048,576 个输出元素
+```
+
+每个输出元素需要计算 1024 次 FMA：
+
+```text
+C[row][col] = sum(A[row][k] * B[k][col])
+k = 0 ... 1023
+```
+
+所以：
+
+```text
+总 FMA = 1024 × 1024 × 1024
+        = 1,073,741,824 FMA
+```
+
+按 `1 FMA = 2 FLOPs`：
+
+```text
+总 FLOPs = 1,073,741,824 × 2
+          = 2,147,483,648 FLOPs
+          = 2.147483648 GFLOP
+```
+
+### 第二步：Host 端设置 workgroup 数
+
+每个 workgroup 计算一个 `16×16` 输出 tile。
+
+在 X 和 Y 方向上，需要的 workgroup 数为：
+
+```text
+1024 / 16 = 64
+```
+
+所以 host 端调用：
+
+```cpp
+vkCmdDispatch(commandBuffer, 64, 64, 1);
+```
+
+总 workgroup 数：
+
+```text
+64 × 64 = 4096 个 workgroups
+```
+
+### 第三步：Device 端设置 workgroup size
+
+```glsl
+layout(local_size_x = 16,
+       local_size_y = 16,
+       local_size_z = 1) in;
+```
+
+每个 workgroup 有：
+
+```text
+16 × 16 = 256 个 invocations
+```
+
+整个 dispatch 的 invocation 数量：
+
+```text
+64 × 64 × 16 × 16
+= 1,048,576 invocations
+```
+
+这正好等于输出矩阵元素数：
+
+```text
+1024 × 1024 = 1,048,576
+```
+
+每个 invocation 计算一个 `C[row][col]`，并执行 1024 次 FMA：
+
+```text
+总 FMA = 64 × 64 × 16 × 16 × 1024
+        = 1,073,741,824 FMA
+```
+
+这和第一步的计算量估算一致。
+
+### Warp 视角
+
+一个 `16×16` workgroup 包含：
+
+```text
+256 invocations / 32 lanes per warp
+= 8 warps
+```
+
+整个 dispatch 有：
+
+```text
+4096 workgroups × 8 warps/workgroup
+= 32,768 logical warps
+```
+
+也可以直接计算：
+
+```text
+1,048,576 total invocations / 32 lanes per warp
+= 32,768 logical warps
+```
+
+注意：
+
+```text
+32,768 是 warp 数，不是 lane 数。
+```
+
+总 lane / invocation 数是：
+
+```text
+32,768 warps × 32 lanes/warp
+= 1,048,576 lanes / invocations
+```
+
+每个 lane 做 1024 次 FMA，因此每个 warp 做：
+
+```text
+32 lanes × 1024 FMA/lane
+= 32,768 FMA/warp
+```
+
+整个 dispatch 的工作量：
+
+```text
+32,768 warps × 32,768 FMA/warp
+= 1,073,741,824 FMA
+```
+
+和前面的 `1024 × 1024 × 1024` 结果一致。
+
+### Logical warp 和 resident warp
+
+```text
+32,768 logical warps
+```
+
+表示整个 dispatch 必须完成的 warp 总数，不表示 GPU 同时运行 32,768 个 warp。
+
+例如假设：
+
+```text
+GPU 有 80 个 SM
+每个 SM 对当前 kernel 可驻留 16 个 warp
+```
+
+那么 GPU 最多同时驻留：
+
+```text
+80 × 16 = 1280 resident warps
+```
+
+从 resident warp slot 的角度看：
+
+```text
+32,768 / 1280 = 25.6
+```
+
+所以需要大约 25.6 个“驻留容量批次”才能容纳所有 logical warps。
+
+这不是精确的执行轮数或性能预测。实际运行时间还受以下因素影响：
+
+- global memory load 和 store
+- cache hit rate
+- memory coalescing
+- shared memory 和 barrier
+- register pressure
+- shared-memory 使用量
+- 每个 SM 的 resident workgroup 上限
+- warp scheduler 的指令发射能力
+- 指令依赖和 memory latency
+- 分支分歧
+
+---
+
+## Shared-memory tiling 的补充
+
+如果使用 `16×16` 的 shared-memory tile：
+
+```glsl
+shared float As[16][16];
+shared float Bs[16][16];
+```
+
+这里的 `16` 表示每轮处理的 K 维 tile 长度，不代表整个矩阵乘法只有 16 次 FMA。
+
+对于 `1024×1024×1024` GEMM：
+
+```text
+K = 1024
+K tile size = 16
+1024 / 16 = 64 轮 K tile
+```
+
+每轮做 16 次 FMA：
+
+```text
+64 轮 × 16 FMA/轮
+= 1024 FMA/invocation
+```
+
+因此 shared-memory tiling 会减少 global-memory 读取并提升数据复用，但不会改变 GEMM 的数学运算量：
+
+```text
+总 FMA = M × N × K
+总 FLOPs = 2 × M × N × K
+```
+
 
 
 

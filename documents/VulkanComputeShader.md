@@ -25,9 +25,9 @@ vkCmdDispatch(1024/16,1024/16,1)
 
 例子1: 16x16的两个矩阵计算  
 第一步：算力估算  
-16x16的两个矩阵计算，有256个输出元素，每个输出元素计算16次fma。
+16x16的两个矩阵计算，有256个输出元素，每个输出元素计算16次fma。  
 整体算力：256x16=4096，or 4096 FMA  
-在 GPU 峰值算力和 GEMM 性能语境中，1 次 FP32 FMA 通常计作： 
+在 GPU 峰值算力和 GEMM 性能语境中，1 次 FP32 FMA 通常计作：  
 1 multiply + 1 add = 2 FLOP  
 所以 flop = 4096x2 = 8192  
 
@@ -55,11 +55,11 @@ SM 的 warp scheduler 会从 ready 的 resident warps 中选择 warp 发射 load
 第二步：host  
 1024/16 x 1024/16 x 1 = 64x64x1  
 第三步：device  
-还是16x16x1  
-这样的话invocation数量是: 64*64*16*16=1048576  
+还是16x16x1，表示每个workgroup size还是256  
+这样的话总invocation数量是: 64x64x16x16=1048576  
 另外每个invocation=1024个fma  
 总算力：64x64x16x16x1024=1073741824fma，也跟算力估算吻合  
-需要多少个warp：1048576/32=32768   
+需要多少个warp(还是假设warp size=32)：1048576/32=32768   
 (也就是有 32768 个warp， 1048567 个  lane，每个lane要算1024fma )  
 
 32768 是总执行量，不是同时并发量  

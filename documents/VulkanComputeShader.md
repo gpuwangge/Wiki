@@ -20,6 +20,54 @@ vkCmdDispatch(1024/16,1024/16,1)
 
 **`为什么要引入workgroup的概念，因为只有同一个workgroup里的workitem是保证并行的`**  
 
+## 举例
+这里简要举例，详细分析见最后  
+
+例子1: 16x16的两个矩阵计算  
+第一步：算力估算  
+16x16的两个矩阵计算，有256个输出元素，每个输出元素计算16次fma。
+整体算力：256x16=4096，or 4096 FMA  
+在 GPU 峰值算力和 GEMM 性能语境中，1 次 FP32 FMA 通常计作： 
+1 multiply + 1 add = 2 FLOP  
+所以 flop = 4096x2 = 8192  
+
+第二步：设置host端每个维度的workgroup number  
+本例中直接设置成1x1x1就可以了  
+
+第三步：设置device端一个workgroup size  
+因为256个独立的输出元素，有256个invocation，可以设置为16x16x1  
+即一个workgroup内完成全部运算  
+总共invocation次数为16x16=256  
+另外每个invocation=16个fma  
+256x16=4096 fma，也吻合算力估计  
+
+假设warp size=32，一个sm容纳16个warp，硬件是如何调度的。  
+需要多少个warp：用总invocation数除以warpsize, 256/32=8  
+(也就是有 8个warp，共256个lane，每个lane要算16fma )    
+该 workgroup 被划分为 8 个 warp。每个 warp 的 32 个 active lanes 对应 32 个输出元素；每个 lane 完成 16 次 FMA。  
+SM 的 warp scheduler 会从 ready 的 resident warps 中选择 warp 发射 load/FMA 指令，并在 warp 遇到 memory 或数据依赖延迟时切换到其他 ready warp。  
+因此这些 warp 在逻辑上并行完成工作，但不保证 8 个 warp 在每个 cycle 同时发射或执行。  
+
+例子2：若要计算1024x1024的矩阵乘法  
+第一步：算力估算  
+1024x1024个输出，每个输出需要计算1024次fma  
+整体算力：1024x1024x1024=1073741824 fma or 2147483648 flops or 2.147483648 GFLOP  
+第二步：host  
+1024/16 x 1024/16 x 1 = 64x64x1  
+第三步：device  
+还是16x16x1  
+这样的话invocation数量是: 64*64*16*16=1048576  
+另外每个invocation=1024个fma  
+总算力：64x64x16x16x1024=1073741824fma，也跟算力估算吻合  
+需要多少个warp：1048576/32=32768   
+(也就是有 32768 个warp， 1048567 个  lane，每个lane要算1024fma )  
+
+32768 是总执行量，不是同时并发量  
+假设某 GPU 有 80 个 SM，并且在这个 kernel 的寄存器/shared-memory 使用条件下，每个 SM 可同时驻留 16 个 warp，那么瞬时最多可有  80×16=1280 resident warps  
+它们仍会分批完成总计 32768 个 logical warps。大约需要： 32768/1280 = 25.6个驻留 warp 批次  
+实际执行时间还取决于每个 warp 的 1024 次 FMA、load/store、barrier、指令发射宽度、缓存命中率、memory coalescing 和寄存器压力等。  
+
+
 ## Device端代码
 以下是Device(GPU)代码里面workgroup维度(size)的接口(这是compute shader专有写法，省略了变量名字)  
 > layout (local_size_x = 4, local_size_y = 1, local_size_z = 1) in;
@@ -34,8 +82,6 @@ in uvec3 gl_GlobalInvocationID;          //每个workitem的全局ID, 相当于�
 in unit  gl_LocalInvocationIndex;        //其实就是展开成一维的workitem index
 ```
 **`Compute Shder的本质，就是靠workitem的全局ID和局部ID来访问数据`**
-
-
 
 
 ## Host端代码

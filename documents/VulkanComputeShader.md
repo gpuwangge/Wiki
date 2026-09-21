@@ -132,7 +132,7 @@ Host和Device的数据交换的介质是Storage Buffer。这是GPU可读写的�
 
 
 
-# Vulkan Compute Shader：矩阵乘法中的 Workgroup、Invocation 和 Warp
+# 矩阵乘法中的 Workgroup、Invocation 和 Warp
 
 本文使用两个简单例子说明：
 

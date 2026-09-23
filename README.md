@@ -28,7 +28,7 @@
 ## [Warp Divergence](https://github.com/gpuwangge/Wiki/blob/main/documents/WarpDivergence.md)  
 ## [Register File](https://github.com/gpuwangge/Wiki/blob/main/documents/RegisterFile.md)  
 ## [AXI](https://github.com/gpuwangge/Wiki/blob/main/documents/AXI.md)  
-## [Bandwidth Throuput](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthThrouput.md)  
+## [Bandwidth BandwidthThroughput.md](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthThroughput.md.md)  
 ## [Roofline Model](https://github.com/gpuwangge/Wiki/blob/main/documents/RooflineModel.md)  
 ## [Cache](https://github.com/gpuwangge/Wiki/blob/main/documents/Cache.md)  
 ## [Bandwidth Validation](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthValidation.md)  

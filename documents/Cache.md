@@ -236,4 +236,53 @@ MSAA 会导致 Depth/Color 缓冲区大小翻倍（如 4x MSAA）。CCU 可以�
 * **晶体管开销控制**：处理 16 个像素（$4\times4$）的增量计算与编码，其并行逻辑电路非常轻量；若扩大到 256 个像素（$16\times16$），硬件压缩/解压电路的逻辑复杂度、晶体管占用面积以及计算延迟将呈指数级上升，这在芯片设计中是不可接受的。
 
 
+## Set-associative（组相联）
+Set-associative（组相联）通常指 CPU/GPU 的一种 Cache 组织和映射方式。  
+它把 Cache 划分为许多 set（组），每组包含若干条 way（路/缓存行）：一个内存块只能映射到某个固定的组，但在该组内可以放进任意一路。它是直接映射（direct-mapped）与全相联（fully associative）之间的折中。  
 
+核心结构:假设一个 Cache 有
+64 个 set  
+每个 set 有 4 个 way  
+每个 cache line 为 64 B  
+这就是一个 4-way set-associative cache，总容量为：
+```
+64 sets×4 ways/set×64 B/line=16 KB
+```
+其中：
+Set：由同一个 index 选中的一组 cache line  
+Way：一个 set 内的一条候选 cache line  
+Associativity（相联度）：每个 set 中 way 的数目；4-way 就是 4 路组相联  
+Cache line / block：Cache 和下级内存之间搬运数据的最小块，常见大小是 64 B  
+
+CPU 访问一个地址时，通常把地址概念上拆成：
+```
+[Tag∣Set Index∣Block Offset]
+```
+Block offset：定位到一个 cache line 内的具体字节。  
+Set index：决定去哪个 set 找。  
+Tag：在该 set 的所有 way 中确认“是不是我要的那个内存块”。  
+
+例如，一个地址的 set index 指向 set 12：
+硬件选中 set 12。  
+并行读取这个 set 的全部 4 个 way 的 tag。  
+将地址 tag 与 4 个 tag 比较。  
+任意一路匹配且 valid，就发生 cache hit。  
+全部不匹配，就是 cache miss；数据从更低层 cache 或内存取回，并在这个 set 的某一路中填入  
+
+因此，4-way 的含义并不是“一个地址可随机放到 Cache 的任意四个位置”，而是：  
+它先被 index 限制到一个固定 set；随后可位于该 set 内四个 way 的任意一个。  
+
+可以将它理解为停车场：
+Direct-mapped：你的车牌号决定唯一车位；找车快，但车位被占就没办法。  
+Fully associative：可以停任意车位；最灵活，但找车时必须查遍全部车位。  
+Set-associative：车牌号先决定停车区域（set），在该区域里的几个车位（ways）任选一个；这是工程上最常用的折中。  
+
+组相联主要解决 conflict miss（冲突未命中）。
+设两个频繁访问的数据块 𝐴和 B 恰好映射到同一个 set：  
+对 direct-mapped cache，它们只能争夺同一条 line：  
+```
+A→B→A→B→⋯
+```
+会不断互相驱逐，形成 cache thrashing。  
+对 2-way cache，如果该 set 有两条 line，A 可放在 way 0、B 可放在 way 1；之后两者都能命中。  
+如果同一组中长期活跃的数据块多于相联度，比如 4-way 中有 5 个同组热点块，则仍可能发生冲突与替换。  

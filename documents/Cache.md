@@ -28,6 +28,7 @@ Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）�
 | **L3 / SLC** | 系统级共享 (System-wide) | 许多 GPU 无此层级；若有则受 CPU/其他外设流量干扰，无法独立校验 GPU 模型 |
 
 所有L1/L2/L3都是SRAM材料做的。速度分别为, 几个cycle，十几cycle~几十cycle，?cycle。  
+另外，有L0 cache：最靠近 SIMD / 执行单元的小缓存
 Register File也是SRAM，速度最快1cycle。  
 顺便说一句TBDR的Tile Buffer(or imageblock)也是SRAM，但是它不是Cache。  
 GMEM 的物理本质是 DRAM（GDDR / HBM / LPDDR），在架构和编程模型上它是全局可寻址的虚拟内存空间，读写会经过 SRAM 构建的 L1/L2 Cache 硬件层级。  
@@ -129,6 +130,10 @@ Cache Bank是SRAM 阵列的物理切分。一个 Bank 内部包含成千上万�
 
 ## CCU(Cache & Compression Unit)
 CCU（Cache & Compression Unit，缓存与压缩单元） 是现代 GPU（特别是移动端 GPU 如 Arm Mali、Qualcomm Adreno，以及部分桌面级/嵌入式图形 IP）管线中的关键硬件模块。  
+
+高通 GPU 采用的是特殊的分片/平铺渲染（Tile-based Rendering）架构。CCU 的工作是从高通独有的片上高速图形内存（GMEM）中切出一块空间，作为专用的颜色缓存（Color Cache）和深度缓存（Depth Cache）。  
+
+当 GPU 在进行 2D 图像块复制（Blit）、系统内存渲染目标访问、或者把片上 GMEM 的渲染结果最终输出（Resolve）到手机系统内存（主内存）时，全部都要通过 CCU 来进行高速缓存、合并与数据压缩，以此极大地节省手机的内存带宽和功耗。  
 
 L1.5：CCU 内部的 Cache 既不完全等同于传统的通用 L1，也不属于全局共享的 L2，而是一个紧贴着 ROP(Raster Operations Unit) / Tile Buffer 的“专用级缓存”（Specialized/Dedicated Cache）。  
 
@@ -286,3 +291,103 @@ A→B→A→B→⋯
 会不断互相驱逐，形成 cache thrashing。  
 对 2-way cache，如果该 set 有两条 line，A 可放在 way 0、B 可放在 way 1；之后两者都能命中。  
 如果同一组中长期活跃的数据块多于相联度，比如 4-way 中有 5 个同组热点块，则仍可能发生冲突与替换。  
+
+
+## Cache性能分析
+### 什么是 temporal locality 和 spatial locality？GPU 上各自如何优化？
+- Spatial locality（空间局部性）：访问一个地址后，很快访问其邻近地址。  
+优化：连续数组、紧凑数据布局、线程 ID 映射到连续元素、mipmapping、tile/block 处理。  
+
+- Temporal locality（时间局部性）：同一个地址或 cache line 在较短时间内被重复访问。  
+优化：blocking/tiling、复用中间结果、persistent data、将热点数据放在更适合的只读或显式共享路径。  
+
+优化方向：人为建立可预测且高重用的 temporal locality。当同一 block/workgroup 对一组数据有高复用时，显式 tiling 往往比依赖硬件 cache 更稳健。
+
+### 什么时候 shared memory/LDS 比 L1 cache 更好？什么时候反而不值得？
+适合显式 shared memory/LDS 的情况：  
+- workgroup 内数据复用高，而且复用模式可预测。
+- 需要重排数据，例如矩阵转置、卷积 tile、histogram、reduction。
+- 需要跨线程通信与同步。
+- 需要将 global 的不规则或低效访问变成片上连续访问。
+- 硬件 cache 难以自动捕获该复用，例如访问跨度大、工作集竞争严重、复用时序过长。
+
+不一定值得的情况：  
+- 每项数据只用一次，搬入 shared memory 只是多一次 load/store 与同步。
+- 工作集本身已很好地命中 L1/L2。
+- shared memory 的分配降低 occupancy，得不偿失。
+- 访问产生严重 bank conflict。
+- 算法本身 compute-bound，内存优化对总时间影响很小。
+
+### 为什么“使用更多 shared memory”可能让性能下降？
+常见原因有五类：  
+- 降低 occupancy  
+每个 block/workgroup 分配更多 shared memory，单个 SM/CU 能并发驻留的 block 数减少，可用于隐藏内存延迟的 active warps/waves 变少。  
+
+- Bank conflict  
+多个 lanes 访问映射到同一 bank 的不同地址，会被序列化或拆分为多次访问。  
+
+- 额外搬运成本  
+global → shared 的 load 与 shared → register 的读取需要指令；若复用不够高，成本无法摊销。  
+
+- 同步成本  
+tile 填充后通常需要 barrier；如果 workgroup 内工作不均或 barrier 很多，会削弱收益。  
+
+- 挤占 L1/片上资源  
+在一些架构上 shared memory 与 L1 容量或资源调度存在关系；即使物理上完全独立，二者也可能共同影响 SM 的资源压力。  
+
+### 为什么 ray tracing 往往是 cache-unfriendly？如何改善？
+ray tracing 的 cache 难点来自：  
+- 光线经过反射、折射、随机采样后迅速失去空间相干性。
+- 每条 ray 的 BVH traversal path 不同，导致 control-flow divergence。
+- BVH node、triangle、material、texture、ray state 的访问交错且随机。
+- hit/miss、不同材质、不同 bounce 导致 shader execution reordering 不足或受限。
+- 较大的 ray payload、attribute、stack/state 会增加寄存器压力、spill 和 cache 竞争。
+
+常见改善策略：  
+- Ray sorting / ray reordering：按方向、origin cell、material、hit type、shader group 等重排，提高 traversal 或 shading coherence。
+- BVH layout 优化：压缩 node、使用紧凑的 child bounds、宽 BVH、减少 pointer chasing、按 traversal 访问顺序布局。
+- 减少 payload/attribute 压力：缩小 payload，避免不必要的 live variables，减少 register spill。
+- 分阶段 pipeline：将 traversal 与 shading 分离，按 material 或 hit 类型 batch。
+- 纹理和材质布局优化：压缩材质参数、减少随机 descriptor/resource indirection。
+- 控制 bounce 与随机性：在允许的质量范围内使用更相干的采样策略，或在合适阶段进行 path compaction。
+- 用 profile 验证：判断瓶颈究竟是 RT core traversal、shader execution、L2 miss、VRAM bandwidth、occupancy 还是 divergence。
+
+### 如何判断一个 kernel/shader 是 cache-bound、bandwidth-bound 还是 latency-bound？
+bandwidth-bound 是单位时间搬运的字节数接近瓶颈；latency-bound 是单次访问或依赖链太长且并发不足以掩盖它；cache-bound 常表示 cache miss、cache throughput、cache contention 或 working-set thrashing 限制了性能。三者经常共存，必须以计数器和对照实验区分。  
+
+### 如果一个 shader 的 L2 hit rate 很高，但性能仍不好，可能是什么原因？
+可能原因包括：  
+- L2 本身带宽饱和：命中不等于免费；大量 L2 hit 仍可能压满 L2 fabric/port。
+- 请求数量过多：stride、未合并访问、过小粒度 load 导致大量 transaction。
+- L1 miss / L2 latency 仍无法隐藏：occupancy 低、寄存器压力高、波前数不足。
+- load-use dependency chain 很长：同一线程必须等本次 load 才能发出下一次关键指令。
+- warp/wave divergence：有效 lanes 少，吞吐被控制流稀释。
+- shared-memory bank conflict 或同步：真正瓶颈不在 global memory。
+- compute-bound 或 special-function-bound：例如 ALU、RT traversal、texture filtering、寄存器文件端口、指令派发受限。
+- cache thrashing：平均 hit rate 高，但关键数据的 reuse 仍被短时间驱逐。
+- L2 与其他工作负载竞争：例如并发 queue、graphics + compute 或其他 kernel 共享 L2。
+
+
+## Cache有价值的总结
+- GPU cache 的主要价值是减少下层流量；GPU 更依赖大量并发 warp/wave 隐藏延迟。
+
+- L1 通常更局部，L2 通常跨 SM 共享；精确结构因厂商和代际而异。
+
+- shared memory/LDS 是显式 scratchpad，不是自动 cache；适用于可预测的 workgroup 级高复用。
+
+- cache hit rate 不等于性能；还必须看 transaction、line utilization、带宽、stall、occupancy。
+
+- warp/wave 内连续、对齐、紧凑的访问通常能减少 transaction，这就是 coalescing。
+
+- SoA(Structure of Arrays，数组结构体)/AoS(Array of Structures，结构体数组) 应按 wave 的实际访问字段和复用模式选择，不能教条化。
+
+- shared memory 优化会受到 bank conflict、barrier 和 occupancy 降低的制约。
+
+- shared L2 不等于自动正确同步；coherence 与 consistency/ordering 是不同问题。
+
+- atomic 的关键问题是 contention；用 warp/block 局部聚合降低全局热点原子次数。
+
+- 优化要以 profiler 和对照实验闭环，而不是只依赖架构直觉。
+
+
+

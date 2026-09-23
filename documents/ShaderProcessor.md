@@ -271,7 +271,10 @@ ALU 负责算，Load/Store 负责搬数据，Texture Pipe 负责取纹理，Inte
 ```
 
 ### Shared memory / LDS / local data store / PowerVR Unified Store 的异同
-Shared Memory / LDS(Local Data Share）主要解决“同一个线程组里的线程如何快速共享数据”；  
+Shared Memory，也叫 LDS(Local Data Share）主要解决“同一个线程组里的线程如何快速共享数据”；  
+一般是指位于 GPU 芯片内部、靠近计算单元的一小块高速 SRAM，供同一个 thread block / workgroup 中的线程协作读写。它不是显存 VRAM，也不是 Windows 任务管理器里显示的“共享 GPU 内存”。  
+典型用途是线程协作、数据复用。  
+
 PowerVR Unified Store 则是 PowerVR 特有的统一片上存储架构，概念范围更大  
 
 Shared Memory 是编程模型概念；  

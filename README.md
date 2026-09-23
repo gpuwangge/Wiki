@@ -34,6 +34,8 @@
 ## [Bandwidth Validation](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthValidation.md)  
 ## [Shader Processor](https://github.com/gpuwangge/Wiki/blob/main/documents/ShaderProcessor.md)  
 ## [Graphics Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GraphicsArchitecture.md)  
+## [GPU Performance Analyze](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUPerformanceAnalyze.md)  
+
 
 # NPU
 ## [NPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/NPUArchitecture.md)  

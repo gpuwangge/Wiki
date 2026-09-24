@@ -53,13 +53,13 @@ Occupancy 的本质是可用于 latency hiding 的容量指标，不是性能分
 
 ### 决定 Occupancy 的“短板效应”示例
 假设我们在 Ampere 架构 (Max Resident Warps = 64) 上运行一个 Kernel，
-设置 Block Size = 256 Threads (即每个 Block 有 $256 / 32 = 8$ Warps)：
-- 理想情况：如果资源足够，SM 最多可常驻 8 个 Blocks ($8 \times 8 = 64$ Warps)，此时 ${Occupancy} = 64 / 64 = 100\%$。
+设置 Block Size = 256 Threads (即每个 Block 有 256 / 32 = 8 Warps)：
+- 理想情况：如果资源足够，SM 最多可常驻 8 个 Blocks (8 x 8 = 64 Warps)，此时 Occupancy = 64 / 64 = 100\%。
 - 寄存器瓶颈：如果你的 Kernel 每个 Thread 使用了 64 个寄存器，而 Ampere 单个 SM 的 Register File 总量为 65536 个 32-bit 寄存器。
-    - 每个 Block 需要：$256 \times 64 = 16,384$ 个寄存器。
-    - 单 SM 最多只能放下 $65536 / 16384 = 4$ 个 Blocks。
-    - 实际常驻 Warps：$4 { Blocks} \times 8 { Warps/Block} = 32 { Warps}$。
-    - 此时：${Occupancy} = 32 / 64 = 50\%$。
+    - 每个 Block 需要：256 x 64 = 16,384 个寄存器。
+    - 单 SM 最多只能放下 65536 / 16384 = 4 个 Blocks。
+    - 实际常驻 Warps：4 Blocks x 8 Warps/Block = 32 Warps。
+    - 此时：Occupancy = 32 / 64 = 50\%。
 
 ## MLP(Memory-Level Parallelism（内存层级并行度)
 MLP = 同时未完成的 memory operations 的数量。  

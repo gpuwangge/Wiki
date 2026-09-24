@@ -1,10 +1,10 @@
-# ALU bound, Memory bound, Latency bound
+# 三个核心维度 (Three Dimensions)
 
-| 类型                        | 真正瓶颈                                                      | 典型现象                                            | GPU 利用率特征                                                  | 优化方向                                                                                       |
-| ------------------------- | --------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| ALU bound / Compute bound | ALU、FMA、SIMD、Tensor Core 等计算单元吞吐不足                        | 算术操作很多，每字节数据做很多计算                               | Compute pipe utilization 高，接近 peak；memory bandwidth 不一定高   | 减少算术量、降低 precision、提高 instruction efficiency、提升 SIMD/vector utilization                    |
-| Memory bandwidth bound    | DRAM/L2/NoC 的可持续带宽达到上限                                    | GPU 请求数据总量太大，memory bus 被打满                     | Memory bandwidth 高，接近 peak；memory queue 常很深                | 减少 bytes、提高 cache reuse、compression、tiling、coalescing、减少 redundant load/store              |
-| Latency bound             | 单次 ALU / cache / memory / dependency latency 暴露，无法被其他工作隐藏 | GPU 经常在等数据或等 dependency，但 memory bandwidth 并未打满 | Compute utilization 低，memory bandwidth 也低；eligible wave 不足 | 提高 occupancy/MLP、增加 independent work、减少 dependency chain、隐藏 latency、改善 scheduling/prefetch |
+| 维度 | 定义 | 典型特征 | 优化方向 |
+| :--- | :--- | :--- | :--- |
+| **ALU-bound** | 计算能力受限 | 算力接近峰值，内存等待少 | 简化 Shader 算法，减少指令数 |
+| **Memory-bound** | 带宽受限 | 内存吞吐量接近峰值，算力闲置 | 压缩 Texture，减少 Render Target，优化缓存命中率 |
+| **Latency-bound (Occupancy)** | 并行度/延迟受限 | 活跃线程少，寄存器压力大，stalls 高 | 减少寄存器使用，优化分支分歧，增加并行 Warp，提高 occupancy/MLP |
 
 
 ## Latency bound
@@ -20,6 +20,10 @@ GPU 正在等待某个结果回来，但没有足够的其他 independent work �
 
 最关键的判断是：  
 Compute utilization 低，memory bandwidth 也低；不是资源的总吞吐被打满，而是 GPU 没有足够 ready work 来隐藏等待时间。  
+
+Hide latency的两个方法：  
+- Cache：靠的是避免延迟，把数据放在离核心近的地方，让线程秒回数据
+- Occupancy: 允许主线程去主存慢悠悠读取数据，同时让硬件立马切换到另一个准备就绪的线程去执行
 
 ## Occupancy
 ```
@@ -47,9 +51,18 @@ GPU 遇到 memory load、texture fetch、dependency 时，一个 warp 可能暂�
 
 Occupancy 的本质是可用于 latency hiding 的容量指标，不是性能分数。
 
-## MLP
+### 决定 Occupancy 的“短板效应”示例
+假设我们在 Ampere 架构 (Max Resident Warps = 64) 上运行一个 Kernel，
+设置 Block Size = 256 Threads (即每个 Block 有 $256 / 32 = 8$ Warps)：
+- 理想情况：如果资源足够，SM 最多可常驻 8 个 Blocks ($8 \times 8 = 64$ Warps)，此时 ${Occupancy} = 64 / 64 = 100\%$。
+- 寄存器瓶颈：如果你的 Kernel 每个 Thread 使用了 64 个寄存器，而 Ampere 单个 SM 的 Register File 总量为 65536 个 32-bit 寄存器。
+    - 每个 Block 需要：$256 \times 64 = 16,384$ 个寄存器。
+    - 单 SM 最多只能放下 $65536 / 16384 = 4$ 个 Blocks。
+    - 实际常驻 Warps：$4 { Blocks} \times 8 { Warps/Block} = 32 { Warps}$。
+    - 此时：${Occupancy} = 32 / 64 = 50\%$。
+
+## MLP(Memory-Level Parallelism（内存层级并行度)
 MLP = 同时未完成的 memory operations 的数量。  
-MLP 全称是 Memory-Level Parallelism（内存层级并行度）。  
 指的是处理器/GPU 在同一时间能发出并保持多个未完成的 memory requests，例如多个 cache miss、texture fetch 或 DRAM load 同时 outstanding。  
 
 例如某个 shader/core 在某时刻：
@@ -137,12 +150,30 @@ Arithmetic Intensity = Operations/Bytes transferred
 ```
 通过算术强度强度可以把peak计算指令数转成数据量，与memory bandwidth做对比，找到ALU bound还是memory bound。
 
+# GPU不同模块的bound分析
+- Vertex Shader: 常见ALU-bound, vertex fetch memory-bound
+- Fragment Shader: ALu-bound, texture memory-bound
+- Texture Unit: memory-bound
+- L2 Cache / Memory Controller: 统一统计系统内存带宽压力
+- ROP(Render Output): 后期混合，常受Framebuffer带宽影响
 
-# 分析举例: Graphics Pipeline
-找到geometry bound还是fragment bound  
+# Benchmark分析
+## Segmentation
+- 首先按照Frame拆分：整体性能FPS，判断是否掉帧，区分CPU/GPU bottleneck，全局内存占用与系统带宽消耗
+- 再按(render)pass：区分不同的渲染场景，比如shadowmap, g-buffer, 光照和后期处理等设置的影响，隔离depth/stencil状态与early-z剔除效率，量化tbdr的tile开销
+- 再按Drawcall分段：定位哪个具体mesh/material导致bottleneck
+
+# Bound判断逻辑简析
+- 判定ALU-bound: ALU usage > 80% 并且 memory stall低
+- 判定Memory-bound: memory bandwidth接近硬件上线且memory stall cycle占比高
+- 判定Latency-bound: occupancy < 50% 且 non memory stall 高(通常是register不足引起)
+
+
+# 架构分析: Graphics Pipeline
+找到vertex bound还是fragment bound  
 TBDR用于解决fragment bound问题，但会带来paramater buffer explode问题  
 再通过IDVS/DVS解决  
 
-# 分析举例: Shader
+# 架构分析: Shader
 
 

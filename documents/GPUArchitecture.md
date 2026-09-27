@@ -343,6 +343,180 @@ ALU指令数 = 1000G/s
 Memory Bandwidth x arithmatic intensity = 300 * 4 = 1200G/s  
 换句话说，memory传输拉满300GB/s之后，需要处理1200G条指令的能力才匹配，但ALU只能处理1000G，所以是ALU bound or compute bound。  
 
+#### 另一个复杂例子
+```
+GPU frequency                 = 1 GHz
+Shader Process                = 8
+Shader ALU throughput         = 1024 ALU instructions / cycle / Shader Process
+
+Texture Processor             = 16
+Texture throughput            = 16 texture instructions / cycle / Texture Processor
+
+Pixel Processor               = 4
+Pixel throughput              = 16 pixels / cycle / Pixel Processor
+
+Resolution                    = 3840 × 2160 = 8,294,400 pixels/frame
+Shader ALU instructions       = 160 / pixel
+Shader Texture instructions   = 6 / pixel
+
+Measured performance           = 1000 FPS
+```
+
+合理吗?合理的话如何提高？不合理的话理论最好效能是什么？如何提高？  
+
+参考答案：  
+- 先算每个 stage 能处理多少
+
+Shader Processor  
+有 8 个 Shader Processor，每个：  
+1024 ALU instructions / cycle  
+
+所以整个 GPU：  
+8 × 1024 = 8192 ALU instructions / cycle  
+
+GPU 是 1 GHz：  
+8192 × 1 GHz = 8.192 × 10^12 ALU instructions / second  
+
+每个 pixel 需要 160 条 ALU instruction：  
+8.192 × 10^12 / 160 = 51.2 × 10^9 pixels / second  
+
+转换成 FPS：  
+51.2 × 10^9 / 8,294,400 ≈ 6173 FPS  
+
+所以 Shader 理论上限约：  
+6173 FPS  
+
+- Texture Processor
+
+16 个 Texture Processor，每个：  
+16 texture instructions / cycle  
+
+总吞吐：
+16 × 16 = 256 texture instructions / cycle  
+1 GHz：  
+256 × 10^9 = 256 G texture instructions/s  
+
+每 pixel 需要 6 条 texture instruction：  
+256 × 10^9 / 6 ≈ 42.67 × 10^9 pixels/s  
+
+换成 FPS：  
+42.67 × 10^9 / 8,294,400 ≈ 5144 FPS  
+
+所以 Texture 理论上限：  
+≈5144 FPS  
+
+- Pixel Processor
+
+4 个 Pixel Processor，每个：  
+16 pixels / cycle  
+
+所以：  
+4 × 16 = 64 pixels / cycle  
+1 GHz：  
+64 × 10^9 pixels/s  
+
+转换成 FPS：  
+64 × 10^9 / 8,294,400 ≈ 7716 FPS  
+
+所以 Pixel Processor 理论上限：≈7716 FPS  
+
+- 找 bottleneck
+
+现在三个 stage：  
+Stage	理论 FPS  
+Shader	≈6173 FPS  
+Texture	≈5144 FPS  
+Pixel	≈7716 FPS  
+
+所以：  
+Texture < Shader < Pixel  
+真正的 bottleneck 是 Texture Processor。  
+
+因此在题目给出的简化模型下：  
+理论最高性能 ≈ 5144 FPS  
+而不是 6173 FPS。  
+
+那么 1000 FPS 合理吗？  
+合理。  
+
+因为：  
+Measured = 1000 FPS  
+Theoretical = 5144 FPS  
+
+实际性能只有：  
+1000 / 5144 ≈ 19.4%  
+
+也就是说 GPU 达到了这个简化理论模型大约 19% 的吞吐利用率。  
+所以不能因为理论上能跑 5144 FPS，就认为 1000 FPS 不合理。  
+真实 GPU 中还有大量没有在题目中体现的因素：  
+```
+Memory bandwidth
+       ↓
+Texture cache miss
+       ↓
+DRAM latency
+       ↓
+Shader occupancy
+       ↓
+Instruction dependency
+       ↓
+Pipeline bubbles
+       ↓
+Texture latency
+       ↓
+Synchronization
+       ↓
+Rasterization overhead
+       ↓
+Command / driver overhead
+       ↓
+Early-Z / blending / ROP behavior
+       ↓
+实际 FPS
+```
+因此 1000 FPS 完全可能。  
+
+- 优化思路
+
+第一优先级：优化 Texture  
+提高 texture cache hit rate  
+优化 sampling pattern：让相邻 pixel 尽可能访问空间局部的数据。  
+使用合适的 mipmap：避免远距离纹理仍然访问过高分辨率 mip level。  
+减少 texture bandwidth: 别的格式，compression  
+
+第二步：优化 Shader  
+减少 ALU instruction:比如减少不必要计算  
+减少 divergence  
+
+浓缩图：
+```
+                         1 GHz GPU
+                            │
+          ┌─────────────────┼─────────────────┐
+          │                 │                 │
+          ▼                 ▼                 ▼
+      Shader             Texture            Pixel
+      8 × 1024           16 × 16           4 × 16
+      ALU/cycle          TEX/cycle          PIX/cycle
+          │                 │                 │
+          ▼                 ▼                 ▼
+      6173 FPS           5144 FPS           7716 FPS
+          │                 │                 │
+          └─────────────────┼─────────────────┘
+                            │
+                            ▼
+                     Bottleneck
+                       Texture
+                            │
+                            ▼
+                  Theoretical max
+                     ≈ 5144 FPS
+                            │
+                            ▼
+                   Measured = 1000 FPS
+```
+
+
 ### 2 周期数法：即指令消耗了多少周期 vs mem消耗了多少周期
 异步频率比例 = 前端指令流频率 / 着色器核心频率  
 

@@ -364,6 +364,14 @@ Measured performance           = 1000 FPS
 
 合理吗?合理的话如何提高？不合理的话理论最好效能是什么？如何提高？  
 
+profiling分析经验：  
+hz：每秒多少次  
+ghz：10^9 次。用这个做单位最好  
+第一步：算HW Capacity  
+第二步：算Workload  
+第三步：算理论最大FPS，跟实测FPS对比  
+第四步：找出瓶颈，优化瓶颈  
+
 参考答案：  
 - 先算每个 stage 能处理多少
 

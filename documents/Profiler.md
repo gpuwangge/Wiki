@@ -126,11 +126,11 @@ https://developer.nvidia.com/nsight-graphics
 
 ## Nsight System图例
 在新的project中设定command，然后点击start   
-<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem1.PNG" alt="alt text">  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem1.png" alt="alt text">  
 app会运行，运行结束后会生成一个.qdrep文件，双击打开即可查看性能分析结果。  
-<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem2.PNG" alt="alt text">  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem2.png" alt="alt text">  
 在左侧的timeline中，可以看到各个线程的执行情况，以及各个线程的执行  
-<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem3.PNG" alt="alt text">  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem3.png" alt="alt text">  
 
 
 

@@ -160,6 +160,13 @@ SP内部含有上百个CUDA Core，但Shader Core里只有两个EE(Valhall)。�
 * **访问延迟 (Latency):** 一次 TLB Miss 会引发多次额外的物理内存读访问，导致指令流水线停顿 (Stall)。
 * **带宽开销 (Overhead Traffic):** 统计的 MMU 页表读取流量属于系统管理开销，不属于应用层有效数据流，计算 Core 有效带宽时需予以剔除。
 
+## BIF
+在芯片设计（尤其是 SoC 集成、IP 复用与互联配置）中，BIF 通常指 Block Interface File（模块接口文件），用于集中描述某个IP/子模块与顶层总线、片上网络(NoC)、电源域或外部引脚之间的实例化映射、约束与流控参数。  
+
+在 BIF 中，credits 是片上总线流控合约。它决定了该 Block 对外通信的“最大连续发送能力”，直接影响 SoC的带宽利用率、功耗峰值、时序余量与死锁安全性。  
+
+## Credit
+credits 的技术含义：接收端向发送端预先发放的“可接收数据包/事务的配额”。每发送一个单元事务，消耗 1 个credit；耗尽时必须停止发送，等待接收端返回更多 credit。  
 
 ## Beat
 GPU/CPU 硬件性能建模中，Beat（通常译为“拍”或“数据拍”）指的是在单个时钟周期（Clock Cycle）内，通过总线传输的一块数据单元（Data Transfer Unit）。  
@@ -170,6 +177,21 @@ GPU/CPU 硬件性能建模中，Beat（通常译为“拍”或“数据拍”�
 - 如果总线单次数据传输能力（Beat）为 16 字节（128-bit 总线）；(或者说一个beat的大小就是总线的宽度)  
 - 那么传输这 1 个 Cache Line 的数据就需要占用 8 个 Beats（$128 / 16 = 8$ 拍突发传输）。 
 
+## Burst
+对比beat/burst/transaction:  
+beat：拍数。理想无干扰情况下一个 cycle 有 1 beat。实际并不是每个 cycle 都传输数据，所以 cycle:beat 可能 1:1、3:1、5:1 等。  
+burst：可以认为 burst 是比 beat 更高一个层次的概念，Burst 是“事务级”封装。  
+transaction：一个事务是更高层级的层次，可以包含好几个 burst。  
+
+bus width：物理通道宽度。比如 128b，每个时钟周期（或者说1拍）能搬运的数据。  
+burst length：一个 burst 多少 beat。工业界中一个 burst 必然分成好几个 beat，比如一个事务需要16个beats。  
+burst size：突发传输大小，公式为 bus width * beat count = 128 * 16 = 2048b = 256B  
+
+## 模型accurate层次
+bit-accurate  
+transaction-accurate  
+cycle-accurate  
+RTL-accurate：含 handshaking latency、alu latency、DDR伪随机间隔  
 
 ## Ground Truth and Actual
 在硬件性能建模、仿真测试以及数据校验中，Ground Truth（底层基准值） 和 Actual（上层累加值） 是用来做交叉验证（Cross-Validation）的两个对比测量维度。  

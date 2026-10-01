@@ -65,6 +65,7 @@
 ## [ARM ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/ARMISA.md)  
 ## [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 ## [Arithmetic](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArithmetic.md)  
+## [Power](https://github.com/gpuwangge/Wiki/blob/main/documents/Power.md)  
 
 # SystemC
 ## [SystemC Tutorial](https://github.com/gpuwangge/Wiki/blob/main/documents/SystemCTutorial.md)  

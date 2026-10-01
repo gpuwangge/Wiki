@@ -438,3 +438,25 @@ NVIDIA 的 SM（Streaming Multiprocessor） 是 GPU 中执行 CUDA / Shader work
 
 NVIDIA SM 是以 Warp 为基本执行组织、以 Scheduler 为调度核心、以 Register/Shared Memory 为片上状态和数据存储，并通过多种执行单元实现高吞吐和 latency hiding 的 GPU 核心计算模块。  
 
+# Warp schedular的三种方式
+## 1. Round-Robin（轮询调度 / 循环调度）
+工作机制： 调度器按照固定的顺序（如 Warp 0 $\rightarrow$ 1 $\rightarrow$ 2 $\rightarrow$ 3 $\rightarrow$ 0）循环扫描所有就绪的 Warp，按顺序轮流发射指令。  
+特点与优缺点：  
+- 优点： 硬件实现简单，开销低；能保证各个 Warp 的执行进度保持高度一致（均衡推进）。
+- 缺点： 当所有 Warp 在同一时刻都需要进行大延时的内存访问（如同时发生 Global Memory Load）时，会导致所有 Warp 同时挂起停顿（Stall），无法有效掩盖长时间的内存延迟。
+
+## 2. GTO (Greedy-Then-Oldest / 贪婪优先，旧者补充)
+工作机制：
+Greedy 阶段： 优先选择当前正在执行的同一个 Warp，只要该 Warp 的下一条指令没有数据依赖且准备就绪，就“贪婪”地一直发射它的指令，直到该 Warp 阻塞（如等待访存或依赖指令完成）。  
+Oldest 阶段： 一旦当前 Warp 阻塞，调度器切换到备用队列中等待时间最久（最老）的就绪 Warp 继续执行。  
+特点与优缺点：
+- 优点： 现代 GPU（如 NVIDIA Fermi/Kepler/Ampere 等）最常用的核心策略之一。它让单个/少数 Warp 快速跑完，能够极大提高 L1 Data Cache / Texture Cache 的时间局部性（Temporal Locality）；同时错开了各个 Warp 发起大延时访存的时间点，更有效地隐藏了 DRAM 延迟。
+- 缺点： 会导致 Warp 之间的进度出现明显分化（部分 Warp 跑得很远，部分仍停留在起点）。
+
+## 3. Priority-Based / Dynamic LRU (基于优先级 / 动态最少使用调度)
+工作机制： 调度器根据运行时的动态状态（如依赖关系、内部计数器、指令类型或历史发射记录）为每个 Warp 动态计算并赋予优先级（Priority），每次总是发射优先级最高且已就绪的 Warp。  
+常见的优先级规则包括：LRU (Least Recently Used)、最长等待指令优先、屏障同步（Barrier）前 Warp 优先、或高延迟访存指令优先。  
+特点与优缺点：
+- 优点： 调度非常灵活且针对性强。例如在遇到 syncthreads() 或组内同步时，优先调度进度落后的 Warp，能避免“快 Warp 等慢 Warp”导致的屏障阻塞。
+- 缺点： 硬件评估与追踪逻辑复杂，需要额外的寄存器和仲裁电路，增加硬件面积与功耗。
+

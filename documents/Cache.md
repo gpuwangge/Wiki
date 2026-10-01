@@ -390,4 +390,31 @@ bandwidth-bound 是单位时间搬运的字节数接近瓶颈；latency-bound �
 - 优化要以 profiler 和对照实验闭环，而不是只依赖架构直觉。
 
 
+## Dynamic Cache
+Dynamic Cache（动态缓存 / 动态显存分配） 通常指的是 GPU 硬件能够根据实际工作负载的需要，在运行时（Runtime）实时、按需动态分配硬件缓存/显存资源的技术，而不是在编译或任务启动前静态预分配固定大小的资源。  
+传统静态分配 (Static Allocation)： 在传统 GPU 架构中，当 Shader（着色器）准备执行时，硬件或编译器会根据该任务可能需要的最大资源上限（Worst-case），提前为每个线程/Task 划定固定大小的 Register（寄存器）和 Local Memory/Cache。  
+- 缺点： 大多数线程在实际运行中根本用不满预留的最高资源，导致极大的缓存/显存浪费，限制了同时并行的线程数量（降低了 Occupancy / 占用率）。
+
+动态分配 (Dynamic Cache / Caching)： 硬件内置微架构级别的分配引擎，能够实时监控每个 Execution Thread / SIMD Lane 的真实需求。用多少，给多少。  
+- 优点： 释放了被闲置的 Cache/SRAM 空间，使 GPU 能够同时调度和并行处理多得多的线程，大幅提升 GPU 核心占用率与吞吐效率。  
+
+主要应用场景
+- 光线追踪 (Ray Tracing) 与复杂计算： 光线追踪或物理模拟任务具有极强的不确定性和分支发散性（Divergence），不同光线需要的计算资源差异极大。Dynamic Cache 能极其显著地改善这类负载下的 GPU 资源利用率。
+- 移动端 / 低功耗芯片： 在 SRAM（片上缓存）面积和功耗受限的芯片设计中，Dynamic Cache 可以在不增加物理 SRAM 面积的前提下，等效提升缓存利用率并降低对外部 DRAM 带宽的依赖。
+
+## Atomic
+Atomic（原子操作） 指的是不可分割的、一步完成的内存读写操作。  
+为什么移动端 GPU 需要 Atomic？  
+移动端 GPU（如 Arm Mali、Qualcomm Adreno、Imagination PowerVR、Apple GPU）采用大规模并行架构，成百千个 Core/ALU 会同时运行 Shader。  
+常见的 Atomic 指令类型  
+- atomicAdd（原子加）、atomicSub（原子减）、atomicMin / atomicMax（原子取极值）
+
+移动端 GPU 设计中 Atomic 的核心痛点与挑战  
+- 写回机制（Write-Through vs Write-Back）： 传统的移动端 L1/L2 Cache 往往追求低功耗，采用简化的一致性协议。如果 Shader 在 L1 Cache 中执行 Atomic 操作，如何通知其他 Core 的 L1 Cache？  
+- 硬件硬件硬件原子单元（Atomics Engine）： 现代移动 GPU 倾向于把 Atomic 操作下放到 L2 Cache 硬件层（L2 Atomic Unit）甚至 System Interconnect（如 AXI5 / CHI 协议中的 Bus Atomics）执行。线程发起 Atomic 请求后直接路由到 L2，不经过 L1 缓存，从而避免复杂的 L1 缓存一致性维护。  
+
+性能损耗（Performance Penalty & Contention）  
+- 管道阻塞（Serialization）： 当成百上千个线程对同一个 Hotspot（热点地址）执行 Atomic 操作时，原本高并行的 GPU 会退化成单线程串行执行，造成严重的 Stall（流水线停顿）。  
+- Tile-Based Deferred Rendering (TBDR) 的冲突： 移动端广泛采用 TBDR 架构，局部数据存在 Tile Memory (On-chip SRAM) 中。如果 Atomic 发生在 Tile Memory 内（如 Order-Independent Transparency 顺序无关透明度、自定义 Blend），速度极快；但如果 Atomic 发生在 Global Memory，则会频繁占用外部 DRAM 带宽，导致功耗骤升。  
+
 

@@ -337,3 +337,39 @@ function identifyBottleneck(formula) {
 3. **容错性瓶颈诊断**：瓶颈识别算法设置了 `0.75 * top_confidence` 的相对阈值，能够同时揭示主瓶颈及紧随其后的次要瓶颈，为性能优化提供更全面的指引。
 
 
+# 一个真实芯片的Roofling分析例子
+三星魔改AMD RDNA4  
+芯片面积特别大  
+每个CU有224组FP32 ALU(Xclipse 960共16个CU)
+- CU是AMD基本单元，相当于NV的SM
+- NV RTX5090每个SM也就是128个FP32 ALU
+- 这样的结果是FP32浮点算例达到6.98 TFLOPS
+
+另一方面，一般手机内存带宽只有PC轻薄本的一半(也就是64 bits)  
+GPU L2缓存也不是特别大(2MB)  
+所以综合来看这个大CU只能跑在低频率上  
+
+## Roofling Performance Analyze
+先不说缓存  
+Arithmetic Intensity = FLOP/memoryByte  
+算术强度可以把带宽转换成FLOP(算术强度 x Bandwidth)  
+假如最大算力6.98T, 带宽8B x freq  
+假设工作频率5Ghz，数据速率为10Ghz(时钟上下沿触发)  
+8 x 10G x Intensity=6.98T, Intensity=87.25的算术强度才能拉满  
+
+
+## 常见算法的算术强度：
+Blur: 算术强度零点几  
+Deferred Rendering: 1~10  
+SSR屏幕空间反射：5-20  
+Particle Sim或体积雾: 20+  
+全部加起来拉满特效才有可能到100，手游上很罕见  
+没有 Atomic 的情况： 线程 A 和线程 B 都想给内存里的计数器 Count 加 1（初始值为 0）。  
+结果错误： 两次加法后 Count 变成了 1（本该是 2）  
+使用 Atomic 的情况： 线程 A 发起 atomicAdd 操作，硬件锁住/串行化该地址：  
+结果正确： Count 为 2。  
+
+
+
+
+

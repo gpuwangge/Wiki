@@ -145,6 +145,7 @@ MLP：可能高，因为 A/B/C/D load independent，可同时发出。
 
 ## 算术强度
 即每搬运 1 byte，做了多少 ALU 运算。
+单位是FLOPS/Byte。用法是:算术强度x带宽x数据频率=每秒能处理的指令数(也就是常说的算力)
 ```
 Arithmetic Intensity = Operations/Bytes transferred
 ```
@@ -174,6 +175,33 @@ Arithmetic Intensity = Operations/Bytes transferred
 TBDR用于解决fragment bound问题，但会带来paramater buffer explode问题  
 再通过IDVS/DVS解决  
 
-# 架构分析: Shader
+# GPU常见的一些Bottleneck位置
+Vertex Processing Bottleneck
+* Vertex Processing Load
+* Cycles per vertex
+* Register Overload
+
+Tiler Task Bottleneck
+* Tiles per Triangle
+* Triangle Ratio
+* Triangles Input per Frame
+* Vertices per Triangle
+
+Pixel Shader Processing Bottleneck
+* Pixel Processing Load:
+* Cycles per Pixel
+* Register Overload: register spilling
+
+Texturing Bottleneck
+* Texture Filter Load: average load of Texturing Units
+* Texture Read Stall: % of time Texture Processing Unit was stalled waiting for texture data to be returned from external caches/memory
+
+Renderer Bottleneck
+* HSR Efficency
+* ISP Pixel Load
+* Overdraw: pixel overdraw
+* Z Load/Store
+
+
 
 

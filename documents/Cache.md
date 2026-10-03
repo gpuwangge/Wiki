@@ -411,6 +411,17 @@ Atomic（原子操作） 指的是不可分割的、一步完成的内存读写�
 
 移动端 GPU 设计中 Atomic 的核心痛点与挑战  
 - 写回机制（Write-Through vs Write-Back）： 传统的移动端 L1/L2 Cache 往往追求低功耗，采用简化的一致性协议。如果 Shader 在 L1 Cache 中执行 Atomic 操作，如何通知其他 Core 的 L1 Cache？  
+
+Write-through：写 Cache 的同时，立即写 Memory。  
+Cache 和 Memory 始终保持同步。  
+优点：简单,Memory 中的数据比较新,cache eviction 时不需要额外 write-back  
+缺点：每次 write 都可能产生 memory traffic, 写很多数据时，memory bandwidth 压力大,通常会配合 write buffer，避免 CPU 每次写都被 memory latency 卡住。  
+
+Write-back：先只写 Cache，等这个 cache line 被 eviction 时，再写回 Memory。  
+Memory 可能暂时保存旧数据，Cache 保存最新数据。  
+优点：大幅减少 memory write traffic,对大量连续写入尤其有效,更节省 memory bandwidth  
+缺点：需要 dirty bit,cache eviction 时需要 write-back,cache coherence / consistency 设计更复杂  
+
 - 硬件硬件硬件原子单元（Atomics Engine）： 现代移动 GPU 倾向于把 Atomic 操作下放到 L2 Cache 硬件层（L2 Atomic Unit）甚至 System Interconnect（如 AXI5 / CHI 协议中的 Bus Atomics）执行。线程发起 Atomic 请求后直接路由到 L2，不经过 L1 缓存，从而避免复杂的 L1 缓存一致性维护。  
 
 性能损耗（Performance Penalty & Contention）  

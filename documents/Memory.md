@@ -282,6 +282,73 @@ Walk的过程就是从root开始一层一层深度遍历(次数=level)，如果�
 (CreatePage会生成一个size为2^page_size_bit的char数组)  
 (在这个模型里，只有遍历walk到的node array会被生成；且最多只有一个page会被生成；模型的level和每个level的size是由使用者设计的，层数少速度快，层数多浪费的空间少，都有优点)  
 
+# Memory Bank
+Memory Bank（内存 Bank） 可以简单理解为：  
+把一整块内存划分成多个可以相对独立工作的“小内存块”。  
+例如一个内存有 4 个 Bank：  
+```
+          Memory
+     ┌────┬────┬────┬────┐
+     │Bank│Bank│Bank│Bank│
+     │ 0  │ 1  │ 2  │ 3  │
+     └────┴────┴────┴────┘
+```
+如果只有一个 Bank：  
+```
+Request 1 ──→ Memory
+Request 2 ──→ Memory
+Request 3 ──→ Memory
+```
+很多请求需要排队。  
+如果有多个 Bank：  
+```
+Request 1 ──→ Bank 0
+Request 2 ──→ Bank 1
+Request 3 ──→ Bank 2
+Request 4 ──→ Bank 3
+```
+就可以并行处理，因此提高吞吐量。  
+和 Memory Interleaving 的关系  
+可以这样记：  
+Memory Bank = 多个独立的“内存通道/分区”  
+Memory Interleaving = 把地址分散到这些 Bank 的方法。例如：  
+```
+Address 0 → Bank 0
+Address 1 → Bank 1
+Address 2 → Bank 2
+Address 3 → Bank 3
+Address 4 → Bank 0
+Address 5 → Bank 1
+```
+A memory bank is an independently accessible portion of memory that can operate in parallel with other banks.  
+Memory Bank 是内存中可以与其他 Bank 相对独立、并行工作的一个分区。  
+
+# Memory Intervene
+Memory Interleave（内存交错）：把连续的数据访问分散到多个独立的 Memory Bank / Channel 中，使多个 Bank 可以并行工作，从而提高内存带宽。例如：  
+```
+Bank 0: Address 0, 4, 8, ...
+Bank 1: Address 1, 5, 9, ...
+Bank 2: Address 2, 6, 10, ...
+Bank 3: Address 3, 7, 11, ...
+```
+
+CPU/GPU 连续访问数据时，可以同时访问不同 Bank：  
+```
+Cycle 1: Bank0 ← A0
+         Bank1 ← A1
+         Bank2 ← A2
+         Bank3 ← A3
+```
+
+Memory interleaving distributes consecutive memory addresses across multiple memory banks, allowing parallel accesses and increasing memory bandwidth.  
+把连续的内存访问分散到不同的 Memory Bank，让多个 Bank 可以同时工作，从而提高内存访问带宽。  
+连续访问只是通常更容易被分散到不同 Bank，因此特别适合利用 interleaving。  
+
+目的：提高 memory bandwidth / throughput  
+核心机制：地址 → 不同 Memory Bank  
+问题：如果多个请求映射到同一个 Bank，会产生 bank conflict，并行度下降。  
+GPU 中常见：banked memory、shared memory、HBM channels 等场景。  
+
 # Reference
 https://www.cnblogs.com/alantu2018/p/9000777.html  
 

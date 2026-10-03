@@ -1,3 +1,22 @@
+# Warp Scheduler
+warp scheduler的流程  
+```
+scheduler 选择 warp  
+↓
+issue：把该 warp 的一条指令送入对应管线  
+↓
+execute：ALU / LSU / Tensor 等管线在后台处理  
+↓
+writeback / retire：结果可被依赖指令使用  
+```
+Issue / 发射：调度器当前周期把一条 warp instruction 送进执行单元。  
+• Execute / 执行：执行单元的流水线处理它，可能持续多个 cycle。  
+• 完成/写回：结果写回寄存器或内存操作达到对应完成状态。  
+• Warp 是否 ready：由 scoreboard 跟踪。若下一条指令需要尚未完成的结果，warp 就不能继续 issue，称为 scoreboard stall；若不依赖该结果，则仍可以继续发射。  
+
+
+
+
 # Warp Divergence
 Warp divergence（分支发散）指同一个 warp 内的线程，对 if/else 条件得出了不同结果。  
 GPU 的 SIMT 执行模型不能让同一个 warp 在同一个时刻执行两条不同的指令流：它会先执行 if 路径、屏蔽走 else 的 lane，再执行 else 路径、屏蔽走 if 的 lane，最后在控制流汇合点重新合流。  

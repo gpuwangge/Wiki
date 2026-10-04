@@ -762,6 +762,24 @@ A_T[j][i] 存储在 memory[j * 32 + i]
 - 如果核心 A 修改了自己专属 Cache 中的数据，它的 Cache Controller 会通过 Snoop Filter（监听过滤器）或 Directory（目录）向全系统广播。
 - 其他核心的 Cache Controller 监听到后，会检索自己的专属 Cache，如果发现相同地址的副本，就会将其状态位标记为 Invalid（无效）。
 
+## Cache coherence的Snoop Request是怎么做的
+Snoop request 本质上是发给其他 cache controller 的一条硬件一致性消息：“请检查这个地址的 cache line，按要求降级、失效，必要时交出最新数据。”接收方通过查 tag 和 coherence state 来处理，不需要 CPU 执行指令，也不是扫描整个 cache。  
 
+先区分 request 和 snoop：前者是“我想读数据／获得写权限”；后者是为了满足这个请求，要求其他 cache 配合。  
 
+假设 Core A 要修改地址 X，但它目前没有独占修改权限：  
+```
+Core A
+  │ 发起 store
+  ▼
+A 的 cache controller
+  │ 请求：“我要 X 的独占修改权限”
+  ▼
+互连中的一致性控制器
+  │ 发 snoop：“持有 X 的缓存，请让副本失效”
+  ├──> B 的 cache controller
+  └──> C 的 cache controller
+```
+Directory／snoop filter 可以理解为一本账：“地址 X 可能在 B、C 的缓存里。”它决定找谁，不必每次都问所有核心。  
+Directory 的主要价值是少问无关的缓存。没有这张表，广播式系统也能工作，但通常需要让其他缓存都检查一遍。  
 

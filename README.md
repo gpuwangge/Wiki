@@ -37,7 +37,8 @@
 ## [Graphics Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GraphicsArchitecture.md)  
 ## [GPU Performance Analyze](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUPerformanceAnalyze.md)  
 ## [Shader Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/ShaderArchitecture.md)  
-## [Compression](https://github.com/gpuwangge/Wiki/blob/main/documents/Compression.md)
+## [Compression](https://github.com/gpuwangge/Wiki/blob/main/documents/Compression.md)  
+## [Benchmark](https://github.com/gpuwangge/Wiki/blob/main/documents/Benchmark.md)  
 
 # NPU
 ## [NPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/NPUArchitecture.md)  

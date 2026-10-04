@@ -1,6 +1,73 @@
+# Cache的结构
+Cache的结构分为物理层和逻辑层  
+逻辑层：CPU/GPU是如何寻找cache数据的  
+物理层：数据存在cacheline里，cacheline在物理上放在某个cachebank里，某个cachebank放在某个cacheslice里  
+(看起来cache在逻辑和物理上使用了两套命名系统)  
+
+## Cache物理层
 <p float="left">
-  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cache.jpg" alt="alt text">  
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cache_physical.jpg" alt="alt text">  
 </p>  
+
+cache物理层的重要概念：分区交错(Partitioned & Interleaved)  
+A. 分区(Partitioned) - 物理切割  
+* 目的：解决大面积 SRAM 的时序问题。  
+* 物理体现：如果 L2 Cache 有 4MB，做成一个整体会太大，信号传递太慢。硬体工程师将其物理切割成 4 个 1MB 的 slice，分散在晶片不同位置（例如围绕在 CPU Core 周围）。  
+* 逻辑视角：逻辑上它们仍然组成一个完整的 4MB Cache。  
+
+B. 交错(Interleaved) - 地址映射规则
+* 目的：提升频宽，避免冲突。
+* 物理体现：通过硬体解码器，将连续的地址单元(Address Bits)路由到不同的物理 Bank。  
+地址 0x00 -> Bank 0  
+地址 0x40 -> Bank 1  
+地址 0x80 -> Bank 0  
+* 逻辑视角：逻辑上地址仍然是连续的 0x00, 0x40, 0x80，程式不会感知到它们实际上存在不同的物理电路块中。
+
+## Cache的逻辑层
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/cache_logical.jpg" alt="alt text">  
+</p>  
+
+Cacheline：基本cache单元。有时又叫一个cacheslot。  
+Cacheset：由很多个cacheline组成的集合。  
+Cacheway：每个cacheset里面cacheline的数量。  
+
+为什么要设计这种系统？  
+假如每个地址对应唯一的cacheline(单way cache)，那么如果两个常用数据刚好对应同一个地址，就会产生conflict  
+如果把多个cacheline组成set(多way cache)，每个地址对应一个cacheset，也就是对应多个cacheline，可以减少conflict  
+
+具体例子：  
+```
+cache_size = 1 * 1024 * 1024 # 1 MB
+cache_line_size = 64          # 64 Bytes, 1024 * 1024 / 64 = 16384个Cacheline
+ways = 16                     # 16-way, 16个cacheline组成一个set，16384 / 16 = 1024个Cacheset
+```
+
+以下是一个完整的CPU发出的cache address的结构：
+| Tag (標籤) | Index (組索引) | Offset (線內偏移) |
+|---|---|---|
+| 用來比對是否命中 | 決定去哪個 Set (組) | 決定在 Line 內哪 Byte |
+
+Offset: 因為 Line 是 64B, 所以最低 6 bits (2^6=64) 用來找 Line 內的位置。  
+Index: 因為有 1024 個 Set, 所以中間 10 bits (2^10=1024) 用來決定去第幾組。  
+Tag: 剩下的高位元, 用來比對儲存的內容是否正確。只有Tag是真正存儲在Cache裡面的地址，也叫“显式地址”。  
+
+注意的是，cache address里面并没有出现“数据应该存储在哪个cacheline”这条信息。数据放在哪个cacheline里是由cache自行决定的，cpu并不知道。  
+当cache收到cpu来的cache address存数据的时候，它可以把数据放在任意一个cacheline里(同时也把tag存在这里)  
+当cache收到cpu来的cache address读数据的时候，它在每一way使用一个并行的比较器对比tag，看tag hit到哪一个路，就去那一路读数据。  
+这样的好处是CPU不需要知道或管理cacheway的信息。  
+
+实际上，cpu地址里面的index通常是集合了物理层cache的slice/bank信息的。  
+换句话说，cpu在使用cache的时候，不但不需要知道数据在哪个cacheline，也不需要知道具体该去看哪个cacheslice和cachebank，这些都会自动完成。  
+
+对于CPU来说，只需要知道如下实际的逻辑顺序：  
+步骤 | 使用的地址栏位 | 硬体动作
+1 | Index | 找到数据在哪个Cache Set
+2 | Tag | 从该 Set 的所有 Way 读出 Tag，并与地址 Tag 并行比对
+3 | Hit Signal | 多工器(MUX)选通命中中的 Way 的数据，确认命中后才开启数据通路
+4 | Offset | 透过移位器/多工器选取 Line 內的特定 byte
+
+
 
 ## Cache Line
 Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）与主内存（DDR/LPDDR）之间进行数据交换的最小基本单位。  

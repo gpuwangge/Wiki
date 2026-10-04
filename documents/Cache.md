@@ -2,7 +2,6 @@
 Cache的结构分为物理层和逻辑层  
 逻辑层：CPU/GPU是如何寻找cache数据的  
 物理层：数据存在cacheline里，cacheline在物理上放在某个cachebank里，某个cachebank放在某个cacheslice里  
-(看起来cache在逻辑和物理上使用了两套命名系统)  
 
 ## Cache物理层
 <p float="left">
@@ -702,6 +701,31 @@ A_T[j][i] 存储在 memory[j * 32 + i]
 2. **改变线程映射:** 调整线程块(Thread Block)的维度，使得线程 ID 与内存地址的映射关系错开。
 3. **使用向量化访问:** 如果硬件支持，使用 `float4` 等宽向量类型，减少访问次数，但需注意对齐。
 4. **编译器优化:** 现代编译器(如 LLVM/GCC for DSP)有时能自动检测并插入 Padding，但手动控制更可靠。
+
+## 硬件怎么识别专属的cache
+在多核处理器（如 CPU 或 GPU）架构中，硬件核心并不需要通过复杂的软件逻辑去寻找或“识别”自己的专属 Cache（如 L1 或 L2）。这种归属关系在芯片的物理设计与硬连线（Hardwiring）阶段就已经被固定下来，随后通过硬件状态机和地址路由来管理。  
+
+具体而言，硬件通过以下几个层次的机制来识别和管理专属 Cache：  
+
+1. 物理层：硬连线与拓扑结构 (Physical Hardwiring)  
+专属 Cache（通常为 L1 指令/数据 Cache 和私有 L2 Cache）在硅片的物理布局上紧贴着对应的执行核心。  
+核心内的存取单元（Load/Store Unit, LSU）通过专属的内部数据总线直接硬连线到这块 SRAM。当核心发出内存访问请求时，电信号在物理层面上只能首先传输到这块直接相连的 Cache 阵列，它在物理上根本“看”不到其他核心的私有 L1/L2 Cache。这种物理隔离是专属身份的最基础保障。  
+
+2. 路由层：硬件核心 ID 与片上网络 (Hardware IDs & Routing)  
+当专属 Cache 发生未命中（Cache Miss），需要向下一级共享 Cache（如 L3）或主存发起请求时，系统依靠硬件 ID 来区分数据的主人。  
+
+3. 寻址层：地址映射与 Tag RAM (Addressing & Tagging)  
+核心在自己专属的 Cache 内部识别某块数据是否存在，依赖于地址切片匹配机制。  
+- 当核心（通过 MMU/TLB 转换后）输出一个物理内存地址时，Cache Controller 会将该地址截断为 Tag（标签）、Index（索引）和 Offset（偏移量）。
+- Index 用于快速定位数据应该存放在专属 Cache 的哪一个组（Set）中。
+- 硬件会并行对比该组内所有的 Tag RAM。如果发现 Tag 完全匹配，即确认为 Cache Hit（缓存命中）。这套识别逻辑由核心专属的 Cache Controller 独立闭环完成。
+
+4. 协议层：缓存一致性管理 (Cache Coherence)  
+在多核系统中，同一个内存地址的数据可能被复制到多个不同核心的专属 Cache 中。硬件通过缓存一致性协议（如 MESI 或 MOESI 协议）来识别数据的“所有权”和“有效性”。  
+- 每个专属 Cache 行（Cache Line）除了存储数据，还包含几个隐藏的状态位（如 Modified 已修改、Exclusive 独占、Shared 共享、Invalid 无效）。
+- 如果核心 A 修改了自己专属 Cache 中的数据，它的 Cache Controller 会通过 Snoop Filter（监听过滤器）或 Directory（目录）向全系统广播。
+- 其他核心的 Cache Controller 监听到后，会检索自己的专属 Cache，如果发现相同地址的副本，就会将其状态位标记为 Invalid（无效）。
+
 
 
 

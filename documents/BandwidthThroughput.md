@@ -102,3 +102,114 @@ $$\text{Throughput (Instructions/Cycle)} = \frac{\text{Total Instructions}}{\tex
 
 *   **异构指令开销归一化**：GPU 执行的指令类型繁杂（如乘加、类型转换、消息交互、特殊函数），它们的硬件执行周期各不相同。该公式通过给不同指令赋予特定的权重因子，将复杂的指令计数器折算为一个可统一比对的总体吞吐量消耗。
 *   **微架构差异适配**：通过引入架构特定的 PE 因子，该算法能够灵活适配不同代际 GPU 内部子核的硬件微架构吞吐差异，从而实现高层抽象模拟器对多种不同硬件配置的兼容。
+
+
+## Little’s law
+Little’s law是排队论中的一个关系：在稳定运行的系统里，平均未完成数量 = 平均吞吐率 × 平均停留时间。  
+Little’s law 只统计请求待了多久，不要求请求一进来就开始处理。    
+
+一个直观例子   
+假设一家咖啡店： 平均每分钟进来 2 位顾客。  
+每位顾客进店到离店的时间，平均5 分钟。这五分钟包括排队时间和实际处理时间。  
+那么店里平均有： 2 人/min × 5 min = 10 人。  
+这里的 10 人包括排队、点单、等待咖啡等所有尚未离店的人，不是“同时正在被服务的人”。这正对应 outstanding 包含等待与处理中的请求。  
+
+套到内存读取   
+假设每秒完成 10^9 笔读取。(单位时间进来的顾客数)  
+每笔平均延迟为 100 ns。（顾客呆在店里的时间，包括了排队和处理）  
+Outstanding Request: N = 10^9 笔/s × 100 × 10 ^(-9) s = 100 笔 (店里平均人数)  
+也就是说，要维持这个完成速率，系统平均需要有 100 笔请求尚未完成。  
+
+
+
+## Latency-Throughput-Bandwidth
+1. bandwith是单位时间内最多能传的数据，例如 GB/s，而不是总数据量；
+2. throughput是单位时间内实际传的数据；
+3. latency是单笔请求从发出或被接受，到完成的耗时；
+
+因为有latency的存在，所以会有outstanding request。请求从发出到完成期间就是 outstanding；多笔同时 outstanding 还需要系统允许重叠执行。  
+系统里最大的outstanding request的数量是受硬件限制的。实际能维持多少，还受到程序依赖和独立请求数量的限制。  
+所以如果latency很大的话，outstanding request达到最大值，这时候可能throughput达不到bandwidth。 有限并发可能不足以覆盖等待时间。  
+要让throughput达到bandwidth，latency要小，或者要有足够并发来覆盖它。  
+
+Latency-Throughput-Bandwidth三者的制约关系  
+1. 比如Bandwidth是64GB/s
+2. Latency是200ns，可维持的 outstanding 数=100, 每秒完成读取：100/200ns= 0.5G/s
+3. Throughput计算：每笔请求 64 B, 每秒0.5G笔，总共32GB/s
+
+这个例子中，Throughput32GB/s < Bandwidth64GB/s, 说明跑不满。如果要跑满，要么Lantency下降为100ns；或者Outstanding数提升为200.  
+
+
+## 练习题1
+某存储器接口每个 Beat(数据节拍)传输 8 Bytes(64-bit 总线)，主频与数据频率均为 2 GHz。发读命令至第一笔数据返回的延迟为 400 ns。读取 64 KB 数据时：  
+1. 该读操作的 Latency 为多少？
+2. 在等待 Latency 期间，内存控制器最多可维持多少个 Outstanding Requests？
+
+解答
+1. Latency = 400ns 题目已描述为“首笔数据返回所需时间”，即命令到首字节数据的通道延迟。  
+但如果要计算至最后一个beat完成的时间，则  
+总transaction数量为 64KB / 8B = 8K  
+单次transaction传输时间 = 1/f = 1/2G=0.5ns  
+全部传输完成需要时间为 8K * 0.5ns = 4096ns  
+所以所有数据的读操作总耗时4496ns  
+
+2. 最大 Outstanding Requests 无法由现有条件确定。800 只有在“一周期发一个独立请求”等额外假设下才成立；一个 Beat 不能直接等同于一个 Request。  
+Max Outstanding = 400 ns / 0.5 ns per-issue = 800 个并发请求
+
+
+## 练习题2
+Latency / Bandwidth / Transfer Time 联动(进阶)  
+
+内存控制器参数:  
+f = 1 GHz, Beat SIZE = 8B, BURST = INCR, LEN = 7(8 Beats)。读操作延迟 = 400 ns。  
+问:  
+1. 单次 Transaction 的 Transfer Time 是多少？理论峰值带宽是多少？
+2. 读取 64 KB 数据，若始终保持流水线满载(Outstanding 足够)，总耗时最少为多少？
+3. 为掩盖 400 ns 延迟，最少需要多少个 Outstanding Transaction？
+ 
+解析:  
+1. 首先每周期传输时间为1/f=1/1G=1ns, 理论峰值带宽为： 8B/1ns=8GB/s  
+Transfer有8 beats，则Transaction transfer time = 8ns
+
+2. 假设每周期一个beat，每个beat 8B，每个transaction 8B，每个transaction数据量64B  
+读取64KB数据，Transaction数量 = 64KB/64B=1K  
+每个Transaction transer time = 8ns, 总传输时间为1k*8ns=8192ns  
+因为latency=400ns，总耗时400+8192=8592ns  
+
+3. 首先Latency=400ns，一个transaction transer time要8ns完成；也就是说第一个transaction发出第一个beat算起，要408ns。  
+题目问的是outstanding transaction而不是outstanding request，所以  
+最少需要408/8=51个outstanding transaction  
+
+
+## Burst:
+是在传输/片上互连协议(如 AXI、PCIe、DDR、UCIe 等)中的标准术语，  
+意思是该接口是否允许在单条读写命令下，自动连续传输多个数据块(Beats)。  
+
+
+### 什么是 Burst(突发传输)
+非突发(Non-Burst / Single Transfer): 每传一个数据块(Beat)，主控都必须单独下达一次命令和地址。  
+例如传 64 Bytes(8 个 Beat)，需要 8 次独立请求。  
+
+突发模式(Burst Mode):  
+主控只下发一条命令和起始地址，存储器/接口会自动按预设规则(递增、循环等)连续传送 N 个 Beat，无需主控重复发号。  
+这个 N 就是 Burst Length(BL)。  
+
+举例:  
+若 Burst Length = 8，且每次传 8 Bytes，则：  
+1 个 Transaction = 8 个 Beats = 64 Bytes  
+
+### 为什么需要 Burst？  
+
+| 维度 | 无 Burst（每次 1 Beat） | 有 Burst（如 BL=8） |
+|---|---|---|
+| **命令/地址开销** | 每次传数据时都要再发命令，总线很闲散/碎片化 | 命令开销被摊薄到整个 Burst，数据传输占比大幅提升 |
+| **带宽利用率** | 理论带宽 = 8B × 2GHz = **16 GB/s**（假设每拍传输） | 理论带宽 = 8B × 2GHz = **16 GB/s**（持续满速传输） |
+| **主控负载** | 需频繁发指令，CPU/控制器压力高 | 批量下发，调度更容易 |
+| **典型应用场景** | 随机访问、延迟敏感型控制操作 | 顺序读取/写入、图像/视频、大模型权重搬运 |
+
+
+对于相同的数据量，实际使用多 Beat burst 会减少 transaction 总数，Beat 总数不变。  
+比如64KB数据和8B beat，最多发64KB/8=8K transaction  
+如果burst len=7(8个beat)， 则transaction数量为1k  
+
+

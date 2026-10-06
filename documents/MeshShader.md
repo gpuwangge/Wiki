@@ -30,6 +30,79 @@ DS（GS）PS
 
 每条共享边上强制使用同一合法的TF。因为如果不一致，公共边上就会有裂缝。  
 
+## 描述
+Tessellation 是 GPU 中把一个比较粗的 mesh patch 动态细分成更多几何体的功能。主要有三个阶段：Hull Shader、Tessellator 和 Domain Shader。  
+首先是 Hull Shader，也就是 HS。HS 根据输入的 patch，决定需要细分多少，并输出 Tessellation Factors，也就是 TF。  
+TF 本质上控制 Tessellator 怎么细分 patch 的边和内部。TF 越大，细分得越多，最后产生的几何体也越多。  
+然后是 Tessellator。它是一个 fixed-function stage。它根据 TF 生成细分后的 topology，以及新顶点在 patch 中的参数化坐标。比如 triangle patch，会生成 barycentric coordinates。  
+最后是 Domain Shader。DS 拿到 Tessellator 生成的这些坐标，再结合原始 patch 的数据，计算每一个新顶点真正的 position。比如可以根据原始顶点做 interpolation，也可以通过 displacement map 对顶点进行进一步移动。DS 还可以计算 normal、texture coordinate 等其他属性。  
+所以简单来说：HS 决定切多少，TESS 负责切并生成坐标，DS 根据这些坐标计算最终顶点的位置。  
+
+Tessellation is a GPU feature that takes a coarse mesh patch and dynamically subdivides it into more detailed geometry. It has three main stages: Hull Shader, Tessellator, and Domain Shader.   
+First, the Hull Shader, or HS, looks at the input patch and determines how much it should be subdivided. It outputs tessellation factors.  
+The tessellation factors basically control how many pieces the Tessellator should divide each edge and the inside of the patch into. A higher factor means more subdivisions and more geometry.  
+Then, the Tessellator is a fixed-function stage. It takes these factors and generates the topology and parametric coordinates of the new vertices. For example, for a triangle patch, it generates barycentric coordinates for the new points.  
+Finally, the Domain Shader takes these coordinates and the original patch data, and calculates the actual position of each generated vertex. For example, it can interpolate the original vertex positions, or use a displacement map to move the vertex. It can also calculate other attributes such as normals and texture coordinates.  
+So, in simple terms: HS decides how much to subdivide, TESS generates the subdivision and coordinates, and DS maps those coordinates to the final vertex positions.  
+
+
+## Control Point（CP）、Tessellated Point、DS output vertex 三者关系
+The input to the tessellation stage is a patch, which consists of a number of control points.  
+The control points are basically the input geometry that defines the shape of the patch.  
+The Hull Shader processes these control points and generates tessellation factors.  
+The Tessellator then uses those factors to generate new parametric points inside or on the boundary of the patch.  
+These points are not necessarily final vertices yet. They are essentially coordinates describing where we are on the patch.  
+The Domain Shader is invoked for each tessellated point. It takes that point's parametric coordinates and the patch's control-point data, and calculates the final vertex position and other attributes.  
+
+So the relationship is:  
+Control Points → define the patch → Tessellator generates parametric points → Domain Shader turns each point into a final vertex.  
+
+### Control Point（CP）
+假设我们输入一个 triangle patch：CP0、CP1、CP2 = Control Points  
+它们是 patch 的输入控制点，不是 Tessellator 新生成的点。  
+
+### Tessellated Point
+Tessellator 会根据 TF，生成很多 tessellated points。
+这些点首先是参数化坐标（parametric coordinates），不是 DS 自己产生的。
+
+### DS output vertex
+```
+DS(u, v, w)
+```
+DS 根据：CP0,CP1,CP2...以及：u, v, w   
+计算真正的 vertex position：
+```
+P = u * CP0 + v * CP1 + w * CP2
+```
+当然实际 DS 可以做得更复杂，比如：
+```
+P = interpolated_position + displacement * normal
+```
+```
+        Control Points
+        CP0 CP1 CP2
+             │
+             ▼
+        Hull Shader
+             │
+       Tessellation Factors
+             │
+             ▼
+        Tessellator
+             │
+    parametric coordinates
+       (u,v,w), (u',v',w')...
+             │
+             ▼
+      Domain Shader
+             │
+             ▼
+      Final Vertices
+```
+Control points define the patch.   
+The Tessellator generates parametric coordinates based on the tessellation factors,   
+and the Domain Shader converts each coordinate into a final vertex.  
+
 ## 无硬件支持的Tess是如何实现的
 一些场上的GPU是不是对tess没有fixed function？它具体是怎样的？  
 

@@ -121,6 +121,19 @@ OpAccessChain用于指向数组中的一个指针
 %result = OpAccessChain %type %base %index1 %index2 ...
 ```
 
+## spir-v格式，反汇编后出来的opcode是汇编吗
+算是汇编，但不是 GPU 的原生汇编。准确说，spirv-dis 输出的是 SPIR-V 的文本汇编表示；SPIR-V 本身是中间表示（IR），不是 GPU 硬件直接执行的机器指令。  
+```
+GLSL / HLSL                 高级着色语言
+    ↓ 编译
+SPIR-V 二进制 (.spv)        跨厂商的中间表示
+    ↕ spirv-dis / spirv-as
+SPIR-V 文本汇编 (.spvasm)   同一中间表示的可读形式
+    ↓ GPU 驱动编译、优化
+GPU 原生机器码/原生汇编      硬件实际执行的指令
+```
+spirv-dis 将二进制转换成人类可读、可解析的文本；spirv-as 则可以把文本重新组装成 SPIR-V 二进制。因此叫它“SPIR-V 汇编”是合理且准确的，但不能直接把它当成某款 GPU 的 ISA 汇编。  
+
 ## Vulkan Shader编译使用的工具链
 安装好Vulkan SDK后，相关工具可以在安装目录Bin/下面找到  
 glslc.exe可以把vulkan shader(glsl)转换成spir-v格式  
@@ -132,14 +145,28 @@ spirv-dis.exe可以把spir-v转换成spir-v汇编语言
 spirv-dis.exe shader.spv -o shader.asm
 ```
 
+## 如何获得GPU 原生机器码/原生汇编 
+需要通过 GPU 驱动编译后的 pipeline 或厂商工具获取  
+Vulkan 提供了查询编译产物的扩展，但是否能拿到最终机器码或原生汇编，取决于驱动支持和它愿意暴露哪些内容。  
+VK_KHR_pipeline_executable_properties 可以暴露文本或二进制形式的内部表示，其中可能包括最终 shader 汇编、编译后的 shader 二进制或中间 IR；它不保证一定返回机器码。  
 
+### 最方便：用图形工具
+| 场景             | 工具                       | 能做什么                                                                     |
+| -------------- | ------------------------ | ------------------------------------------------------------------------ |
+| 通用 Vulkan 调试   | RenderDoc                | 驱动支持相应扩展时，可以检查 pipeline 的内部表示，例如原生汇编或驱动 IR。blogs.igalia                  |
+| NVIDIA GPU     | Nsight Graphics          | Shader Profiler 支持 Vulkan，并提供底层 shader 汇编关联；具体显示粒度取决于版本和 Pro 功能权限。nvidia |
+| AMD GPU，实际运行分析 | Radeon GPU Profiler（RGP） | 查看 shader ISA 及指令级时序，分析真实运行中的热点。gpuopen                                  |
+| AMD GPU，离线分析   | Radeon GPU Analyzer（RGA） | 对 Vulkan、SPIR-V 等进行离线编译与性能分析。gpuopen                                     |
 
+如果是 Imagination PowerVR GPU，官方有工具可以输出原生 USC 汇编，而且支持把 SPIR-V 作为输入。不过，要区分“离线编译得到的原生汇编”和“设备上 Vulkan 驱动实际生成的汇编”。
 
+Imagination 官方文档列出了两类工具：
+| 工具                          | 用途                               | 适用范围                                                                              |
+| --------------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
+| PowerVR Profiling Compilers | 离线编译 shader，输出 USC 反汇编和逐行周期分析    | 文档列出 Rogue（Series 6、7、8、9）和 Volcanic（Series B、C），支持 SPIR-V 二进制、GLSL、OpenCL kernel |
+| PVRShaderEditor             | GUI 中查看、分析编译后的 USC 汇编，包括 FP16 指令 | 文档明确提供 PowerVR Rogue 的 shader 反汇编                                                 |
 
-
-
-
-
+对于任何gpu，有没有可能通过spir-v获得gpu原生asm后，修改一下，再让gpu运行？特定 GPU 和驱动上有可能，但没有适用于所有 GPU 的通用方法。  
 
 
 

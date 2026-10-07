@@ -349,6 +349,41 @@ Memory interleaving distributes consecutive memory addresses across multiple mem
 问题：如果多个请求映射到同一个 Bank，会产生 bank conflict，并行度下降。  
 GPU 中常见：banked memory、shared memory、HBM channels 等场景。  
 
+# Memory and FIFO
+一个 CPU 每个 cycle 可以产生 1 个 request，CPU 频率是 2 GHz。
+
+CPU 和 Memory 之间有一个 FIFO：
+- CPU：2 GHz
+- CPU 每 cycle 产生 1 request
+- Memory：每次处理 1 个 request
+- Memory latency：100 ns
+- Memory 可以连续处理 request，完成后每 cycle 可以接收一个新的 request
+- FIFO 初始为空
+
+问题：
+1. 如果 FIFO 深度是 100 entries，能不能完全隐藏 memory latency？
+2. 为了让 CPU 在 memory latency 期间不 stall，FIFO 至少需要多大？
+3. 如果 FIFO 只有 50 entries，会发生什么？
+4. 如果 memory bandwidth 只能达到 CPU request rate 的 80%，FIFO 多大才能解决这个问题？
+
+思考：  
+- FIFO是用来暂存还没被 Memory 处理的 request  
+- 每cycle产生1个request，也可以处理1个request，这叫做速度匹配，这时候系统latency是可以隐藏的  
+- 当看到latency的时候，就要同时想到，在latency的时间段会产生多少个outstanding request:  
+```
+2G * 100ns = 200 request
+```
+- 可以把 memory bandwidth 理解成 Memory 的“处理数据速度”  
+- 当FIFO满了之后，CPU无法继续发request，这个状态叫做CPU Stall
+
+解答：
+1. FIFO 100深度不够，因为有200 outstanding request。在50ns之后，FIFO就满了，CPU会Stall
+2. 200
+3. CPU在50个cycle也就是50/2G=25ns之后CPU Stall
+4. Memory每cycle产生0.8个request，每cycle积累0.2个request。FIFO多大都无法解决问题。  
+一个cycle时间为1/2G=0.5ns。如果FIFO size=200，在200/0.2*0.5=500ns之后，FIFO就满了，CPU会Stall。
+
+
 # Reference
 https://www.cnblogs.com/alantu2018/p/9000777.html  
 

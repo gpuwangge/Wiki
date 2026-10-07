@@ -22,6 +22,7 @@
 ## [NDC](https://github.com/gpuwangge/Wiki/blob/main/documents/NDC.md)   
 ## [Mesh Shader](https://github.com/gpuwangge/Wiki/blob/main/documents/MeshShader.md)  
 ## [Raytracing](https://github.com/gpuwangge/Wiki/blob/main/documents/Raytracing.md)  
+## [Geometry](https://github.com/gpuwangge/Wiki/blob/main/documents/Geometry.md)  
 
 # GPU
 ## [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUDriver.md)  

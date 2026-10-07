@@ -32,4 +32,467 @@ CCU 在将颜色数据向外输送或内部回写时，采用的正是 UBWC 格�
 
 
 
+# GPU 领域常见压缩算法
+
+如果限定在 **GPU 领域**，面试里说 `compression` 通常不是泛指 ZIP/Huffman，而更多是指 **显存、Cache、Framebuffer、Texture 等数据的压缩**。
+
+> **GPU使用压缩的主要目的是减少 Memory Traffic 和 Bandwidth。GPU 每秒需要搬运大量数据，如果数据存在空间或时间上的相关性，就可以压缩后再写入 Memory，读取时再解压，从而减少 DRAM 带宽消耗，同时降低功耗、提高性能。**
+
+
+可以把 GPU Compression 简单理解成：
+
+```text
+        Find Redundancy
+              ↓
+        Compress Data
+              ↓
+       Reduce Data Movement
+              ↓
+    Reduce Memory Bandwidth
+              ↓
+     Improve Performance
+     and Power Efficiency
+```
+
+**GPU Compression 的核心价值不是“节省存储空间”这么简单，而是最重要地减少 Memory Traffic 和 DRAM Bandwidth。**
+
+## 1. GPU 中常见的压缩类型
+
+| 压缩类型                          | 核心思想                  | GPU 中典型用途                     |
+| ----------------------------- | --------------------- | ----------------------------- |
+| **Delta Compression**         | 不存绝对值，存相邻数据的差值        | GPU Memory / Cache            |
+| **Frame Buffer Compression**  | 利用像素 / Tile 的相似性压缩    | Render Target / Framebuffer   |
+| **Color Compression**         | 利用相邻 Pixel Color 的相关性 | Color Buffer / ROP            |
+| **Depth Compression**         | 压缩相邻 Depth 值          | Depth Buffer / Z Buffer       |
+| **Texture Compression**       | 固定大小 Block 压缩 Texture | Texture Memory                |
+| **Sparse / Zero Compression** | 对大量 0 或无效数据进行压缩       | Memory / Tensor / Sparse Data |
+| **Lossless Compression**      | 保证解压后数据完全一致           | Cache / Memory / Framebuffer  |
+| **Lossy Compression**         | 允许一定精度损失              | Texture / AI/ML 数据            |
+
+
+## 2. Delta Compression
+
+### 核心思想
+
+不直接存储数据本身，而是存储：
+
+> 当前数据与参考数据之间的差值（Delta）。
+
+例如原始数据：
+
+```text
+1000, 1001, 1002, 1003, 1004
+```
+
+可以转换成：
+
+```text
+1000, +1, +1, +1, +1
+```
+
+因为 Delta 通常数值很小，所以需要的 bit 数更少。
+
+### GPU 中的意义
+
+GPU Memory Compression 经常利用：
+
+* Spatial Locality
+* Data Correlation
+* Temporal Correlation
+
+来获得更高的压缩率。
+
+### 面试关键词
+
+```text
+Delta
+Reference Value
+Data Correlation
+Spatial Locality
+Temporal Locality
+Memory Bandwidth
+Compression Ratio
+```
+
+## 3. Framebuffer / Color Compression
+
+这是 GPU 中非常重要的一类 Compression。
+
+假设一个 4×4 Tile 中所有 Pixel 都是相同颜色：
+
+```text
+Red  Red  Red  Red
+Red  Red  Red  Red
+Red  Red  Red  Red
+Red  Red  Red  Red
+```
+
+没必要完整保存 16 个 Color。
+
+可以保存类似：
+
+```text
+Color = Red
+Compression Mode = Constant
+```
+
+读取时再恢复成：
+
+```text
+Red Red Red Red
+Red Red Red Red
+Red Red Red Red
+Red Red Red Red
+```
+
+实际 GPU 中通常会有更加复杂的 Compression Mode，例如：
+
+* Constant
+* Delta
+* Pattern
+* Palette-like Encoding
+
+### 主要目的
+
+减少：
+
+```text
+GPU → DRAM
+DRAM → GPU
+```
+
+之间的数据传输。
+
+因此可以：
+
+* 降低 DRAM Bandwidth
+* 降低 Memory Traffic
+* 降低功耗
+* 提高 GPU Performance
+
+## 4. Depth / Z Compression
+
+Rendering 中的 Depth Buffer 非常大，因此 GPU 通常会对 Depth Data 进行 Compression。
+
+例如相邻 Pixel：
+
+```text
+0.5000
+0.5001
+0.5002
+0.5003
+```
+
+这些值非常接近，可以利用：
+
+> Spatial Correlation
+
+进行压缩。
+
+## Depth Compression 和 Hi-Z 的区别
+
+这两个概念经常容易混淆。
+
+### Depth Compression
+
+目标：
+
+> **减少 Depth Buffer 的存储和 Memory Bandwidth。**
+
+### Hi-Z / Hierarchical Z
+
+目标：
+
+> **快速判断一个 Primitive / Tile 是否可以被 Early-Z Reject。**
+
+例如 Hi-Z 可以保存一个 Tile 的：
+
+```text
+Min Depth
+Max Depth
+```
+
+从而快速判断：
+
+```text
+Primitive
+    ↓
+Hi-Z Test
+    ↓
+Can it be rejected?
+```
+
+所以：
+
+> **Hi-Z 本身不是 Compression。**
+
+但是它们经常在 GPU Rendering Pipeline 中一起出现。
+
+## 5. Texture Compression
+
+这是 GPU 中最经典的 Compression 之一。
+
+常见格式包括：
+
+* **BC1–BC7**
+* **ETC2**
+* **ASTC**
+* **PVRTC**
+
+例如 ASTC：
+
+```text
+4×4 Pixels
+     ↓
+Compressed Block
+     ↓
+Fixed-size Data
+```
+
+GPU 可以直接读取 Compressed Texture，然后在 Texture Unit 中进行 Decode。
+
+因此不需要：
+
+```text
+Compressed Texture
+        ↓
+CPU / GPU 完整解压
+        ↓
+Uncompressed Texture
+        ↓
+DRAM
+```
+
+而是：
+
+```text
+Compressed Texture
+        ↓
+Texture Unit
+        ↓
+Decode
+        ↓
+Shader
+```
+
+### Texture Compression 的优势
+
+主要减少：
+
+* Texture Memory Footprint
+* Memory Bandwidth
+* DRAM Traffic
+
+## 6. Sparse / Zero Compression
+
+AI GPU 中越来越重要。
+
+例如：
+
+```text
+0 0 0 0
+0 5 0 0
+0 0 0 0
+0 0 7 0
+```
+
+如果数据非常 Sparse，就没有必要存储大量的 `0`。
+
+可以只存储：
+
+```text
+(index, value)
+```
+
+例如：
+
+```text
+(5, 5)
+(14, 7)
+```
+
+这种思想可以应用于：
+
+* Sparse Matrix
+* AI Accelerator
+* Tensor Compression
+* Memory Traffic Reduction
+
+
+## 7. Lossless vs Lossy
+
+## Lossless Compression
+
+压缩之后：
+
+```text
+Original
+   ↓
+Compress
+   ↓
+Compressed
+   ↓
+Decompress
+   ↓
+Original
+```
+
+数据完全一致。
+
+GPU 中常见于：
+
+* Cache
+* Memory
+* Framebuffer
+* Color Buffer
+* Depth Buffer
+
+
+## Lossy Compression
+
+允许一定程度的数据损失：
+
+```text
+Original
+   ↓
+Compress
+   ↓
+Compressed
+   ↓
+Decompress
+   ↓
+Approximately Original
+```
+
+主要用于：
+
+* Texture
+* Image
+* AI / ML Data
+
+Texture Compression 中非常常见。
+
+## 8. GPU Compression 为什么重要？
+
+这是 GPU Architecture 面试非常常见的基础问题。
+
+### 核心答案
+
+> **The main goal is to reduce memory traffic and bandwidth consumption.**
+
+GPU 每秒需要搬运大量数据：
+
+```text
+GPU
+ ↓
+Cache
+ ↓
+Memory Controller
+ ↓
+DRAM
+```
+
+如果数据存在：
+
+* Spatial Correlation
+* Temporal Correlation
+* Repeated Values
+* Zero Values
+
+就可以进行 Compression。
+
+例如：
+
+```text
+Original Data
+     ↓
+ Compression
+     ↓
+Less Data
+     ↓
+DRAM
+```
+
+读取时：
+
+```text
+DRAM
+ ↓
+Compressed Data
+ ↓
+Decompression
+ ↓
+GPU
+```
+
+因此可以减少：
+
+* DRAM Bandwidth
+* Memory Traffic
+* Power Consumption
+
+并可能提高：
+
+* GPU Performance
+* Effective Memory Bandwidth
+
+## 9. GPU Compression 面试最应该掌握的 4 个
+
+如果准备 **GPU Architecture / GPU Performance** 面试，建议优先掌握：
+
+### ① Delta Compression
+
+核心：
+
+```text
+Store Difference Instead of Absolute Value
+```
+
+
+### ② Color / Framebuffer Compression
+
+核心：
+
+```text
+Exploit Spatial Similarity Between Pixels
+```
+
+### ③ Depth Compression
+
+核心：
+
+```text
+Exploit Correlation Between Neighboring Depth Values
+```
+
+并理解：
+
+```text
+Depth Compression ≠ Hi-Z
+```
+
+### ④ Texture Compression
+
+重点知道：
+
+```text
+BC1–BC7
+ETC2
+ASTC
+PVRTC
+```
+
+以及：
+
+```text
+Compressed Texture
+        ↓
+Texture Unit
+        ↓
+Hardware Decode
+        ↓
+Shader
+```
+
+
 

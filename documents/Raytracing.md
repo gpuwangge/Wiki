@@ -60,3 +60,15 @@ Ray(t) = O + t*D, t > 0
 | 遍历栈与常数 | 递归深度、`BVH` 遍历栈指针、`Push Constants` / `Tunable Parameters` |
 | 线程组管理 | 线程 ID 分发状态、屏蔽掩码（`Enable Mask`）、预取队列指针 |
 
+# 为什么Path Tracing用monte carlo积分而不是普通积分
+因为光追的rendering equation维度大，不连续  
+普通积分追求精确，无法解  
+MC积分不追求精确，对维度连续性无要求，而且可以并行  
+```
+I=1/N sum_1…N f(xi)  
+```
+其中xi随机分布，每个点独立。xi对应一条”光路径”  
+N就是SPP 或 (SPP x 像素的数量)，看是local还是global  
+收敛分析：对一个pixel，误差随sqrt(SPP)缩小  
+
+

@@ -384,6 +384,41 @@ CPU 和 Memory 之间有一个 FIFO：
 一个cycle时间为1/2G=0.5ns。如果FIFO size=200，在200/0.2*0.5=500ns之后，FIFO就满了，CPU会Stall。
 
 
+# c++实现malloc
+这题在考什么：进货是一箱一箱的，但要让顾客觉得是按个零售  
+进货：一次一箱(4KB)  
+退货：也是一次一箱  
+顾客可能的要求：malloc(16), malloc(1024), malloc(3900)…  
+
+做的是四件事情  
+1. block splitting/fragmentation  
+把4096字节拆成客户要的16字节  
+
+2. free list, linked list  
+就是账本，记录箱子切下来还剩多少字节，在哪里  
+
+3. coalescing/merging  
+把零碎的空间拼回去  
+
+4. trade off  
+找空位的时候，是从前往后扫，找到一个最大的(first fit)，还是找刚好卡住的那个(best fit)  
+考虑对齐问题  
+
+## 例子
+给一个allocate 4k byte的malloc，实现general malloc。  
+- 切：把申请的memory想象成4kb的长面包。用户需要就切一点，切的时候要在header藏一个标签，表明它的长度和状态(free or alloc)。这个header可能占16B，属于管理成本。
+- 记：用一个list记录空段。list的元素就是空段地址。如果去看这个地址就会先读到这段地址的header。这样用户在提需求的时候就不用把4kb按顺序扫一遍，直接去查list就知道哪段空着的，也知道空着这段有多大。  
+- 拼：当用户free memory的时候，看看长面包左右邻居，能不能拼一下。  
+
+简化版的伪代码  
+1. 准备一个全局list：g_list_head  
+2. cur=g_list_head, 搜索第一个适合的地址。注意这里需求的空间要考虑对齐  
+3. 如果没有地址，allocate一个新的4k页，如果4k不够，要多个页  
+4. 把cur从g_list_head移除  
+5. 如果cur size大于需求的空间，需要拆分，把拆分的部分rem加入g_list_head  
+6. 把cur空间状态标记为alloc  
+
+
 # Reference
 https://www.cnblogs.com/alantu2018/p/9000777.html  
 

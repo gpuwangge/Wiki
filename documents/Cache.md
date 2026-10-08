@@ -37,8 +37,6 @@ B. 交错(Interleaved) - 地址映射规则
 性能损失:如果有 32 个线程冲突, 原本 1 个周期完成的访问可能需要 32 个周期, 性能下降高达 32 倍。  
 无冲突情况:多个线程访问同一地址(Broadcast)通常不会冲突, 或者访问不同 Bank 完全并行。  
 
-以下是图片 "serialization.jpg" 中的完整文字内容提取：
-
 ### 访问序列化 (Access Serialization)
 在高性能计算和硬件架构中，访问序列化(Access Serialization)是指原本可以并行(Parallel)发生的多个内存访问请求，由于硬件资源冲突或限制，被迫变成串行(Sequential)依次执行的现象。  
 简单来说，就是“排队”：大家本来可以同时进门，结果因为门太窄或只有一个柜台，必须一个接一个地进。  
@@ -164,11 +162,12 @@ Tag: 剩下的高位元, 用來比對儲存的內容是否正確。只有Tag是�
 换句话说，cpu在使用cache的时候，不但不需要知道数据在哪个cacheline，也不需要知道具体该去看哪个cacheslice和cachebank，这些都会自动完成。  
 
 对于CPU来说，只需要知道如下实际的逻辑顺序：  
-步骤 | 使用的地址栏位 | 硬体动作
-1 | Index | 找到数据在哪个Cache Set
-2 | Tag | 从该 Set 的所有 Way 读出 Tag，并与地址 Tag 并行比对
-3 | Hit Signal | 多工器(MUX)选通命中中的 Way 的数据，确认命中后才开启数据通路
-4 | Offset | 透过移位器/多工器选取 Line 內的特定 byte
+| 步骤 | 使用的地址栏位 | 硬体动作 |
+|---|---|---|
+| 1 | Index | 找到数据在哪个 Cache Set |
+| 2 | Tag | 从该 Set 的所有 Way 读出 Tag，并与地址 Tag 并行比对 |
+| 3 | Hit Signal | 多工器（MUX）选通命中的 Way 的数据，确认命中后才开启数据通路 |
+| 4 | Offset | 透过移位器／多工器选取 Line 内的特定 byte |
 
 ## Associative
 Associative (關聯度) 是cache邏輯層的概念，用來描述「一個memory區塊可以存放在 Cache 的哪些位置」的規則。  
@@ -195,6 +194,7 @@ Cache Line（缓存行）是 CPU、GPU 等处理器中 Cache（高速缓存）�
 - CPU：常见的 Cache Line 大小通常为 64 Bytes（如 x86、ARM 架构）。  
 - GPU：为了适应大规模并行与高带宽需求，GPU 的 L2 Cache Line 或 Sector 通常更大，常见为 128 Bytes 或被划分为 32/64 Bytes 的子块（Sector）。  
 
+## L2作为校验核心
 为什么选择以 L2 Cache 作为缓存行（Cache Line）与带宽校验的核心：主要由 硬件架构角色、物理分布 以及 缓存一致性边界 决定。  
 不选择 L1 的原因：太分散、噪音多、存在合并机制  
 - 物理分布分散： L1 是各个计算核心（Shader Core / Compute Unit）私有的。GPU 内部可能有数十甚至上百个 L1 缓存，每个 L1 只能看到本核心的局部访问，无法提供全芯片统一的视图。

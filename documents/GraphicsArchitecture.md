@@ -46,6 +46,13 @@
 * 剔除不需要处理的图元或区域。
 * 提高数据局部性，减少不必要的处理。
 
+### 有哪些Primitive级culling
+- Frustum culling：视锥剔除
+- Distance culling：距离剔除
+- Occlusion culling：遮挡剔除
+- Meshlet / cluster culling：细粒度剔除
+- Face culling：正面 / 背面剔除
+
 ## 5. HSR
 
 **隐藏表面消除（Hidden Surface Removal）**
@@ -67,6 +74,13 @@
 * 确定图元覆盖的像素区域。
 * 对顶点属性进行插值。
 * 生成供后续片段处理的候选片段。
+
+### Rasterization里面有哪些事情做
+三角形 setup：准备覆盖测试,判断 sample location 是否位于三角形内部  
+Coverage test:单采样：一个像素通常测试一个 sample。MSAA：一个像素里有多个 samples，分别判断覆盖。  
+生成 fragment，并计算深度:一个像素可能被多个三角形产生的 fragments 覆盖，后续再通过深度测试、混合等操作决定最终结果。  
+插值 vertex shader 输出的属性:Fragment shader 输入，例如 UV、颜色、法线等，需要从图元顶点的输出值插值得到。  
+
 
 ## 7. LRZ
 
@@ -120,6 +134,15 @@
 * 丢弃未通过测试的片段。
 * 处理无法在 Early Z 阶段完成测试的情况。
 
+### Stencil Test有哪些经典应用
+物体描边 / 选中高亮：绘制一个稍微“膨胀”的物体，只允许 stencil != 1 的区域通过。  
+平面镜 / 平面反射：解决的是“反射应该画在哪里”，不是“反射内容怎么生成”。  
+Portal：传送门 / 窗口中的另一个空间  
+Stencil shadow volumes：阴影体  
+UI / 任意形状裁剪  
+Deferred rendering：局部光源的 light-volume 剔除  
+平面投影阴影 / Decal 区域限制  
+
 ## 12. Color Blending & Output
 
 **颜色混合与输出**
@@ -130,7 +153,18 @@
 * 处理渲染目标相关操作。
 * 将最终颜色及深度/模板结果写入对应存储区域。
 
----
+### blending test具体是怎么做的
+```
+Fragment shader 输出颜色 → Source
+Framebuffer 已有颜色     → Destination
+              ↓
+各自乘以 blend factor
+              ↓
+执行 blend operation
+              ↓
+应用 colorWriteMask，写回 attachment
+```
+
 
 ## Graphics Pipeline Overview
 

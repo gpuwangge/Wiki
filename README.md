@@ -28,7 +28,7 @@
 ## [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUDriver.md)  
 ## [GPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUArchitecture.md)   
 ## [GPU ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/GPUISA.md)   
-## [Warp Divergence](https://github.com/gpuwangge/Wiki/blob/main/documents/WarpDivergence.md)  
+## [Warp Scheduler](https://github.com/gpuwangge/Wiki/blob/main/documents/WarpScheduler.md)  
 ## [Register File](https://github.com/gpuwangge/Wiki/blob/main/documents/RegisterFile.md)  
 ## [AXI](https://github.com/gpuwangge/Wiki/blob/main/documents/AXI.md)  
 ## [Bandwidth Throughput](https://github.com/gpuwangge/Wiki/blob/main/documents/BandwidthThroughput.md)  

@@ -2,7 +2,7 @@
 **`GPU和CPU设计上的区别`**：GPU设计目标是最大化吞吐量(Throughout), 关心并行度(Parallelism)。  
 CPU更关心延迟(Latency)和并发(Concurrency)。  
 **`并行`**：同时处理多个相同任务。  
-**`并发`**：处理多个任务，但不是同时。 
+**`并发`**：处理多个任务，但不是同时。  
 **`显存`**：GPU里面独立的内存。HBM(High Bandwidth Memory)，通过PCIe与CPU内存通讯。  
 **`GPU缓存Cache机制`**：目的是为了减少内存(显存，Latency=15x, B/W=1x)的时延。  
 **`GPU寄存器`**：通常把GPU寄存器regs也当作缓存(L0，Latency=?, B/W=?)。regs距离SM非常近。因为SM是实际的计算单元，所以希望尽快的获取数据。    

@@ -15,11 +15,9 @@
 * **单位**：GFLOPS（每秒十亿次浮点运算）或 TFLOPS（每秒万亿次浮点运算）。
 
 * **计算公式**：
-  
-
-  $$
-  P = \frac{\text{Flops}}{\text{Time}}
-  $$
+```
+P = Flops\Time
+```
 
 ### 2. 计算强度 (Arithmetic Intensity / Operational Intensity)
 
@@ -28,11 +26,9 @@
 * **单位**：FLOPs/Byte（每字节浮点运算次数）。
 
 * **计算公式**：
-  
-
-  $$
-  I = \frac{\text{Total Flops}}{\text{Total Memory Access (Bytes)}}
-  $$
+```
+I = (Total Flops) \ Total Memory Access (Bytes)
+```  
 
 ### 3. 硬件峰值指标
 
@@ -43,12 +39,12 @@
 ## 二、 Roofline Model 的数学原理与公式
 
 Roofline Model 的性能上限由一条分段函数（即“屋顶”形状的曲线）决定：
+```
+Performance = min(P_{max}, I x B_{max})
+```
 
-$$
-\text{Attachable Performance} = \min \left( P_{max}, \quad I \times B_{max} \right)
-$$
 
-根据计算强度 $I$ 的不同，整个性能空间被划分为两个截然不同的区域：
+根据计算强度 I 的不同，整个性能空间被划分为两个截然不同的区域：
 
 ### 1. 内存带宽瓶颈区 (Memory-Bound / Bandwidth-Bound)
 
@@ -57,11 +53,10 @@ $$
 * **表现**：此时处理器的计算单元（ALU）经常处于“饥饿”状态，因为数据从内存传输到处理器的速度跟不上计算速度。
 
 * **上限公式**：
-  
+```
+Performance = I x B_{max}
 
-  $$
-  \text{Performance} = I \times B_{max}
-  $$
+```
 
 * **优化目标**：提升计算强度 $I$（例如通过循环分块、算子融合等技术减少访存）。
 
@@ -72,11 +67,9 @@ $$
 * **表现**：此时内存带宽已经能够满足数据供给，处理器的计算单元全负荷运转，达到了硬件的极限。
 
 * **上限公式**：
-  
-
-  $$
-  \text{Performance} = P_{max}
-  $$
+```
+Performance = P_{max}
+```
 
 * **优化目标**：通过指令级并行、向量化、降低指令复杂性等手段提升硬件本身的 $P_{max}$。
 
@@ -85,11 +78,9 @@ $$
 * **定义**：内存瓶颈区和计算瓶颈区的交界点，称为**临界计算强度 (**$I_{crit}$**)**。
 
 * **计算公式**：
-  
-
-  $$
-  I_{crit} = \frac{P_{max}}{B_{max}}
-  $$
+```
+I_{crit} = P_{max} / B_{max}
+```
 
 * **物理意义**：该值标志着硬件设计中“计算能力”与“访存带宽”的平衡点。
 

@@ -87,7 +87,7 @@
 [SSL](https://github.com/gpuwangge/Wiki/blob/main/documents/SSL.md)   
 [C Features](https://github.com/gpuwangge/Wiki/blob/main/documents/CFeatures.md)   
 [IC Design Flow](https://github.com/gpuwangge/Wiki/blob/main/documents/ICDesignFlow.md)   
-[Parallel Reduction](https://github.com/gpuwangge/Wiki/blob/main/documents/ParallelReduction.md)  
+[Parallel Computing](https://github.com/gpuwangge/Wiki/blob/main/documents/ParallelComputing.md)  
 
 
 

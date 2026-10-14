@@ -1,16 +1,24 @@
 # SIMT and SIMD
-GPU 对程序员呈现的是 SIMT 模型，而底层大量算术执行通常具有 SIMD 的特征。 所以“GPU 既是 SIMD，又是 SIMT”在不同抽象层次上是对的，但不能把二者当成完全同义词。  
-
-GPU 通常用 SIMD 风格的并行执行单元实现高吞吐计算，但把它暴露成 SIMT 线程编程模型。
-所以，写 shader 时把它当作“很多线程”；做性能分析时把它当作“按 warp/wave 锁步运行的向量机器”，通常最准确。
-```
-GPU 对软件/编程模型通常是 SIMT；从执行资源和数据并行实现看，底层常可视为 SIMD-style。
-```
-
 | 概念 | 全称 | 视角 | 核心含义 |
 |---|---|---|---|
 | SIMD | Single Instruction, Multiple Data | 指令 / 硬件数据通路 | 一条向量指令同时作用于多个数据 lane |
 | SIMT | Single Instruction, Multiple Threads | 编程模型 / 线程抽象 | 多个独立的 shader/CUDA thread 被成组调度，通常执行同一条指令 |
+
+总结来说  
+SIMD: 向量操作, 通常没有独立的线程执行上下文，一条指令处理多个数据元素，可以是CPU vector instructions  
+SIMT: 多线程并行， 每个逻辑线程有自己的寄存器状态、执行上下文等，硬件通常按 warp/wavefront 组织执行，GPU 编程模型，如 CUDA  
+
+什么是 warp divergence？  
+同一个 warp 内，如果一些线程走 if 分支，另一些走 else，硬件可能需要分别执行两条路径，再屏蔽不活跃的线程。  
+
+SIMT 是不是每个线程都执行完全相同的指令？  
+同一个 warp 的线程可以执行不同的逻辑路径；关键是硬件如何调度、屏蔽和重新汇合这些线程。
+
+SIMT 的性能瓶颈是什么？  
+- Branch divergence：线程分支不一致，降低执行效率。
+- Memory access patterns：访问不连续或难以合并的内存地址，降低内存吞吐量。
+- Occupancy and latency hiding：活跃 warp 数量不足时，可能无法充分隐藏内存或执行延迟。
+
 
 # Excution Unit
 Execution Units（执行单元，简称 EU） 是 GPU 核心内部负责真正执行算术、逻辑及特定硬件加速指令的算术逻辑单元（ALU）集合。  

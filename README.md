@@ -70,6 +70,7 @@
 [Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
 [Arithmetic](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArithmetic.md)  
 [Power](https://github.com/gpuwangge/Wiki/blob/main/documents/Power.md)  
+[CPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/CPUArchitecture.md)  
 
 # SystemC
 [SystemC Tutorial](https://github.com/gpuwangge/Wiki/blob/main/documents/SystemCTutorial.md)  

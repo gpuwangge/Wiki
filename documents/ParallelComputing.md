@@ -156,3 +156,80 @@ __global__ void sumKernel(const int* buffer, unsigned int* output){
 sumKernel<<<1, 1024>>>(buffer, output);
 ```
 
+# Share Local Memory
+在Vulkan Compute Shader里，Share Local Memory（SLM）使用shared关键字标记。表示同一个workgroup可以读写。  
+SLM主要用于线程间交换数据。比如多个线程协作加载一份数据，之后反复从 shared 读取。  
+跟Register对比：register 通常是单个 invocation 的私有值，由编译器自动分配。register访问成本比slm更低。  
+
+SLM会限制可驻留workgroup数。  
+REG会限制可驻留线程数。  
+所以两者都会影响Occupancy。  
+
+举例，下面是一个最小的组内交换例子：每个线程加载一个元素，然后读取组内下一个线程加载的数据。假设输入和输出是不同 buffer，且都至少包含 count 个元素。
+```c
+#version 450
+
+// 每个 workgroup 有 256 个 invocation。执行到 barrier() 的 invocation 会等待：只有同组的 256 个 invocation 都到达这个同步点，才允许继续执行后面的代码。  
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0, std430) readonly buffer Input {
+    float src[];
+};
+
+layout(set = 0, binding = 1, std430) writeonly buffer Output {
+    float dst[];
+};
+
+layout(push_constant) uniform Params {
+    uint count;
+} pc;
+
+shared float tile[256];
+
+void main()
+{
+    uint lid = gl_LocalInvocationIndex; ////每个workitem在一个workgroup里的局部ID
+    uint gid = gl_GlobalInvocationID.x; //每个workitem的全局ID
+
+    // 越界线程仍参与初始化与同步。
+    tile[lid] = gid < pc.count ? src[gid] : 0.0;
+
+    barrier(); //barrier() 同步的是 同一个 workgroup 内的所有 invocation
+
+    // 此时可以读取同组其他线程写入的数据。
+    float value = tile[(lid + 1u) % 256u];
+
+    if (gid < pc.count)
+        dst[gid] = value;
+}
+
+```
+可以理解为：  
+```
+同一个 workgroup：
+
+invocation 0   写 tile[0]   ──┐
+invocation 1   写 tile[1]   ──┤
+...                           ├── barrier ── 然后各自读取 tile
+invocation 255 写 tile[255] ──┘
+```
+这个程序具体输出什么？  
+```
+输入：src[0], src[1], src[2], ... , src[254], src[255]
+输出：src[1], src[2], src[3], ... , src[255], src[0]
+```
+也就是每组内部循环左移一位。  
+
+为什么用这个例子？只是为了展示三个步骤：
+```
+每个线程写自己的 shared 槽位
+                 ↓
+             barrier()
+                 ↓
+每个线程读其他线程写入的槽位
+```
+没有 barrier()，读取时不能保证邻居已经完成写入。
+
+不过，这个操作本身完全可以直接计算源索引并读取 SSBO(Shader Storage Buffer Object)，不必绕 shared memory。我之前应该更明确地说明：这是同步机制的教学例子，不是展示 SLM 性能优势的好例子。  
+
+

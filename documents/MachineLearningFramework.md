@@ -202,3 +202,7 @@ Vulkan 后端
 - 不一定全部在 Vulkan 上执行：需要启用 Vulkan，并检查模型所用算子的后端支持范围。
 
 
+# Reference
+[Tensorflow实践](https://github.com/gpuwangge/TensorFlowLab/tree/main)  
+
+

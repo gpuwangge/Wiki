@@ -1397,6 +1397,61 @@ void CTextureImage::generateMipmaps(std::string rainbowCheckerboardTexturePath, 
 https://learnopengl-cn.github.io/04%20Advanced%20OpenGL/01%20Depth%20testing/  
 https://developer.aliyun.com/article/325636  
 
+# Pingpong Buffer
+Particle System使用了Pingpang Buffer  
+
+MAX_FRAMES_IN_FLIGHT = 2;  
+初始 currentFrame = 0;  
+
+descriptor 关系是：
+| 当前 frame slot | binding 0：输入 | binding 1：输出 |
+| --- | --- | --- |
+| 0 | buffer 1 | buffer 0 |
+| 1 | buffer 0 | buffer 1 |
+
+
+因此执行流程是：
+初始化：CPU 的 M/N/K/A/B ──上传──> buffer 1
+
+第一次 dispatch，frame slot 0：  
+buffer 1 ──读取 A/B──> shader ──写 C──> buffer 0
+
+第二次 dispatch，frame slot 1：  
+buffer 0 ──读取 A/B──> shader ──写 C──> buffer 1
+
+这种“上一帧状态作为输入、当前帧状态作为输出”的模式，很适合粒子模拟。  
+
+对于粒子模拟，计算通常是：    
+完整旧状态 → 更新 → 完整新状态  
+
+
+更general地说  
+Ping-pong（乒乓缓冲）就是：准备两份存储，每轮从一份读取旧状态、向另一份写入新状态；下一轮交换两者的角色。  
+初始：A 保存 S₀  
+第 0 轮：A ──计算──> B     B 保存 S₁  
+第 1 轮：B ──计算──> A     A 保存 S₂  
+第 2 轮：A ──计算──> B     B 保存 S₃  
+……  
+
+关键不是“有两个 buffer”，而是“输入、输出角色交替”。  
+1. 为什么需要它：让所有线程读取一致的旧状态  
+2. “交换”通常不复制任何数据  
+3. 它并不会自动让两轮计算并行  
+4. 哪些场景适合，哪些不需要？  
+
+适合：新状态依赖旧状态的多个位置
+例如邻域滤波、网格模拟、迭代求解这类结构：  
+整份旧状态 → 计算 → 整份新状态  
+只要写入会破坏其他线程仍需读取的旧数据，ping-pong 就是一个容易推理的解决方案。  
+粒子模拟使用 ping-pong，还可能是为了把上一轮状态与本轮输出、渲染消费分开；教程中的粒子 buffer 就同时参与计算更新和后续绘制。    
+
+不一定需要：每个线程只更新自己的独立元素    
+比如矩阵乘法：没有形成迭代链  
+当前计算是：固定 A、B → C  
+下一次仍然需要 A、B，而不是把 C 当成下一次的完整输入。因此，仅仅交换两个装有 A/B/C 的 buffer，并没有算法上的必要。   
+
+
+
 # Todo  
 multi object sample  
 ray tracing    

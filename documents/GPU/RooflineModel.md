@@ -320,7 +320,7 @@ function identifyBottleneck(formula) {
 3. **容错性瓶颈诊断**：瓶颈识别算法设置了 `0.75 * top_confidence` 的相对阈值，能够同时揭示主瓶颈及紧随其后的次要瓶颈，为性能优化提供更全面的指引。
 
 
-# 一个真实芯片的Roofling分析例子
+# 算例1
 三星魔改AMD RDNA4  
 芯片面积特别大  
 每个CU有224组FP32 ALU(Xclipse 960共16个CU)
@@ -348,5 +348,24 @@ SSR屏幕空间反射：5-20
 Particle Sim或体积雾: 20+  
 全部加起来拉满特效才有可能到100，手游上很罕见  
 
+# 算例2
+一个 kernel 计算 4 TFLOP、搬运 40 GB 数据，在 H100 上是算力受限还是带宽受限（也就是 roofline 分析）  
+(分析：一个kernel的计算情况只能算出I。硬件峰值算力和峰值带宽都需要查阅获得。)
 
+先算算力强度： I = 4TFLOP / 40GB = 100 FLOP/B  
+查阅H100 SXM的HBM3带宽为BW = 3.35TB/s。
+
+所以对于本Kernel的峰值算力需求为 I * BW = 3.35T B/s * 100 FLOP/B = 335 TFLOP/s。  
+
+继续查阅H100各个算力执行单元，对比如下：  
+| 执行单元 / 精度        | 峰值（稠密）       | 拐点 (FLOP/B) | TcT_cTc​  | TmT_mTm​ | 结论   |
+| ---------------- | ------------ | ----------- | --------- | -------- | ---- |
+| FP32 CUDA core   | 67 TFLOPS    | ≈ 20        | ≈ 59.7 ms | 11.9 ms  | 算力受限 |
+| TF32 Tensor Core | 494.5 TFLOPS | ≈ 148       | ≈ 8.1 ms  | 11.9 ms  | 带宽受限 |
+| BF16 Tensor Core | 989 TFLOPS   | ≈ 295       | ≈ 4.0 ms  | 11.9 ms  | 带宽受限 |
+| FP8 Tensor Core  | 1979 TFLOPS  | ≈ 591       | ≈ 2.0 ms  | 11.9 ms  | 带宽受限 |
+
+按Roofling图来分析的话，对于给定的四个core，可以画出四张Roofline分析图。  
+四张图的斜线部分就是带宽，也就是3.35TB/s；横向部分就是各自的峰值；拐点是x轴上四个core的I值。  
+把测试的kernel画在四张图上应当看到位于FP32的横线以下，但为于其他三张图的斜线以下。  
 

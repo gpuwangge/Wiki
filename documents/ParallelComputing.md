@@ -20,7 +20,7 @@ C[m*K+k] += A[m*N+n] * B[n*K+k]
 在这个最基础的 GEMM 实现中，每个 invocation 独立计算一个输出元素，不需要 shader 内部的 barrier()。如果之后优化为 tiled GEMM，让多个 invocation 协作加载和复用 shared memory，就通常需要 Workgroup 内同步。  
 每个 thread 独立求自己的局部和：不需要 barrier。  
 
-# Parallel Reduction例：协作求和
+# Parallel Reduction例：归约求和
 Assume an assembly-like shader language in a compute shader with 1024 threads.  Write a program to sum all values in a buffer of size 256KB.  Each value is 32 bits(4B).  
 
 分析：  
@@ -156,7 +156,62 @@ __global__ void sumKernel(const int* buffer, unsigned int* output){
 sumKernel<<<1, 1024>>>(buffer, output);
 ```
 
-# Share Local Memory
+## 按SM(streaming multiprocessor)分析如何配置归约求和
+题目给了总thread数量，但没给workgroup number和size，就是默认1个workgroup。  
+下面分析如何确定使用多少workgroup和设置其他参数。  
+
+每个SM有32KB共享内存，64K寄存器  
+根据这些资源，每个SM可以有若干workgroup驻留, 每个workgroup可以有若干个thread(NV架构是32个thread组成一个warp)，每个thread有若干个32-bit寄存器  
+每个SM有若干个warp scheduler进行调度  
+
+### Shared Memory限制SM上可以驻留的workgroup数量(32K/4K=8)
+Shared memory是可以在同一个workgroup内共享的  
+如果一个 SM 有 32 KiB 可用于 workgroup 的 **shared memory** ，每个 workgroup 使用 4 KiB，那么仅考虑 shared memory，最多可同时驻留 8 个 workgroup。  
+这是 shared-memory 约束给出的上限，不等于最终一定能驻留这么多组。  
+
+### Register限制了SM上总thread数量,进而限制workgroup数量(64K/64/128=8)
+寄存器：通常按每线程用量计算，他的使用是一个线程内使用的私有资源  
+首先区分单位：这里的 64K registers 通常指 65536 个 32-bit 寄存器，即 256 KiB 的寄存器存储  
+每线程寄存器数如果是64，则限制了总thread数量是1024个  
+假设每个workgroup有128个thread（即workgroup size=128），则限制了驻留的workgroup数量为1024 / 128 = 8个  
+
+### Warp数量决定实际延迟
+在 NVIDIA 上，一个 warp 是 32 个线程  
+按照上述例子限制是8个workgroup，每个workgroup128个thread，所以一共32个warp  
+按照一般经验，SM最好有8～32个workgroup，每个workgroup 128~256线程，总共512～1024线程，可以有效隐藏内存延迟
+
+## 小知识：单个workgroup，thread的最大数量1024
+一般来讲，一个workgroup默认最大的thread就是1024(2d 就是32x32)或512。为什么？  
+原因：  
+1. 每个线程需要有私有的register，一个计算单元sm中的总寄存器数量有限(比如64k个32bit regs，按1k thread数量看，每个thread分得64个), 如果thread不限制，则每个thread的reg太少，导致reg spill to local memory，性能下降。
+2. 太多线程带来太多barrier压力，因为barrier要等太多线程
+3. 单个workgroup size过大，会造成active warp减少，warp occupancy太低，降低hide latency能力
+4. workgroup size过大，破坏l1 cache locality
+
+当然workgroup size太小也不好，因为这样会导致线程间共享数据的能力弱。
+
+## 综合分析：64K个数据，分8个workgroup，workgroup size=128，共1024个thread
+对于64K个数据:  
+1. 总thread数不变，每个thread还是处理64个数字
+2. 跨 workgroup 合并与组内归约轮数  
+普通 compute dispatch 中，没有可以让所有 workgroup 一起等待的全局执行 barrier，因此不能直接用组内 barrier() 完成跨组归约。  
+可以选择：  
+- 每组输出一个部分和，得到 8 个部分和，再由 host 或第二次 dispatch 合并。
+- 每组完成组内归约后，由一个线程对同一个全局结果执行 atomicAdd，在一次 dispatch 中完成累加。结果需提前清零并正确同步；如果输入是 float，还需要支持并启用相应的浮点原子加功能。  
+
+采用每轮将参与元素数减半的树形归约时： 
+| 配置                        | 每组树形归约轮数                                    |
+| ------------------------- | ------------------------------------------- |
+| 1 个 workgroup，每组 1,024 线程 | log⁡2(1024)=10 |
+| 4 个 workgroup，每组 256 线程   | log⁡2(256)=8      |
+| 8 个 workgroup，每组 128 线程   | log⁡2(128)=7      |
+
+3. 效率上，将一个大组拆成多个小组，可能增加跨 SM 分配的机会，提高整张 GPU 的利用率。
+4. 共享内存占用上，如果只有一个workgroup需要1024x4B=4KB；如果有8个workgrouo每个只需要128x4B=512B
+5. Register数量上，全部线程同时驻留在同一个 SM，64K/1K=64,即每个thread不能使用超过64个register
+
+
+# Share Local Memory 和 Register对Occupancy的影响
 在Vulkan Compute Shader里，Share Local Memory（SLM）使用shared关键字标记。表示同一个workgroup可以读写。  
 SLM主要用于线程间交换数据。比如多个线程协作加载一份数据，之后反复从 shared 读取。  
 跟Register对比：register 通常是单个 invocation 的私有值，由编译器自动分配。register访问成本比slm更低。  

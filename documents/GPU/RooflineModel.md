@@ -339,7 +339,7 @@ Arithmetic Intensity = FLOP/memoryByte
 假如最大算力6.98T, 带宽8B x freq  
 假设工作频率5Ghz，数据速率为10Ghz(时钟上下沿触发)  
 8 x 10G x Intensity=6.98T, Intensity=87.25的算术强度才能拉满  
-
+(这里的I=87.25就是Ridge Point拐点)  
 
 ## 常见算法的算术强度：
 Blur: 算术强度零点几  
@@ -368,4 +368,9 @@ Particle Sim或体积雾: 20+
 按Roofling图来分析的话，对于给定的四个core，可以画出四张Roofline分析图。  
 四张图的斜线部分就是带宽，也就是3.35TB/s；横向部分就是各自的峰值；拐点是x轴上四个core的I值。  
 把测试的kernel画在四张图上应当看到位于FP32的横线以下，但为于其他三张图的斜线以下。  
+
+之前的思路是I*B，然后跟峰值P做对比，看是不是bound在算力P上。本质上这是在对比y轴，不直观。  
+更好的方法是对比x轴，也就是算术强度。先算出kernel的算术强度I_kernel；然后根据peak p和peak bw算出roofling拐点的算术强度I_ridgepoint。  
+然后看I_kernel在I_ridgepoint的左边还是右边。左边就是bw bound，右边就是peak bound。  
+
 

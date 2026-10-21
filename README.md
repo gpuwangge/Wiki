@@ -1,12 +1,12 @@
 # API
-[Vulkan Setup](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanSetup.md)  
-[Vulkan API](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanAPI.md)  
-[Vulkan Compute Shader](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanComputeShader.md)  
-[Vulkan CTS](https://github.com/gpuwangge/Wiki/blob/main/documents/VulkanCTS.md)  
-[OpenCL](https://github.com/gpuwangge/Wiki/blob/main/documents/OpenCL.md)  
-[Tensorflow Lite](https://github.com/gpuwangge/Wiki/blob/main/documents/TensorflowLite.md)  
-[Metal](https://github.com/gpuwangge/Wiki/blob/main/documents/Metal.md)   
-[SDL](https://github.com/gpuwangge/Wiki/blob/main/documents/SDL.md)   
+[Vulkan Setup](https://github.com/gpuwangge/Wiki/blob/main/documents/API/VulkanSetup.md)  
+[Vulkan API](https://github.com/gpuwangge/Wiki/blob/main/documents/API/VulkanAPI.md)  
+[Vulkan Compute Shader](https://github.com/gpuwangge/Wiki/blob/main/documents/API/VulkanComputeShader.md)  
+[Vulkan CTS](https://github.com/gpuwangge/Wiki/blob/main/documents/API/VulkanCTS.md)  
+[OpenCL](https://github.com/gpuwangge/Wiki/blob/main/documents/API/OpenCL.md)  
+[Tensorflow Lite](https://github.com/gpuwangge/Wiki/blob/main/documents/API/TensorflowLite.md)  
+[Metal](https://github.com/gpuwangge/Wiki/blob/main/documents/API/Metal.md)   
+[SDL](https://github.com/gpuwangge/Wiki/blob/main/documents/API/SDL.md)   
 
 # AI
 [Stable Diffusion](https://github.com/gpuwangge/Wiki/blob/main/documents/StableDiffusion.md)   
@@ -43,6 +43,7 @@
 [Compression](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/Compression.md)  
 [Benchmark](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/Benchmark.md)  
 [Mesa3D](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/Mesa3D.md)  
+[GPU Programming Model](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/GPUProgrammingModel.md)   
 
 # NPU
 [NPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/NPUArchitecture.md)  

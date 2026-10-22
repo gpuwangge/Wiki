@@ -17,14 +17,14 @@
 
 
 # Graphics
-[Drawcall](https://github.com/gpuwangge/Wiki/blob/main/documents/Drawcall.md)  
-[Global illumination](https://github.com/gpuwangge/Wiki/blob/main/documents/Globalillumination.md)   
-[Cubemap](https://github.com/gpuwangge/Wiki/blob/main/documents/Cubemap.md)   
-[Clip](https://github.com/gpuwangge/Wiki/blob/main/documents/Clip.md)   
-[NDC](https://github.com/gpuwangge/Wiki/blob/main/documents/NDC.md)   
-[Mesh Shader](https://github.com/gpuwangge/Wiki/blob/main/documents/MeshShader.md)  
-[Raytracing](https://github.com/gpuwangge/Wiki/blob/main/documents/Raytracing.md)  
-[Geometry](https://github.com/gpuwangge/Wiki/blob/main/documents/Geometry.md)  
+[Drawcall](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/Drawcall.md)  
+[Global illumination](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/Globalillumination.md)   
+[Cubemap](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/Cubemap.md)   
+[Clip](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/Clip.md)   
+[NDC](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/NDC.md)   
+[Mesh Shader](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/MeshShader.md)  
+[Raytracing](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/Raytracing.md)  
+[Geometry](https://github.com/gpuwangge/Wiki/blob/main/documents/Graphics/Geometry.md)  
 
 # GPU
 [GPU Driver](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/GPUDriver.md)  

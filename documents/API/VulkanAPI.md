@@ -1450,14 +1450,130 @@ Ping-pong（乒乓缓冲）就是：准备两份存储，每轮从一份读取�
 当前计算是：固定 A、B → C  
 下一次仍然需要 A、B，而不是把 C 当成下一次的完整输入。因此，仅仅交换两个装有 A/B/C 的 buffer，并没有算法上的必要。   
 
+# Ray Query
+Vulkan 的 Ray Query 可以理解为：在普通 compute / fragment shader 中，直接查询光线与场景的交点，不需要单独创建 ray tracing pipeline、SBT，也不需要 raygen / closest-hit / miss shader。  
 
+简略实现步骤
+1. 开启扩展和 feature
+```
+// Device extensions
+VK_KHR_ACCELERATION_STRUCTURE_EXTENSION_NAME
+VK_KHR_RAY_QUERY_EXTENSION_NAME
+VK_KHR_DEFERRED_HOST_OPERATIONS_EXTENSION_NAME
+
+// 对应 feature，通过 device 创建时的 pNext 链启用
+bufferDeviceAddress = VK_TRUE;
+accelerationStructure = VK_TRUE;
+rayQuery = VK_TRUE;
+```
+2. 构建 BLAS：存放 mesh 几何
+```
+准备 vertex / index buffer，并获取 device address。
+用 VkAccelerationStructureGeometryKHR 描述三角形数据。
+调用 vkGetAccelerationStructureBuildSizesKHR() 查询所需空间。
+分配 AS 存储 buffer 和 scratch buffer。
+调用 vkCreateAccelerationStructureKHR() 创建对象。
+调用 vkCmdBuildAccelerationStructuresKHR() 执行构建
+```
+3. 构建 TLAS：存放场景实例
+```
+instance.transform = ...;                    // 实例变换
+instance.instanceCustomIndex = meshId;       // shader 用于查找自己的数据
+instance.mask = 0xFF;
+instance.accelerationStructureReference =
+    blasDeviceAddress;                      // AS 地址，不是底层 buffer 地址
+```
+将 instance 数组作为输入构建 TLAS。整体关系是：
+```
+TLAS
+ ├─ Instance A → BLAS(mesh A)
+ ├─ Instance B → BLAS(mesh B)
+ └─ Instance C → BLAS(mesh A)  // 可复用同一个 BLAS
+```
+BLAS 构建完成到 TLAS 构建之间，以及 TLAS 构建完成到 shader 查询之间，都要建立正确的同步依赖  
+4. 将 TLAS 绑定给 shader
+在 descriptor set 中添加：VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR  
+通过 VkWriteDescriptorSetAccelerationStructureKHR 写入 TLAS。  
+GLSL 对应声明：  
+```
+#extension GL_EXT_ray_query : require
+layout(set = 0, binding = 0)
+uniform accelerationStructureEXT sceneTLAS;
+```
+接下来仍然使用普通 graphics / compute pipeline。  
+5. 在 shader 中发射并查询光线
+下面是最简单的不透明三角形阴影测试
+```c++
+bool isOccluded(vec3 origin, vec3 direction, float tMin, float tMax){
+    rayQueryEXT query;
+
+    rayQueryInitializeEXT(
+        query,
+        sceneTLAS,
+        gl_RayFlagsOpaqueEXT |
+        gl_RayFlagsTerminateOnFirstHitEXT,
+        0xFF,              // instance mask
+        origin,
+        tMin,
+        direction,         // 调用方传入归一化方向
+        tMax
+    );
+
+    //rayQueryProceedEXT() 做什么？
+    //每次调用，它会继续遍历加速结构，直到出现以下一种情况：
+    //返回 true：找到了需要 shader 处理的候选交点，暂停遍历，进入循环体。例如非 opaque 三角形，需要你做 alpha test，再决定是否确认命中。
+    //返回 false：查询已经结束，退出循环。此时再读取最终的 committed intersection。
+    //对于其中的不透明三角形，查询会自动确认命中；再加上 TerminateOnFirstHit，确认第一个命中后就结束，不需要你在循环体中处理。
+    //保留 while 是更通用的写法，方便以后在循环体里增加 alpha-test 或程序化几何的候选处理；
+    while (rayQueryProceedEXT(query)) {
+        // 强制视为 opaque 的三角形，无需手动确认 candidate。
+    }
+
+    //gl_RayQueryCommittedIntersectionNoneEXT 表示“没有已确认的交点”。所以 != None 就表示存在已确认命中。
+    return rayQueryGetIntersectionTypeEXT(query, true)
+        != gl_RayQueryCommittedIntersectionNoneEXT;
+}
+```
+在 fragment shader 的光照计算中调用：
+```c++
+vec3 toLight = lightPosition - worldPosition;
+float distanceToLight = length(toLight);
+
+//从“当前着色点指向光源”的 阴影光线（shadow ray）。
+//它用来检查：这个点到光源之间有没有东西挡住。
+//命中不透明遮挡物就意味着这条直接光照路径不通。
+bool shadowed = isOccluded(
+    worldPosition,
+    toLight / distanceToLight,
+    0.001,                       // 示例值，需按场景尺度调整
+    distanceToLight
+);
+
+if (!shadowed) {
+    // 累加该光源的直接光照
+}
+```
+这里命中任意遮挡物就可以结束；如果要查找最近交点用于反射或完整渲染，则去掉 TerminateOnFirstHit，完成遍历后再读取 committed hit 的距离、primitive index、实例索引和重心坐标。  
+
+不透明几何可以自动确认命中；alpha-test 几何需要在遍历循环中检查 candidate、采样 alpha，再按需调用 rayQueryConfirmIntersectionEXT()，不能像上例一样强制全部 opaque。  
+
+Ray Query 只提供相交查询结果，不会自动执行材质着色。获取交点后，需要自己查 vertex / index / material 数据并计算光照。  
+
+如果要进行二次光线的计算，要在第二段代码外层加一个循环：
+```c++
+for (int bounce = 0; bounce <= MAX_SECONDARY_BOUNCES; ++bounce)
+{
+    ...
+}
+```
 
 # Todo  
-multi object sample  
 ray tracing    
+mesh shader  
+resize window   
+multi object sample  
 android screen flicking(Mipmap, furMark)  
 android controller   
-resize window   
-mesh shader
+
 
 

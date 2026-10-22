@@ -60,6 +60,45 @@ Ray(t) = O + t*D, t > 0
 | 遍历栈与常数 | 递归深度、`BVH` 遍历栈指针、`Push Constants` / `Tunable Parameters` |
 | 线程组管理 | 线程 ID 分发状态、屏蔽掩码（`Enable Mask`）、预取队列指针 |
 
+# BRDF（Bidirectional Reflectance Distribution Function，双向反射分布函数）
+1. BRDF 方程
+```c++
+f_r(omega_i,omega_o)=
+    dL_o(omega_o) / dE_i(omega_i)
+```
+其中：
+- f_r：BRDF，描述表面的反射特性。
+- omega_i：入射光方向（Incoming Light Direction）。
+- omega_o：出射光 / 观察方向（Outgoing / View Direction）。
+- dL_o：出射辐射亮度（Differential Radiance）。
+- dE_i：入射辐照度（Differential Irradiance）。
+简单来说：BRDF 描述光从某个方向照射到表面后，有多少光会被反射到另一个方向。  
+BRDF 是渲染方程（Rendering Equation）中的核心组成部分  
+
+2. BRDF 在渲染中的作用
+不同材质具有不同的 BRDF，因此会产生不同的视觉效果：  
+- Diffuse（漫反射）：光线向多个方向均匀散射，例如粗糙的粉笔表面。
+- Specular（镜面反射）：光线集中反射到特定方向，例如抛光金属。
+- Roughness（粗糙度）：影响镜面反射的高光范围；粗糙度越高，高光通常越宽、越模糊。
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/brdf.png" alt="alt text">  
+</p> 
+
+3. PBR参数和BRDF的关系
+Material 参数是描述材质的输入；BRDF LUT 则存储预计算的反射积分结果。  
+常见的 PBR 材质参数如下：  
+
+| 参数 | 含义 | 在 BRDF 中的作用 |
+|---|---|---|
+| Base Color | 基础颜色 | 决定漫反射颜色及金属的反射颜色 |
+| Metallic | 金属度 | 决定使用金属还是非金属的反射模型 |
+| Roughness | 粗糙度 | 控制微表面法线分布，影响高光形状 |
+| Normal | 法线 | 决定表面朝向，影响光照计算 |
+| AO | 环境光遮蔽 | 通常用于近似局部遮蔽，并非 BRDF 本身的参数 |
+
+BRDF模型描述了Ray Tracing中直接光照的部分，但无法描述间接光照。间接光照需要使用Path Tracing算法。Path Tracing算法基于Monte Carlo 积分来模拟光线的路径。  
+
 # 为什么Path Tracing用monte carlo积分而不是普通积分
 因为光追的rendering equation维度大，不连续  
 普通积分追求精确，无法解  

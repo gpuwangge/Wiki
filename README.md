@@ -71,9 +71,9 @@
 [Architecture History](https://github.com/gpuwangge/Wiki/blob/main/documents/ArchitectureHistory.md)  
 [ISA Fundamentals](https://github.com/gpuwangge/Wiki/blob/main/documents/ISAFundamentals.md)  
 [ARM ISA](https://github.com/gpuwangge/Wiki/blob/main/documents/ARMISA.md)  
-[Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)  
+[Memory](https://github.com/gpuwangge/Wiki/blob/main/documents/Memory.md)   
 [Arithmetic](https://github.com/gpuwangge/Wiki/blob/main/documents/ComputerArithmetic.md)  
-[Power](https://github.com/gpuwangge/Wiki/blob/main/documents/Power.md)  
+[Power](https://github.com/gpuwangge/Wiki/blob/main/documents/Power.md)   
 [CPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/CPUArchitecture.md)  
 
 # SystemC
@@ -85,9 +85,9 @@
 
 # MISC
 [Compiler](https://github.com/gpuwangge/Wiki/blob/main/documents/Compiler.md)  
-[Assembly Language](https://github.com/gpuwangge/Wiki/blob/main/documents/AssemblyLanguage.md) 
+[Assembly Language](https://github.com/gpuwangge/Wiki/blob/main/documents/AssemblyLanguage.md)   
 [IT Infrastructure](https://github.com/gpuwangge/Wiki/blob/main/documents/ITInfrastructure.md)   
-[MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md) 
+[MacOS](https://github.com/gpuwangge/Wiki/blob/main/documents/MacOS.md)   
 [SSL](https://github.com/gpuwangge/Wiki/blob/main/documents/SSL.md)   
 [C Features](https://github.com/gpuwangge/Wiki/blob/main/documents/CFeatures.md)   
 [IC Design Flow](https://github.com/gpuwangge/Wiki/blob/main/documents/ICDesignFlow.md)   

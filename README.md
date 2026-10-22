@@ -44,6 +44,7 @@
 [Benchmark](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/Benchmark.md)  
 [Mesa3D](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/Mesa3D.md)  
 [GPU Programming Model](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/GPUProgrammingModel.md)   
+[GPU Hardware Model](https://github.com/gpuwangge/Wiki/blob/main/documents/GPU/GPUHardwareModel.md)   
 
 # NPU
 [NPU Architecture](https://github.com/gpuwangge/Wiki/blob/main/documents/NPUArchitecture.md)  

@@ -342,6 +342,21 @@ sc_signal<T> 和 sc_fifo_out<T> 的核心区别是：一个是“硬件线网/�
 写入行为	write(x)： 前者把值更新为 x（旧值被覆盖）；后者write(x) / nb_write(x) 把元素入队（FIFO 满会阻塞或失败）。  
 读取行为	read()： 前者读当前值（不会“消耗”）；后者read() / nb_read(x) 出队（FIFO 空会阻塞或失败）。  
 同步/时序：前者常用来描述 RTL 信号，更新在 delta cycle 生效；常配合时钟进程；后者更像“消息/事务传输”，天然有生产者-消费者语义。  
+
+delta cycle: 仿真时间不前进的一轮调度。多轮 delta cycle 可以发生在同一个时间点。delta cycle 是“同一个仿真时刻内，让信号更新及其引发的计算逐轮传播”的机制，不是硬件 clock cycle。  
+```
+wait(SC_ZERO_TIME);   // 等下一轮 delta，仿真时间不变
+wait(10, SC_NS);      // 等 10 ns，仿真时间前进
+wait(clk.posedge_event()); // 等时钟上升沿
+```
+“等到下一轮 delta”的意思是：当前仿真线程先暂停，把执行权交回 SystemC 内核；内核完成本轮的信号更新后，再在下一轮调度中，从 wait() 后面继续执行。整个过程不推进仿真时间。  
+```
+s.write(42);           // ① 提交更新请求，当前值仍是 0
+wait(SC_ZERO_TIME);    // ② 当前线程暂停，控制权交给内核
+int x = s.read();      // ⑤ 下一轮恢复执行，此时读到 42
+```
+
+
 连接关系：前者通常 1 个 driver（单写者）+ 多读者（可多个观察者）；FIFO 通常 1 写者 + 1 读者（典型用法；也可扩展但要小心仲裁）。  
 适用场景：前者寄存器输出、组合信号、握手信号（valid/ready）、状态等；后者用于流式数据、任务队列、模块解耦、速率不匹配的缓冲。  
 直观例子  
@@ -426,8 +441,5 @@ SC_THREAD(my_thread) {
 补充说明
 SC_NS 是 SystemC 预定义的时间单位常量（纳秒）。类似的还有 SC_PS、SC_US、SC_MS、SC_SEC。  
 wait() 也可以写成基于 sc_time 的形式：wait(sc_time(3, SC_NS));  
-
-
-
 
 

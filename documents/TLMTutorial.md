@@ -62,7 +62,7 @@ sc_fifo = 排队（先来的先处理）
 为什么 sc_fifo 比 TLM 慢：sc_fifo 处理的是普通数据对象，每次读写都要经过 SystemC 的 FIFO 同步机制，涉及阻塞/唤醒和事件调度。它比 TLM 细，但没有 sc_signal 那么“逐拍”地反映硬件时序，所以一般性能居中。
 为什么 sc_in/sc_out + sc_signal 通常最慢：sc_in/sc_out 本身只是端口，真正的传输靠 sc_signal，而 sc_signal 属于信号级建模，每次变化都要走事件和 delta cycle 机制。如果一个模块里有很多信号、很多进程、很多时钟沿，仿真器要处理的调度就会非常多，所以通常最慢。  
 
-
+initiator 和 target socket可以类比为tlm版本的sc_in, sc_out： initiator_socket 发起请求，内存通过 target_socket 接收请求。  
 
 
 ## 3 TLM Payload
@@ -181,4 +181,82 @@ consumer.fifo_port(fifo);  // Consumer 的 get 端口连 FIFO
 
 TLM FIFO = 先进先出的事务缓冲区，Producer 用 put() 往里塞事务，Consumer 用 get() 往外取事务，中间自动缓冲，解耦发送和接收 。  
 
+## 6 Phase
+之前的阻塞接口：  
+socket->b_transport(trans, delay);  
+一次调用就描述一次完整的事务传输，不需要额外的 phase 参数。  
+
+非阻塞接口则不同：调用会很快返回，但事务可能还没完成。因此，需要通过后续调用和 phase 告诉对方“现在进展到哪一步了”。  
+```c++
+tlm::tlm_sync_enum nb_transport_fw(
+    tlm::tlm_generic_payload& trans, // 什么请求：地址、数据、读写命令等
+    tlm::tlm_phase& phase,          // 进行到哪个阶段
+    sc_core::sc_time& delay         // 此阶段转换相对当前时间的延迟
+);
+```
+以 CPU 读内存为例，完整的四阶段交互可以这样理解：
+```
+CPU / Initiator                          Memory / Target
+      │                                        │
+      ├──── BEGIN_REQ ────────────────────────→│  开始发送请求
+      │←─── END_REQ ──────────────────────────┤  请求阶段结束
+      │                                        │
+      │          内存继续处理，数据尚未返回      │
+      │                                        │
+      │←─── BEGIN_RESP ───────────────────────┤  开始返回响应/数据
+      ├──── END_RESP ────────────────────────→│  响应阶段结束
+      │                                        │
+```
+
+## 7 DMI(Direct Memory Interface)
+简单记：socket 是正常办业务的入口；DMI 是 target 授权你直接访问某段存储的快捷路径，但范围、权限、计时和授权失效都仍然需要遵守。  
+
+和普通 TLM 访问有什么区别？
+```
+普通访问：
+CPU → socket → 总线/路由 → Memory::b_transport()
+                                    ↓
+                              读写内部数组
+
+DMI：
+CPU ───── 通过获得的 C++ 指针 ─────→ 内存数组
+```
+
+什么情况下不适合用？  
+DMI 绕过了正常 transport 处理，所以适合普通 RAM；对于“每次读写都要执行特殊逻辑”的区域，需要谨慎，例如读后清零的寄存器，或者写入就触发设备动作的控制寄存器。直接改数组无法自动执行这些回调，target 通常应该拒绝这类区域的 DMI 请求。  
+
+## 8 Quantum Keeper
+可以把 quantum keeper 理解成一个“时间记账本”：先记账，攒够了再等。  
+假设你模拟一个 CPU，每条指令耗时 1 ns：
+```
+执行一条指令 → 等 1 ns
+执行一条指令 → 等 1 ns
+执行一条指令 → 等 1 ns
+……
+```
+每次等，都要把控制权交回 SystemC，让它安排其他模块运行。  
+quantum 设得越大，一次连续做的事情越多，通常越省调度开销；但也可能更晚才注意到其他模块的事件，比如中断。所以不能只顾跑得快，还要考虑模块之间是否需要及时交互。  
+使用举例：
+```c++
+qk.inc(sc_time(1, SC_NS)); // 账本加 1 ns，不暂停
+
+if (qk.need_sync()) {      // 到同步点了吗？
+    qk.sync();            // 到了：暂停，让其他模块追上
+}
+```
+
+## 9 loosely timed 和 approximately timed 的区别
+Loosely Timed（LT）和 Approximately Timed（AT）是 TLM 中两种不同的建模风格（modeling styles），而不是两个独立的功能。  
+
+用一个生活例子理解：假设 CPU 要从 Memory 读取一个数据，整个过程需要 10 个时钟周期。  
+Loosely Timed（LT）：只记录出发和到达，读到了什么数据，以及大概花了多久。  
+接口调用	常见 b_transport()    
+
+Approximately Timed（AT）：像是记录车辆经过的几个关键路段。每个阶段都有相应的时间点或延迟。它关心：事务在什么时候进入哪个阶段，以及各阶段之间如何交互。  
+接口调用	常见 nb_transport_fw() / nb_transport_bw()  
+
+SystemC TLM-2.0 中，nb_transport_fw() 和 nb_transport_bw() 是两个具体的接口方法，而 nb_transport 通常是对这套非阻塞传输机制的简称。  
+nb_transport通常是对非阻塞传输机制的简称；具体接口包括 nb_transport_fw() 和 nb_transport_bw()。
+
+nb_transport 是非阻塞传输机制；fw 负责向前发送请求，bw 负责反向通知。AT 常用它们，是因为 AT 要把事务拆成多个阶段，描述各阶段的时间和交互，而不只是一次性完成事务。
 

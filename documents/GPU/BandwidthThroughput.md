@@ -196,10 +196,10 @@ t=2^32/10^9=4.294967296s
 也可以先算需要多少个周期(2^32/63),再除以1GHz，结果一样  
 
 3. If the increment value is a 6-bit unsigned value and we wanted to ensure the counter will not overflow in 1 day what would be the required width of the register?  
-一天的时间是24*60*60s  
-一天的总数据量是24*60*60*63G  
+一天的时间是24x60x60s  
+一天的总数据量是24x60x60x63G  
 假设需要的宽度是x  
-2^x = 24*60*60*63G + 1  
+2^x = 24x60x60x63G + 1  
 两边取log2  
 x = 52.273, 往上取整，宽度至少需要53位  
 

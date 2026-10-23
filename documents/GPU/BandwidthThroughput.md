@@ -180,6 +180,62 @@ Transfer有8 beats，则Transaction transfer time = 8ns
 题目问的是outstanding transaction而不是outstanding request，所以  
 最少需要408/8=51个outstanding transaction  
 
+## 练习题3
+A system has a 32-bit register.  
+The register is set to 0. The register increments by a constant value every clock cycle. The clock frequency is 1 GHz.  
+For questions 1-3 provide the formula and a numeric answer (not an estimate).  
+(考察的是 整数溢出、时钟频率、位宽计算，以及 double 的整数精度)  
+
+1. The increment value is 1. How many seconds until the register overflows?  
+t=2^32/10^9=4.294967296s  
+注意这里不要用2^32-1，因为问的是overflow  
+
+2. The increment value is a 6-bit unsigned value. What is the minimal amount of time until it overflows?  
+这里用了6bit而不是1bit数据，应该更快overflow所以  
+4.294967296 / (2^6-1) =  4.294967296 / 63 = 0.06817408406s  
+也可以先算需要多少个周期(2^32/63),再除以1GHz，结果一样  
+
+3. If the increment value is a 6-bit unsigned value and we wanted to ensure the counter will not overflow in 1 day what would be the required width of the register?  
+一天的时间是24*60*60s  
+一天的总数据量是24*60*60*63G  
+假设需要的宽度是x  
+2^x = 24*60*60*63G + 1  
+两边取log2  
+x = 52.273, 往上取整，宽度至少需要53位  
+
+4. Can the maximum value from Q3 be stored in a double precision floating point variable without losing precision?  
+double能存很大的数，但是这里关键在于不能lose精度这个前提条件  
+double能精确表示[-2^53~2^53]之内的每一个整数  
+上一题的宽度是53, 所以不会lose精度  
+
+进一步探索精度问题：  
+这题不能用“double 占 64 bit，所以装得下 53 bit”来解释；真正决定整数是否精确的是有效数字精度，而不是总存储位数。  
+IEEE 754 是目前计算机中使用最广泛的 浮点数标准。按 IEEE 754 的 32 位 float 和 64 位 double 来说：float 约有 7 位十进制有效数字，double 约有 16 位。这里的 精度 指有效数字总数，不是小数点后固定多少位。  
+为什么2^32有十位十进制，但float 只约有 7 位十进制有效数字：因为并没有把所有的二进制位用于保存有效数字  
+总共 32 位  
+┌──────────┬──────────────┬───────────────────────┐
+│ 符号 1 位 │ 指数 8 位    │ 小数部分 23 位         │  
+└──────────┴──────────────┴───────────────────────┘
+10^x = 2^24  
+x = 7.22471989594  
+同理，对于64位的double  
+总共 64 位  
+┌──────────┬──────────────┬───────────────────────┐
+│ 符号 1 位 │ 指数 11 位   │ 小数部分 52 位         │  
+└──────────┴──────────────┴───────────────────────┘
+10^x=2^53  
+x = 15.9545897702  
+换句话说，double能精确表示[-2^53~2^53]之内的每一个整数，但超过了这个范围，相邻整数开始出现空缺。  
+```
+9,007,199,254,740,992     可以精确表示（2^53）
+9,007,199,254,740,993     不可以精确表示
+9,007,199,254,740,994     可以精确表示
+```
+在 [2^53,2^54) 内，相邻 double 的间距是 2，因此只能精确表示偶数整数    
+如果不考虑精度的 IEEE 754 double，能表示的最大 有限数 是：  
+- 有效数字略小于2  
+- 指数部分有11位，其中一个符号位，最大指数是1023  
+理论最大应该小于2^1024 = 1.79769313 x 10^308  
 
 ## Burst:
 是在传输/片上互连协议(如 AXI、PCIe、DDR、UCIe 等)中的标准术语，  

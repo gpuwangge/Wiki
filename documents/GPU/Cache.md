@@ -837,4 +837,20 @@ ASTC 压缩的是“画画用的颜料/素材”（预先准备好的纹理贴�
 
 这也解释了 false sharing：即使两个线程写的是不同变量，只要变量位于同一条 cache line，仍然会争夺这条 line 的写权限。  
 
+## 计算举例
+已知：cache data = 2KiB, line size=64B, data size=32b, address size=32b  
+Direct mapping: 问题是如何寻址  
+(注意知识点KB=1000B, KiB=1024B)  
+tag-index-offset  
+
+回答：  
+1. 总共数据2048/64=32个cacheline，需要5b存储所有的cacheline, index需要5bits  
+2. 接下来要选offset，也就是在64个Byte里面选4Byte，需要6bits  
+为什么是6？我在猜测是2^6=64，后来问ai，其实不是？  
+word offset: 选择64B里面的16个W,需要4bits  
+byte offset: 选择word内的4个B之一，需要2bits  
+完成line offset：4+2=6bits  
+这个跟我原本的猜测一致？  
+3. 剩余给tag的bits: 32-5-6=21bits  
+
 

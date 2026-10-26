@@ -132,5 +132,20 @@ app会运行，运行结束后会生成一个.qdrep文件，双击打开即可�
 在左侧的timeline中，可以看到各个线程的执行情况，以及各个线程的执行  
 <img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightSystem3.png" alt="alt text">  
 
+## Nsight Graphics
+目前在打开Vulkan Validation Layer的情况下，Nsight Graphics无法正常运行，因此需要先关闭Vulkan Validation Layer。  
+并且，做 Nsight 性能采集时，关闭 validation 是合理的。NVIDIA 曾明确建议 GPU Trace profiling 时不启用 validation，因为它可能影响应用行为和性能。  
+
+Capture一帧的方法  
+运行NSightGraphics, 点击Start Activity  
+在Launch->Application Executable输入框内选择可执行程序，然后点击下方Launch Frame Debugger按钮。  
+程序运行的时候，窗口左上角有简单信息提示，按提示按F11会把当前帧capture下来。  
+Capture下来的.ngfx-capture文件默认存在Documents\NVIDIA Nsight Graphics\GraphicsCaptures  
+
+分析一帧的方法  
+双击.ngfx-capture文件，会打开Nsight Graphics，选择Graphics Debugger, 再选择Start Graphics Debugger,打开Debugger界面。  
+这时候左边有API Statistics或Events Panel可以提供这一帧的信息。  
+如图是Vulkan Ray Tracing Pipeline的Events信息。  
+<img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightGraphics1.png" alt="alt text">  
 
 

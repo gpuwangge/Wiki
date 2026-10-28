@@ -453,14 +453,8 @@ CPU 和 Memory 之间有一个 FIFO：
 - 记：用一个list记录空段。list的元素就是空段地址。如果去看这个地址就会先读到这段地址的header。这样用户在提需求的时候就不用把4kb按顺序扫一遍，直接去查list就知道哪段空着的，也知道空着这段有多大。  
 - 拼：当用户free memory的时候，看看长面包左右邻居，能不能拼一下。  
 
-简化版的伪代码  
-1. 准备一个全局list：g_list_head  
-2. cur=g_list_head, 搜索第一个适合的地址。注意这里需求的空间要考虑对齐  
-3. 如果没有地址，allocate一个新的4k页，如果4k不够，要多个页  
-4. 把cur从g_list_head移除  
-5. 如果cur size大于需求的空间，需要拆分，把拆分的部分rem加入g_list_head  
-6. 把cur空间状态标记为alloc  
-
+参考代码：  
+https://github.com/gpuwangge/CppFeatureExperiments/blob/main/microAllocator/main.cpp  
 
 # Reference
 https://www.cnblogs.com/alantu2018/p/9000777.html  

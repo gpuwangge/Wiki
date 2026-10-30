@@ -139,104 +139,6 @@ Latency-Throughput-Bandwidth三者的制约关系
 
 这个例子中，Throughput32GB/s < Bandwidth64GB/s, 说明跑不满。如果要跑满，要么Lantency下降为100ns；或者Outstanding数提升为200.  
 
-
-## 练习题1
-某存储器接口每个 Beat(数据节拍)传输 8 Bytes(64-bit 总线)，主频与数据频率均为 2 GHz。发读命令至第一笔数据返回的延迟为 400 ns。读取 64 KB 数据时：  
-1. 该读操作的 Latency 为多少？
-2. 在等待 Latency 期间，内存控制器最多可维持多少个 Outstanding Requests？
-
-解答
-1. Latency = 400ns 题目已描述为“首笔数据返回所需时间”，即命令到首字节数据的通道延迟。  
-但如果要计算至最后一个beat完成的时间，则  
-总transaction数量为 64KB / 8B = 8K  
-单次transaction传输时间 = 1/f = 1/2G=0.5ns  
-全部传输完成需要时间为 8K * 0.5ns = 4096ns  
-所以所有数据的读操作总耗时4496ns  
-
-2. 最大 Outstanding Requests 无法由现有条件确定。800 只有在“一周期发一个独立请求”等额外假设下才成立；一个 Beat 不能直接等同于一个 Request。  
-Max Outstanding = 400 ns / 0.5 ns per-issue = 800 个并发请求
-
-
-## 练习题2
-Latency / Bandwidth / Transfer Time 联动(进阶)  
-
-内存控制器参数:  
-f = 1 GHz, Beat SIZE = 8B, BURST = INCR, LEN = 7(8 Beats)。读操作延迟 = 400 ns。  
-问:  
-1. 单次 Transaction 的 Transfer Time 是多少？理论峰值带宽是多少？
-2. 读取 64 KB 数据，若始终保持流水线满载(Outstanding 足够)，总耗时最少为多少？
-3. 为掩盖 400 ns 延迟，最少需要多少个 Outstanding Transaction？
- 
-解析:  
-1. 首先每周期传输时间为1/f=1/1G=1ns, 理论峰值带宽为： 8B/1ns=8GB/s  
-Transfer有8 beats，则Transaction transfer time = 8ns
-
-2. 假设每周期一个beat，每个beat 8B，每个transaction 8B，每个transaction数据量64B  
-读取64KB数据，Transaction数量 = 64KB/64B=1K  
-每个Transaction transer time = 8ns, 总传输时间为1k*8ns=8192ns  
-因为latency=400ns，总耗时400+8192=8592ns  
-
-3. 首先Latency=400ns，一个transaction transer time要8ns完成；也就是说第一个transaction发出第一个beat算起，要408ns。  
-题目问的是outstanding transaction而不是outstanding request，所以  
-最少需要408/8=51个outstanding transaction  
-
-## 练习题3
-A system has a 32-bit register.  
-The register is set to 0. The register increments by a constant value every clock cycle. The clock frequency is 1 GHz.  
-For questions 1-3 provide the formula and a numeric answer (not an estimate).  
-(考察的是 整数溢出、时钟频率、位宽计算，以及 double 的整数精度)  
-
-1. The increment value is 1. How many seconds until the register overflows?  
-t=2^32/10^9=4.294967296s  
-注意这里不要用2^32-1，因为问的是overflow  
-
-2. The increment value is a 6-bit unsigned value. What is the minimal amount of time until it overflows?  
-这里用了6bit而不是1bit数据，应该更快overflow所以  
-4.294967296 / (2^6-1) =  4.294967296 / 63 = 0.06817408406s  
-也可以先算需要多少个周期(2^32/63),再除以1GHz，结果一样  
-
-3. If the increment value is a 6-bit unsigned value and we wanted to ensure the counter will not overflow in 1 day what would be the required width of the register?  
-一天的时间是24x60x60s  
-一天的总数据量是24x60x60x63G  
-假设需要的宽度是x  
-2^x = 24x60x60x63G + 1  
-两边取log2  
-x = 52.273, 往上取整，宽度至少需要53位  
-
-4. Can the maximum value from Q3 be stored in a double precision floating point variable without losing precision?  
-double能存很大的数，但是这里关键在于不能lose精度这个前提条件  
-double能精确表示[-2^53~2^53]之内的每一个整数  
-上一题的宽度是53, 所以不会lose精度  
-
-进一步探索精度问题：  
-这题不能用“double 占 64 bit，所以装得下 53 bit”来解释；真正决定整数是否精确的是有效数字精度，而不是总存储位数。  
-IEEE 754 是目前计算机中使用最广泛的 浮点数标准。按 IEEE 754 的 32 位 float 和 64 位 double 来说：float 约有 7 位十进制有效数字，double 约有 16 位。这里的 精度 指有效数字总数，不是小数点后固定多少位。  
-为什么2^32有十位十进制，但float 只约有 7 位十进制有效数字：因为并没有把所有的二进制位用于保存有效数字  
-总共 32 位  
-┌──────────┬──────────────┬───────────────────────┐
-│ 符号 1 位 │ 指数 8 位    │ 小数部分 23 位         │  
-└──────────┴──────────────┴───────────────────────┘
-10^x = 2^24  
-x = 7.22471989594  
-同理，对于64位的double  
-总共 64 位  
-┌──────────┬──────────────┬───────────────────────┐
-│ 符号 1 位 │ 指数 11 位   │ 小数部分 52 位         │  
-└──────────┴──────────────┴───────────────────────┘
-10^x=2^53  
-x = 15.9545897702  
-换句话说，double能精确表示[-2^53~2^53]之内的每一个整数，但超过了这个范围，相邻整数开始出现空缺。  
-```
-9,007,199,254,740,992     可以精确表示（2^53）
-9,007,199,254,740,993     不可以精确表示
-9,007,199,254,740,994     可以精确表示
-```
-在 [2^53,2^54) 内，相邻 double 的间距是 2，因此只能精确表示偶数整数    
-如果不考虑精度的 IEEE 754 double，能表示的最大 有限数 是：  
-- 有效数字略小于2  
-- 指数部分有11位，其中一个符号位，最大指数是1023  
-理论最大应该小于2^1024 = 1.79769313 x 10^308  
-
 ## Burst:最大化利用单次指令
 是在传输/片上互连协议(如 AXI、PCIe、DDR、UCIe 等)中的标准术语，  
 意思是该接口是否允许在单条读写命令下，自动连续传输多个数据块(Beats)。  
@@ -268,4 +170,6 @@ x = 15.9545897702
 比如64KB数据和8B beat，最多发64KB/8=8K transaction  
 如果burst len=7(8个beat)， 则transaction数量为1k  
 
+# 计算练习
+[Calculation](https://github.com/gpuwangge/Wiki/blob/main/documents/Calculation.md)  
 

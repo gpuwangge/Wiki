@@ -92,6 +92,6 @@
 [C Features](https://github.com/gpuwangge/Wiki/blob/main/documents/CFeatures.md)   
 [IC Design Flow](https://github.com/gpuwangge/Wiki/blob/main/documents/ICDesignFlow.md)   
 [Parallel Computing](https://github.com/gpuwangge/Wiki/blob/main/documents/ParallelComputing.md)  
-
+[Calculation](https://github.com/gpuwangge/Wiki/blob/main/documents/Calculation.md)  
 
 

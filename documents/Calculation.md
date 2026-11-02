@@ -1,11 +1,12 @@
-# 1 矩阵乘法中的 Workgroup、Invocation 和 Warp计算
+# 1 矩阵乘法中的 Workgroup、Invocation 和 Subgroup(Warp)计算
 
 本文使用两个简单例子说明：
 
 - 如何估算 GEMM 的 FMA 和 FLOP 数
-- Host 端如何设置 `vkCmdDispatch`
-- Device 端如何设置 compute shader 的 `local_size`
-- 如何计算 invocation 和 warp 数
+- Host 端如何设置 `vkCmdDispatch` (workgroup number)
+- Device 端如何设置 compute shader 的 `local_size` (workgroup size，同一个wg share memory)  
+workgroup size是有限制的，一般小于1024。因此实际上要先确定wg size，再确定wg number。  
+- 如何计算 invocation 和 subgroup(warp) 数 (warp视角)
 
 假设使用最简单的映射：
 
@@ -483,7 +484,7 @@ CPU 和 Memory 之间有一个 FIFO：
 
 
 # 3 Latency相关计算
-## 练习题1
+## 练习题3-1
 某存储器接口每个 Beat(数据节拍)传输 8 Bytes(64-bit 总线)，主频与数据频率均为 2 GHz。发读命令至第一笔数据返回的延迟为 400 ns。读取 64 KB 数据时：  
 1. 该读操作的 Latency 为多少？
 2. 在等待 Latency 期间，内存控制器最多可维持多少个 Outstanding Requests？
@@ -495,12 +496,14 @@ CPU 和 Memory 之间有一个 FIFO：
 单次transaction传输时间 = 1/f = 1/2G=0.5ns  
 全部传输完成需要时间为 8K * 0.5ns = 4096ns  
 所以所有数据的读操作总耗时4496ns  
+另一种思路(不需要transaction概念)：带宽 = 8B x 2G = 16GB/s = 16B/ns
+读64KB数据需要4K ns，加上首笔数据返回的400ns，总耗时4496ns。
 
 2. 最大 Outstanding Requests 无法由现有条件确定。800 只有在“一周期发一个独立请求”等额外假设下才成立；一个 Beat 不能直接等同于一个 Request。  
 Max Outstanding = 400 ns / 0.5 ns per-issue = 800 个并发请求
 
 
-## 练习题2
+## 练习题3-2
 Latency / Bandwidth / Transfer Time 联动(进阶)  
 
 内存控制器参数:  
@@ -518,12 +521,13 @@ Transfer有8 beats，则Transaction transfer time = 8ns
 读取64KB数据，Transaction数量 = 64KB/64B=1K  
 每个Transaction transer time = 8ns, 总传输时间为1k*8ns=8192ns  
 因为latency=400ns，总耗时400+8192=8592ns  
+另一个思路(不考虑Transaction): 带宽8GB/s=8B/ns。读取64KB的时间为64KB/8B=8K ns。8K+400=8592ns  
 
 3. 首先Latency=400ns，一个transaction transer time要8ns完成；也就是说第一个transaction发出第一个beat算起，要408ns。  
 题目问的是outstanding transaction而不是outstanding request，所以  
 最少需要408/8=51个outstanding transaction  
 
-## 练习题3
+## 练习题3-3
 A system has a 32-bit register.  
 The register is set to 0. The register increments by a constant value every clock cycle. The clock frequency is 1 GHz.  
 For questions 1-3 provide the formula and a numeric answer (not an estimate).  

@@ -286,3 +286,171 @@ Solar Bay 没有独立 CPU test，但不意味着不会 CPU-bound。
 - [Solar Bay graphics test](https://support.benchmarks.ul.com/support/solutions/articles/44002466575-solar-bay-graphics-test)
 - [Solar Bay engine](https://support.benchmarks.ul.com/support/solutions/articles/44002466580-solar-bay-engine)
 - [Solar Bay Extreme 发布](https://benchmarks.ul.com/news/3dmark-solar-bay-extreme-is-available-now-)
+
+# UL Solutions和3D Mark
+UL： 一家提供安全科学、测试、认证和性能评估服务的公司。  
+UL Solutions： UL 在2022年重组后使用的企业名称。  
+3DMark： 专门用于测试 PC、笔记本电脑和移动设备图形性能的 Benchmark 软件。  
+3DMark 最初由 Futuremark 开发，后来 Futuremark 被 UL 收购，因此现在由 UL Solutions 运营。  
+
+## 一、UL 公司简介
+
+- **全称**：UL Solutions Inc.，纽交所代码 ULS，总部在美国伊利诺伊州 Northbrook（[LinkedIn](https://www.linkedin.com/company/ulsolutions)）。
+- **历史**：前身是 1894 年 William Henry Merrill 在芝加哥创办的 Underwriters' Electrical Bureau，20 世纪一直叫 Underwriters Laboratories（[Wikipedia](https://en.wikipedia.org/wiki/UL_(safety_organization))）。2024 年 4 月 IPO 上市（[Wikipedia](https://en.wikipedia.org/wiki/UL_(safety_organization))）。
+- **主业**：测试、检验和认证（TIC），以及软件和咨询服务，客户遍布 110 多个国家。常见电器上的 "UL" 认证标志就是它的（[Nasdaq IPO 资料](https://www.nasdaq.com/market-activity/ipos/overview?dealId=1276415-108248)）。
+- **和 3DMark 的关系**：3DMark、PCMark 原本是芬兰公司 Futuremark 的产品。[UL 收购了 Futuremark](https://www.ul.com/news/press-releases?dcr=ul-signals-strategic-expansion-into-performance-benchmarking-services-with-futuremark-acquisition)，之后 Futuremark 品牌[迁入 UL 旗下](https://benchmarks.ul.com/en-sc/news/futuremark-rebranding-to-ul-april-23)。现在由 UL Solutions 的 Benchmarks 部门维护 3DMark、PCMark、Procyon（AI 推理）等产品。
+
+## 二、当前主要的 3DMark GPU Benchmark
+
+| Benchmark | 定位 | API / 平台 | 分辨率 | 光追 | RT 实现方式 | 渲染类型 |
+|---|---|---|---|---|---|---|
+| Steel Nomad | 高端 PC，非光追（Time Spy 的继任者）（[UL](https://benchmarks.ul.com/news/introducing-3dmark-steel-nomad-the-successor-to-3dmark-time-spy)） | DX12 / Vulkan / Metal，跨平台 | 4K（[Tom's Hardware](https://www.tomshardware.com/pc-components/gpus/3dmarks-time-spy-successor-steel-nomad-makes-nvidias-rtx-4090-work-hard-without-ray-tracing)） | 否 | — | 纯光栅 |
+| Steel Nomad Light（SNL） | 手机、平板、轻薄本，非光追（[UL](https://support.benchmarks.ul.com/support/solutions/articles/44002528070-overview-of-steel-nomad-light)） | DX12 FL12 / Vulkan 1.1 / Metal；Windows、WoA、Android、iOS、macOS | 2560×1440 | 否 | — | 纯光栅 |
+| Solar Bay | 跨平台中等负载光追（[UL](https://support.benchmarks.ul.com/support/solutions/articles/44002466573-overview-of-3dmark-solar-bay-benchmark)） | Windows：Vulkan；Android：Vulkan；iOS/macOS：Metal | — | 是 | Windows 用 ray pipeline，Android 用 ray query，Apple 平台用 Metal | 混合：光栅 + 光追反射 |
+| Port Royal | 最早的 DXR 光追 benchmark（[UL](https://benchmarks.ul.com/3dmark)） | DX12 DXR，只有 Windows | — | 是 | ray pipeline（raygen / hit / any-hit）（[Technical Guide](https://s3.amazonaws.com/download-aws.futuremark.com/3dmark-technical-guide.pdf)） | 混合：光栅 G-buffer + 光追反射、硬阴影 |
+| Speed Way | 高端 PC，DX12 Ultimate（[UL](https://benchmarks.ul.com/3dmark)） | DX12 Ultimate，DXR Tier 1.1，只有 Windows | 2560×1440 | 是 | ray pipeline 加 ray query：玻璃反射在 pixel shader 里用 ray query（[UL](https://support.benchmarks.ul.com/support/solutions/articles/44002378662-speed-way-engine)） | 混合：mesh shader 光栅 + 光追反射 + lightmap 空间 path-traced GI |
+| DXR feature test | 测峰值光线遍历性能（[Technical Guide](https://s3.amazonaws.com/download-aws.futuremark.com/3dmark-technical-guide.pdf)） | DX12，DXR Tier 1.1 | — | 是 | 在 compute shader 里追光线，推断是 inline（`TraceRayInline`），官方没有明说 | 纯光追：不用光栅，只追 primary ray |
+
+### 补充说明
+
+- **Port Royal**：反射 pass 只给粗糙度低于阈值的像素发反射光线。hit shader 只写击中信息，先查 cubemap 缓存，查不到才重新着色。阴影在 async compute 队列上跑，每个像素发一条 shadow ray，用 any-hit 判断遮挡（[Technical Guide](https://s3.amazonaws.com/download-aws.futuremark.com/3dmark-technical-guide.pdf)）。
+- **Speed Way**：完全不依赖预计算光照。漫反射 GI 在 lightmap 纹理空间里每帧用 path tracing 算一次反弹，并用 SH 编码。直接光照是 compute shader 里的延迟渲染，AO 用屏幕空间方法（[UL](https://support.benchmarks.ul.com/support/solutions/articles/44002378662-speed-way-engine)）。
+- **Solar Bay**：Android 端要求设备支持 Vulkan 1.1 ray query（[Google Play](https://play.google.com/store/apps/details?id=com.futuremark.dmandroid.application&hl=en)）。所以不同平台的分数测的不是同一条 RT 路径。
+- **按负载对照**：很重：Speed Way（光追）/ Steel Nomad（非光追）；重：Port Royal；中：Solar Bay（光追）/ Steel Nomad Light（非光追）；轻：Wild Life Extreme（[TechSpot](https://www.techspot.com/downloads/5775-3dmark.html)）。
+
+### 选测试的建议
+
+| 想测什么 | 推荐测试 |
+|---|---|
+| RT core traversal 吞吐 | DXR feature test（只有 primary ray，几乎没有着色开销） |
+| hit shader 调度、SBT 等 pipeline 开销 | Port Royal、Speed Way |
+| 移动端 ray query 性能 | Android 上的 Solar Bay |
+| 跨架构的纯光栅性能 | Steel Nomad / Steel Nomad Light |
+
+## 三、下一代全路径追踪 3DMark Benchmark 计划
+
+### 已公开的信息（截至11/05/2026）
+
+| 项目 | 内容 |
+|---|---|
+| 公布时间 | 2026-06-03（[UL 公告](https://benchmarks.ul.com/en/news/announcing-our-next-generation-3dmark-gpu-benchmark-and-its-first-sponsor)） |
+| 渲染方式 | fully path-traced，全路径追踪 |
+| 分辨率 | 有 4K 原生模式 |
+| 超分 / 帧生成 | 可以选不同厂商的 AI 超分和帧生成，横向比较各家方案 |
+| 赞助商 | Thermal Grizzly（第一个），Seasonic（2026-07-24 加入，[UL 公告](https://benchmarks.ul.com/news/seasonic-joins-as-a-sponsor-of-the-next-3dmark-gpu-benchmark)） |
+| 首次亮相 | Computex 2026，在 Thermal Grizzly 展台放了短 demo，之后发布了预告片（[Lowyat](https://www.lowyat.net/2026/395420/ul-releases-next-gen-path-tracing-3dmark-test-teaser/)） |
+| 名称 / 发布日期 | 都还没公布 |
+
+### 媒体报道（未经官方确认）
+
+- 有媒体称它会支持 NVIDIA DLSS 4.5 和 AMD FSR 4.1（[GameGPU](https://en.gamegpu.com/news/zhelezo/novyj-3dmark-poluchit-trassirovku-puti-i-nativnoe-razreshenie-4k)）。UL 官方公告只说"支持多家厂商的方案"，没有写具体版本。
+
+### 尚未公开的技术细节
+
+- 图形 API：DX12 还是 Vulkan，会不会跨平台。
+- RT 实现：ray pipeline 还是 ray query，有没有 SER（Shader Execution Reordering）、opacity micromap 等特性。
+- 降噪方案：传统时空降噪，还是 AI 降噪（ray reconstruction 一类）。
+- 按以往惯例，这些会在发布时写进 3DMark Technical Guide。
+
+### 意义
+
+- 现有的 Port Royal、Speed Way、Solar Bay 都是光栅加光追的混合渲染，测的是"光追只占一部分负载"时的性能。
+- 全路径追踪会把瓶颈推到 traversal 吞吐、shader divergence、显存带宽和降噪上，更接近现在游戏开 path tracing 模式时的负载。
+- 再加上超分和帧生成，它很可能成为对比下一代 RT 硬件和各家 AI 渲染方案的主力测试。
+
+
+# 游戏自带Benchmark
+| Benchmark                 | 光追内容                                                                                         | 特点                                                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Quake II RTX              | 全路径追踪                                                                                        | Vulkan 下能切换 VK_KHR_ray_tracing_pipeline 和 VK_KHR_ray_query，Phoronix 的测试也把两者分开测（OpenBenchmarkingopenbenchmarking） |
+| 《黑神话：悟空》Benchmark Tool    | Full Ray Tracing（路径追踪）：Low 是半分辨率 ReSTIR GI 加 RT 阴影，Very High 再加全分辨率反射和焦散（DSOGamingdsogaming） | Steam 上免费下载，独立于游戏本体（Steamstore.steampowered）                                                                     |
+| 《赛博朋克 2077》RT Overdrive 等 | 路径追踪                                                                                         | 媒体评测最常用，悟空的 Full RT 就常被拿来和它比（HotHardwarehothardware）                                                             |
+
+为什么手机光追都走 ray query
+- ray query 可以直接在 fragment shader 或 compute shader 里发光线，不需要完整的 ray pipeline 和 SBT。这样省带宽也省功耗，更适合移动端的预算（Android Developers）。所以手机上测的是"混合渲染加少量光线"这种场景，和 PC 上的全路径追踪测试不能直接对比。
+
+手游上的光追例子  
+| 游戏                     | 光追用在哪     | 实现方式                                                                                    |
+| ---------------------- | --------- | --------------------------------------------------------------------------------------- |
+| 《暗黑破坏神：不朽》             | 实时反射      | Vulkan 硬件光追。Google 的案例文章特别强调 ray query 是移动端光追的核心技术（Android Developersdeveloper.android） |
+| 《暗区突围》（Arena Breakout） | 反射、AO、软阴影 | Vulkan ray query（Lost on Arrivallost-on-arrival）                                        |
+| War Thunder Mobile     | 阴影        | 硬件光追，Snapdragon 机型上可以开（Lost on Arrivallost-on-arrival）                                  |
+
+
+# 离线渲染器Benchmark
+这类渲染器的工作方式是：每个像素累积成百上千个采样，直到画面噪点收敛到可以接受。一帧要几秒到几分钟甚至几小时。  
+实时光追则是每像素只追 1 条左右的光线，再靠降噪把噪点压下去，两者的目标不一样。  
+
+| Benchmark                     | 开发方         | 光追后端                                                                                              | 计分方式                                  |
+| ----------------------------- | ----------- | ------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Blender Benchmark / Open Data | Blender 基金会 | Cycles：NVIDIA 用 OptiX，AMD 用 HIP RT，Intel 用 oneAPI，Apple 用 MetalRT，都调用硬件光追（Blender 手册docs.blender） | 每分钟渲染的采样数，有公开数据库，按后端分开统计pixelrankings |
+| V-Ray 6 Benchmark             | Chaos       | 同一场景可以切换 RTX 和 CUDA 模式（Chaoschaos）                                                                | 两种模式的分数不能直接比（iRenderirendering）       |
+| OctaneBench                   | OTOY        | RTX 加速可开可关                                                                                        | 以 GTX 980 为 100 分做基准（OTOYrender.otoy） |
+
+为什么手机上一般不用离线渲染器 benchmark
+- 算力和功耗差两个数量级。 手机 GPU 只有几瓦的功耗预算，持续高负载还会因为过热降频。桌面卡动辄几百瓦，渲染农场还会一台机器插 8 张卡。
+- 显存装不下场景。 离线渲染的场景经常有几 GB 到几十 GB，几何和 BVH 通常必须整个放进显存。手机分给单个 app 的内存很有限。有 iPad 用户反映，Octane X 在大多数只有 2 到 4 GB 内存的 iPad 上根本跑不顺（Nomad Sculpt 论坛）。
+- 软件生态不支持。 这几个渲染器的 GPU 后端都是 CUDA/OptiX、HIP、oneAPI 或 Metal。Android 上只有 Vulkan，它们都没有 Vulkan 后端，Blender 本身也不出 Android 和 iOS 版。
+- 移动端的光追是为实时游戏设计的。 Android 上的光追主要通过 Vulkan ray query 暴露，3DMark Solar Bay 就要求设备支持 Vulkan 1.1 ray query（Google Play）。它的设计目标是混合渲染里少量光线、配合降噪，不是大批量的离线采样。
+- 使用场景不同。 离线渲染是做影视和设计时的生产工具，手机用户真正需要的是实时游戏的光追效果，所以手机上的光追测试都是 Solar Bay 这种实时混合渲染 benchmark。
+
+# Evolve和分项Benchmark
+Evolve 是荷兰 Traverse Research 做的跨平台 GPU benchmark，对比的话可以这样概括：Solar Bay 给出一个"光追游戏性能"总分，Evolve 则把 GPU 的每类负载拆开计分，更接近一个分析工具。  
+
+Evolve 是什么  
+- 开发方：荷兰布雷达的 Traverse Research，2025 年 3 月发布（Evolve 新闻稿）。Android Authority 介绍的创始人是 Jasper Bekkers（Android Authority）。  
+- 平台：Windows 和 Android，都要求 GPU 支持硬件光追（Evolve 官网、Microsoft Store）。  
+- 引擎：自研的 Breda renderer，从一开始就围绕硬件光追设计（Evolve）。  
+- 价格：免费版可以直接跑。专业版能导出图表和全部原始数据，价格没公开（Android Authority）。  
+- "evolutionary benchmarking"：会持续加入新技术，不是一个固定不变的测试。比如 1.0.9 版默认打开了 AS compaction，这会改变 Acceleration Structure 分数（Evolve release notes）。所以不同版本的分数不能直接比。  
+
+七项分数
+| 分数                     | 测什么                                                                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------------------- |
+| Ray Tracing            | 所有硬件光追 pass，细分为 ReSTIR DI、GI tracing、反射、阴影、透明/折射、水面、Wavefront Pathtracing                           |
+| Acceleration Structure | GPU 端的 BLAS/TLAS build 和 BLAS refit                                                                 |
+| Rasterization          | 硬件光栅器                                                                                               |
+| Compute                | GPU compute 负载                                                                                      |
+| Driver                 | CPU 端的驱动开销，目前主要是创建和更新 AS                                                                            |
+| Energy                 | 通过 Android Power Stats HAL 读真实功耗。厂商不开放这个接口的机型就不出这项分，不会用电池 API 估算（Android Authorityandroidauthority） |
+| Workgraphs             | DX12 work graphs，只在路径追踪模式下出分                                                                        |
+
+- Mode：可以选 inline（ray query）或 pipeline，而且能按每个 render pass 分别设置（Evolve FAQ）。
+- Renderer：可以选 Hybrid（混合渲染）或 Path Tracing（纯路径追踪，只跑 Wavefront Pathtracing 这一个 pass）（Technical Guide）。
+- 官方实测：所有光追算法都分别用 inline 和 pipeline 实现了一遍。在 RTX 5070 Ti 和 Arc B580 上两者分数差不多，在 RX 9070 XT 上 pipeline 明显更快（Evolve 博客）。
+
+手机实测数据
+- Android Authority 用 Evolve 测了几款旗舰芯片（Android Authority）：
+- Adreno 840 对比 Mali G1：光追快 27%，光栅快 40%，compute 领先 46%。
+- Adreno 840 对比 Adreno 830：光追快 85%。
+- Adreno 840 每帧 GPU 时间分布：光追 27.7%，光栅 17%，compute 45.7%。
+- Mali-G925：每帧超过 50% 的时间耗在光追上，说明它的 RT 硬件是瓶颈。
+
+## Evolve 和 Solar Bay 对比
+相同点
+- 都是游戏风格的实时光追 benchmark，都包含混合渲染（光栅加光追效果）。
+- 都跨 Windows 和 Android，Android 端都走 Vulkan 光追。
+- 都是免费版加付费专业版的模式，也都有在线排行榜。
+
+不同点
+| 维度                   | Solar Bay                                                             | Evolve                                           |
+| -------------------- | --------------------------------------------------------------------- | ------------------------------------------------ |
+| 开发方                  | UL（3DMark）                                                            | Traverse Research                                |
+| 平台                   | Windows、Android、iOS、macOS                                             | Windows、Android，不支持 Apple 平台                     |
+| API                  | Vulkan、Metal                                                          | Vulkan、DX12（DXR）                                 |
+| ray query / pipeline | 由平台固定：Windows 用 pipeline，Android 用 ray query（ULsupport.benchmarks.ul） | 用户可以选，而且能按每个 pass 设置                             |
+| 渲染模式                 | 只有混合渲染，光追主要用在反射上                                                      | 混合渲染或纯路径追踪，两种都有                                  |
+| 光追效果                 | 主要是反射，分三段，光追负载逐段加大（Google Play）                                       | ReSTIR DI、GI、反射、阴影、折射、水面                         |
+| 输出                   | 一个总分，加上稳定性测试                                                          | 七项分数，加上每个 pass 的 GPU 时间和功耗                       |
+| AS build 是否单独计分      | 不单独计分                                                                 | 单独计分（BLAS/TLAS build、refit），CPU 端开销另算在 Driver 分里 |
+| 功耗                   | 不测                                                                    | 读真实功耗                                            |
+| 版本稳定性                | 版本固定，分数长期可比                                                           | 会持续更新技术，跨版本分数不一定可比                               |
+| 业界地位                 | 媒体和厂商的标准对比项                                                           | 比较新，适合深入分析                                       |
+
+怎么选
+- 想要一个大家都认的"手机光追分"：用 Solar Bay。数据库最大，媒体评测也最常引用。
+- 想知道瓶颈在哪：用 Evolve。它能拆开看是 BVH 构建、traversal 还是 shading 慢，还能在同一台设备上直接对比 inline 和 pipeline。这和你在 LuminError 里做 Ray Query 和 ray pipeline 对比的思路很接近。
+
+
+
+

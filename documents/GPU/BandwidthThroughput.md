@@ -1,3 +1,12 @@
+## Keynotes
+- Bandwith：最大可传输数据(GB/s)
+- Throughput：实际传输数据(GB/s)
+- 以上概念也可以离散指指令/数据包/任务，这时候的单位可以是GFLOPS/s
+- Latency: 从发出一个动作/输入，到收到有效相应/输出之间经历的时间(ns)
+- Outstanding Request: 从发起端发出，但尚未收到从设备返回对应响应的请求事务
+- 比如：latency=200ns，频率=0.5GHz，那么 outstanding request = 100
+- N-size burst: 一条指令发送N个beats
+
 
 ## Bandwidth（带宽） vs. Throughput（吞吐量）
 在 GPU 架构设计中，**Bandwidth（带宽）** 和 **Throughput（吞吐量）** 是两个核心但截然不同的性能指标。简单来说：**带宽决定了数据搬运的“车道宽窄与车速”，而吞吐量决定了单位时间内实际完成的“有效工作量”。**

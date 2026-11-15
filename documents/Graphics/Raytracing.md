@@ -99,6 +99,31 @@ Material 参数是描述材质的输入；BRDF LUT 则存储预计算的反射�
 
 BRDF模型描述了Ray Tracing中直接光照的部分，但无法描述间接光照。间接光照需要使用Path Tracing算法。Path Tracing算法基于Monte Carlo 积分来模拟光线的路径。  
 
+4. 一些相关信息
+brdf模型是解决着色模型的，跟光追没有必然联系。  
+
+光追的基础模型是渲染方程，内含brdf积分。  
+
+whitted style光追模型是最简单的光追模型之一，因为不用积分，其diffuse部分是lambert模型。  
+
+blinn phong模型里面的diffuse项也是lambert模型。  
+
+any-hit shader的alpha test（硬遮罩）alpha和阈值比，要么忽略，要么接受。  
+
+any-hit处理半透明的流程（软透明，我未实现）：  
+使用一个全局内存（storage buffer）存这个hit的albedo和t(用于排序)等信息。(不是payload)  
+之后，在closest shader里面把全局内存里的所有hit信息拉出来,先做排序，再做blend。  
+
+关于环境光遮蔽（ambient occulution）：rt里面因为使用二次光线，自然会出现环境光遮蔽。在rasrerization里，使用烘焙或ssao等方式实现ao，开销也不大，效果也不错。  
+
+Solar Bay 和 Solar Bay Extreme 采用混合渲染，通过光线追踪实现反射等效果，而非完整路径追踪；部分反射处理可宽泛类比为 Whitted-style。其漫反射是否统一采用 Lambert，公开资料尚不足以确认。  
+
+有没有其他光追benchmark是有光追diffuse，比如path tracing的？有。最明确、而且源码可查的例子是 Blender Benchmark：它用 Cycles 做 path tracing，能够追踪 diffuse bounce，计算漫反射间接光，而不仅仅是光追反射或阴影。  
+
+为什么graphics pipeline里面的MVP是4x4，而rt instance的transform matrix是3x4  
+回答：因为rt instance的transform matrix不需要做透视变换(perspective transform)  
+
+
 # 为什么Path Tracing用monte carlo积分而不是普通积分
 因为光追的rendering equation维度大，不连续  
 普通积分追求精确，无法解  
@@ -151,6 +176,8 @@ TLAS
  └─ Instance C → BLAS(mesh A)  // 可复用同一个 BLAS
 ```
 BLAS 构建完成到 TLAS 构建之间，以及 TLAS 构建完成到 shader 查询之间，都要建立正确的同步依赖  
+因为instance不做projective transform，所以他只需要一个3x4矩阵。  
+（顺便说一句，光追发射的primary ray的起点是摄像机原点指向某一个像素，它成的像本身就是近大远小，所以不需要projective transform）  
 4. 将 TLAS 绑定给 shader
 在 descriptor set 中添加：VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR  
 通过 VkWriteDescriptorSetAccelerationStructureKHR 写入 TLAS。  

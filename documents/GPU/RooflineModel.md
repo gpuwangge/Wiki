@@ -1,3 +1,10 @@
+# Keynotes
+- x轴：计算强度，Flop/B
+- y轴：算力，Flop/s
+- 斜率(Slope)：带宽，B/s
+- 拐点(Critical Intensity)：也叫临界计算强度点=峰值算力/硬件最大带宽
+
+
 # Roofline Model（屋顶模型）
 
 **Roofline Model** 是一种直观且强大的性能评估与分析模型，由 Samuel Williams 等人在 2009 年提出。它主要用于评估计算机体系结构（如 CPU、GPU、TPU 等）上给定内核或算法的性能上限，并指导代码优化方向。

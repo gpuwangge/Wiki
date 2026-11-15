@@ -13,6 +13,7 @@ Vulkan                    NVIDIA / CUDA          OpenCL
     └── subgroup              └── warp               └── sub-group
         └── invocation            └── thread             └── work-item
 ```
+这里要注意的是，subgroup/warp这一层对API是透明的。  
 
 # Vulkan Compute Shader
 

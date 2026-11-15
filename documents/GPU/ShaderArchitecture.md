@@ -1,3 +1,33 @@
+# Keynotes
+- 名称：Shader Core(ARM), SM(NVidia), SP(Qualcomm), USC(Imaginatgion)
+- Shader Core核心组件：  
+```
+ALU(+RT/Tensor Core)   
+Warp Scheduler   
+Register Files   
+Shared Local Memory   
+L1 Cache   
+SFU(sin/cos/sqft)   
+LD/ST Unit   
+Texture Unit  
+```
+- Shader Core执行模型：SIMT(Workgroup number/size, 每个workgroup被分配到一个Shader Core(一个Shader Core可以驻留和处理多个workgroup), invocation, subgroup也就是warp（一个workgroup可以包括1~N个subgroup）)；  
+当某个warp运行的时候碰到高延迟操作的时候，warp scheduler立即调度到另一个准备就绪的warp继续执行，实现ALU始终满载，达到Hide Latency的目的。
+workgroup通常会限制住最大thread(invocation),而warp宽度知道的话，warp上限数量就能知道  
+- Shader Core Bottleneck：Warp Divergence(if-else)  
+Warp Occupancy(register, slm) ，算occupancy的时候是基于Warp的，具体数字的计算基于木桶原理  
+同一Warp访问同一个Memory Bank引发Bank Conflicte。
+- Warp schedular调度方式：Round-Robin; Greedy-Then-Oldest; Priority
+- Shader Core实用分析框架：  
+1. ALU-bound、texture-bound，还是 bandwidth-bound  
+2. 分析 Dependency Chain即使 ALU 很多，也不代表 GPU 能把 ALU 喂满
+3. 分析 Divergence
+4. 分析 Occupancy：每 Invocation 的 Register / Local Storage.   
+5. Warp Lane / Pixel 的空间局部性。这对 Texture 和 Memory 非常重要
+6. Early-Z / Tile Memory / Fixed Function  
+- Compute Pipeline的相关讨论(因为Compute Pipeline基本上只会用到Shader Core)：跟Graphics相比阶段少，灵活度高。  
+Resource Binding，Dispatch，Syncronization(Barrier, Fence, Semaphore)。Coalesced Memory Access保证相邻线程访问连续的显存地址，最大化利用显存带宽。
+
 # SIMT and SIMD
 | 概念 | 全称 | 视角 | 核心含义 |
 |---|---|---|---|

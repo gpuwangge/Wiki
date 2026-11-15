@@ -1,3 +1,22 @@
+# Keynotes
+- CPU组件
+```
+CPU Core: 处理指令。跟GPU相比Core数量少，适合复杂逻辑。注重低延迟(GPU注重吞吐量)
+Memory
+Cache
+NoC
+I/O, PCIe
+Power/Clock
+```
+- CPU核心(Core)组件
+```
+- ALU(数量相比GPU的ALU少很多，而且GPU有RT/Tensor等专用加速单元)
+- Control，比如分支预测，指令流水线，译码器，有做向量指令的AVX单元，可以做SIMD（GPU没有Control，对应AVX的就是SIMT的Warp Schedular是高度精简的）
+- Cache(比GPU Cache容量大？)
+- Register(比GPU少很多)
+```
+- CPU指令处理五级模型：IF,ID,EX,MEM(L/S),WB
+
 # 当我们谈到CPU Architecture时，我们在谈论什么？
 ## CPU Core
 目的：把指令执行拆成多个阶段，让多条指令重叠执行，提高吞吐量；不代表单条指令更快。  

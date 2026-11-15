@@ -1,3 +1,75 @@
+# Keynotes
+## 物理层
+- Partition：把4MB的cache分成4个1MB的cache slice，可以分散放置，降低传输速度。
+- Slice说是宏观概念，每个slice里面又分为多个Bank。Bank是物理概念。
+- Interleave: 有一个名字叫memory interleave的硬件，负责让连续的地址访问落到不同的Bank上，实现隐藏延迟(hide latency)，提高并行带宽的目的。
+- 如果多个访问呢落到同一个bank，称为bank conflict。会导致access serialization，降低并行度。
+- Arbiter：管理多个请求者对共享资源(总线，存储体)的竞争访问
+
+## 逻辑层(Set Associative)
+- Cacheline：基本cache单元。有时又叫一个cacheslot。
+- Cache Set：由很多个cacheline组成的集合。每个Cache Set又分为好几路(Cache Way)  
+
+通常把Cache画成图的话，每一行代表一个Set，每一列代表一个Way。  
+总Cacheline数量 = Set数量 * Way数量。  
+
+- Cache address的结构：
+
+| Tag (標籤) | Index (組索引) | Offset (页內偏移) |
+|---|---|---|
+| 用來比對是否命中 | 決定去哪個 Set (組) | 決定在 Line 內哪 Byte，一般是12位 |
+
+比如骁龙8EE6 TLB是1024组x4路=4096项(cacheline，这里每一项存储的就是物理页号)。  
+1024组set需要10位存储。找到set之后用tag(42位=64-12页号-10组号)比对出是哪一路way。  
+找到物理页号之后，再拼上页内偏移Offset，就获得了物理地址。 
+
+- CPU读取Cache数据的逻辑顺序：  
+
+| 步骤 | 使用的地址栏位 | 硬体动作 |
+|---|---|---|
+| 1 | Index | 找到数据在哪个 Cache Set |
+| 2 | Tag | 从该 Set 的所有 Way 读出 Tag，并与地址 Tag 并行比对 |
+| 3 | Hit Signal | 多工器（MUX）选通命中的 Way 的数据，确认命中后才开启数据通路 |
+| 4 | Offset | 透过移位器／多工器选取 Line 内的特定 byte |
+
+- Direct-mapped Cache其实就是每个Set的Way数为1的Cache。(很容易产生conflict miss)  
+- Conflict Miss：因为Memory size远大于Cache size，所以多个内存地址可能被映射到同一个cache set(表现为有相同的cache set index)。cache set里面way的数量越多，就越容易处理多个内存地址。但如果内存映射数量超过了way的数量，就会产生conflict miss。  
+- 当Conflict Miss发生的时候(由于没有足够的way)，必然发生Cache Eviction，即把cache line从cache中移除,并更新cache line。  
+- 常见的替换策略（Eviction Policies）  
+决定“哪一条数据该被逐出”由硬件/软件的算法控制  
+FIFO (First-In, First-Out)： 最简单  
+LRU (Least Recently Used)： 最常用，逐出最近最少使用的数据，假设越久没用过的未来越不可能用  
+LFU (Least Frequently Used)： 逐出使用频率最低的数据。  
+Random（随机）： 随机挑选一条数据逐出，实现成本低，常用于某些硬件硬件简化的缓存结构。  
+- Cache Coherency  
+缓存一致性消息（Cache Coherency）：保证不同缓存中同一份数据完全一致  
+举例：  
+在多核系统（例如 GPU 的多个 L2 Cache Slice 或 Shader Core）中，主存（DDR）中的同一个内存地址 A 可能会同时被复制并缓存到多个核心的私有/局部 Cache 中：
+
+Core 0 读取了地址 A（值 = 10），并在本地缓存。  
+Core 1 也读取了地址 A（值 = 10），并在本地缓存。  
+Core 0 将地址 A 修改为 20。此时，Core 0 的 Cache 里 A=20，但 Core 1 的 Cache 里依然是过期的旧值 10。  
+如果 Core 1 再次读取地址 A，就会读到脏数据（Stale Data）。  
+
+一致性协议保证大家看到的是同一个最新值。常见做法有两种：一种是改数据时通知别人作废旧副本（invalidate），另一种是有个"登记处"（directory/snoop filter）记录谁手里有这份数据。  
+
+- Write-back：先只写 Cache，等这个 cache line 被 eviction 时，再写回 Memory。
+- Write-through：写 Cache 的同时，立即写 Memory。
+
+- MESI协议(Modified, Exclusive(Dirty), Shared, Invalid)  
+假设 x = 0，两个核心最初都没有它所在 cache line 的有效副本：  
+
+| 步骤             | Core 0 Cache | Core 1 Cache | 发生了什么                          |
+| -------------- | ---------- | ---------- | ------------------------------ |
+| 初始             | I          | I          | 都没有有效副本                        |
+| Core 0 读 x     | E          | I          | 只有 Core 0 缓存了它，且数据是干净的         |
+| Core 1 也读 x    | S          | S          | 两边都持有可读的共享副本                   |
+| Core 0 写 x = 1 | M          | I          | Core 0 取得独占写权限，Core 1 的副本被置为无效 |
+| Core 1 再读 x    | S          | S          | 获取最新的 1；Core 0 提供最新数据并降级为共享    |
+
+- 这也解释了 false sharing：即使两个线程写的是不同变量，只要变量位于同一条 cache line，仍然会争夺这条 line 的写权限。  
+
+
 # Cache的结构
 Cache的结构分为物理层和逻辑层  
 逻辑层：CPU/GPU是如何寻找cache数据的  
@@ -311,6 +383,9 @@ Dirty / Clean 状态处理：
 对系统与性能建模的影响
 - 总线带宽开销（Control Overhead）： 一致性消息本身通常不包含完整的 64B/128B 用户数据，而是简短的控制命令包（Header/Address/State）。但在频繁进行跨核数据共享和并发写入时，这些消息会占用相当一部分片上网络（NoC）或总线带宽。
 - 性能模型剔除：这类计数器统计的就是与 Cache Coherency / Compute Unit 协议通信相关的非数据消息。在计算真正的有效数据传输带宽时，需要将这些一致性控制消息占用的流量剔除。
+
+可能的追问：GPU 一定要和 CPU 硬件一致吗？  
+回答：不一定。很多 GPU 只做单向一致（I/O coherent），也就是 GPU 能读到 CPU 缓存里的新数据，反过来则由软件负责刷新缓存（flush）。这样硬件更简单。  
 
 ## Cache Slice
 Cache Slice（缓存切片）：是现代 CPU 和 GPU 为了解决高并发访问冲突与布线拥堵（Routing Congestion），将一个原本庞大的集中式大缓存（通常是 L2 或 L3 Cache）在物理和逻辑上拆分成的多个平行、独立的工作单元。每个独立的切片就被称为一个 Cache Slice。  

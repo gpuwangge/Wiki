@@ -86,6 +86,13 @@ GPU Driver拆分UMD和KMD的动机
 - 移植性：UMD不需要处理硬件细节，所以容易移植到不同的硬件系统上。(因此，UMD和KMD一般独立升级和更新)  
 - 开发效率: UMD和KMD可以分别由不同的团队开发，前者专注API和应用程序；后者专注底层硬件交互和资源管理  
 
+# GPU Driver说的command serialization是什么意思
+command在gpu上执行的时候会并行，重叠。令其有序化，就是driver增加fence隔开这些command，让其执行完一段command之后，在启动其他command。  
+
+不要跟data serialization搞混，这个是说把内存里的数据转换为线性字节流。以便写入文件。  
+
+serialize access：指的是本来可以并发的操作强制为一次只执行一个。Cache里面也有serialization的情况，这是要靠cache bank避免的。  
+
 
 # Reference  
 https://blog.csdn.net/m0_51737348/article/details/122657090  

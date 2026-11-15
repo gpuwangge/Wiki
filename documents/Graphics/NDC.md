@@ -19,6 +19,13 @@ $$
 \text{Framebuffer Space}
 $$
 
+注意：
+MVP矩阵变换之后就到了Clip Space，这时候还是4D的。  
+要在4D空间裁剪，是因为之前近大远小投影之后，物体呈非线性状态，但三角形边还是直线；当除以W之后，三角形边就变成了曲线，裁剪就变得困难。  
+（虽然从最后结果来看，除以W之后的三角形边仍旧看起来是直线，但数学上不是）  
+从Clip Space到NDC是通过Projective Divide(也就是除以W)  
+从NDC到Framebuffer Space是同过Viewport Transform  
+
 ## NDC 的作用
 NDC 的主要目标是将不同的相机参数、投影矩阵和屏幕分辨率，统一到一个固定范围内。  
 无论窗口是 800×600、1920×1080，还是 4K，顶点在 NDC 中都遵循相同的范围约定。硬件只需将 NDC 坐标映射到当前 viewport，即可完成对任意分辨率的光栅化。  

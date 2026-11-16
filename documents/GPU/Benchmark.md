@@ -164,6 +164,13 @@ Compute 后处理
 
 Subpass 优化和 compute 后处理成本应分别测量，不能只看整帧 FPS 判断是哪一个起作用。
 
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/aztekhi_render_flow.png" alt="alt text">  
+</p> 
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/aztekhi_tile_renderpass.png" alt="alt text">  
+</p> 
+
 ### Solar Bay 帧结构
 
 | 模块 | 公开实现 | 分析重点 |

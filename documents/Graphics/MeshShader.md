@@ -9,6 +9,199 @@ Fragment Shader：接受精修过的三角形。
 
 mesh shader并不是全场景通用，而是适合特定场景。比如适合开放世界海量实体渲染。不适合简单场景。  
 
+# Mesh Shader计算举例(Vulkan)
+对于一个mesh shader example，host端调用vkCmdDrawMeshTasksEXT(cmd, 100, 1, 1);  
+taskshader: layout(local_size_x = 32) in;  
+meshshader: layout(local_size_x = 64) in;  
+问有多少个meshlet，task shader和mesh shader各执行多少次  
+
+| 项目                             | 数量                                         |
+| ------------------------------ | ------------------------------------------ |
+| Task shader workgroup          | 100                                        |
+| 每个 task workgroup 的 invocation | 32                                         |
+| Task shader 总 invocation       | 100×32=3200100 \\times 32 = 3200100×32=3200 |
+| Mesh shader workgroup          | 取决于 task shader 发射多少组                      |
+| 每个 mesh workgroup 的 invocation | 64                                         |
+
+假设每个 task workgroup 都执行
+```
+EmitMeshTasksEXT(1, 1, 1);
+```
+那么总共发射 100 个 mesh workgroup，mesh shader 总 invocation 为 100×64=6400。这里是每个 task workgroup 发射 1 个 mesh workgroup，不是其中 32 个 invocation 各自发射 1 个。  
+
+如果每个 task workgroup 都执行：  
+```
+EmitMeshTasksEXT(32, 1, 1);
+```
+那么总共发射 100×32=3200 个 mesh workgroup，mesh shader 总 invocation 为 3200×64=204800。若不同 task workgroup 发射数量不同，就把各组的发射数量相加。  
+
+Meshlet 数量与这些数字的关系  
+常见设计是一个 mesh workgroup 处理一个 meshlet，但这是程序的数据组织约定，不是 local_size_x = 64 自动规定的；64 表示组内有 64 个 invocation 协作，并不表示有 64 个 meshlet，也不直接规定顶点数。  
+所以，若采用“一组 mesh shader 处理一个 meshlet”的设计：  
+| Host 调用     | 每个 task workgroup 发射的 mesh 组数 | 本次处理的 meshlet |
+| ----------- | ----------------------------- | ------------- |
+| (100, 0, 0) | 任意                            | 0             |
+| (100, 1, 1) | 1                             | 100           |
+| (100, 1, 1) | 32                            | 3200          |
+后两行都需要相应的 task shader 发射逻辑，不能仅凭两个 local_size_x 推导出来。  
+
+结果可以整理成：
+| 项目                                            | 每个 task workgroup 发射 (1,1,1) | 每个 task workgroup 发射 (32,1,1) |
+| --------------------------------------------- | ---------------------------- | ----------------------------- |
+| Task workgroup 数                              | 100                          | 100                           |
+| 每个 task workgroup 的 invocation 数              | 32                           | 32                            |
+| Task 总 invocation 数                           | 3200                         | 3200                          |
+| Mesh workgroup 数                              | 100                          | 3200                          |
+| 每个 mesh workgroup 的 invocation 数              | 64                           | 64                            |
+| Mesh 总 invocation 数                           | 6400                         | 204800                        |
+| 处理的 meshlet 数（约定一 mesh workgroup 对应一 meshlet） | 100                          | 3200                          |
+解读：
+- 100 个 task workgroup，每个发射 (1,1,1) → 100 个 mesh workgroup。
+- 100 个 task workgroup，每个发射 (32,1,1) → 3200 个 mesh workgroup。
+
+Invocation 有什么用：
+| 层级                                | 工作职责示例                         |
+| --------------------------------- | ------------------------------ |
+| 一个 task workgroup，32 个 invocation | 32 个线程并行检查一批 meshlet，决定哪些需要绘制  |
+| 一个 mesh workgroup，64 个 invocation | 64 个线程协作处理一个 meshlet 的顶点、索引和图元 |
+
+## 举例1
+画一块 81 个顶点、128 个三角形的平面网格，把整个网格作为一个 meshlet。
+```
+// Task shader
+layout(local_size_x = 32) in;
+
+// Mesh shader
+layout(local_size_x = 64) in;
+```
+Host 只启动一个 task workgroup，每个 task workgroup 发射 (1,1,1)：
+```
+vkCmdDrawMeshTasksEXT(cmd, 1, 1, 1);
+```
+整个过程就是：
+```
+1 个 task workgroup
+    └── 32 个 task invocation
+    └── 整组发射 (1,1,1)
+            ↓
+        1 个 mesh workgroup
+            └── 64 个 mesh invocation
+            └── 协作输出 81 个顶点、128 个三角形
+```
+- 32 个 task invocation：没有实际收益，因为它们没有做筛选或准备数据，只是发射一个 mesh workgroup。这个 task shader 是为了演示流程而保留的。
+- 64 个 mesh invocation：有明确的分工作用，它们并行处理同一个 meshlet 内的 81 个顶点和 128 个三角形。但“有并行分工”不等于“这个微型例子一定更快”，实际性能还取决于硬件和工作负载。
+
+## 举例2
+32,000 个 meshlet。为了方便计数，每个 meshlet 都有：  
+64 个顶点。  
+96 个三角形。  
+总共是 204.8 万条 meshlet 顶点记录、307.2 万个三角形。不同 meshlet 边界上的顶点可能重复存储，所以这里不是全模型去重后的顶点数。  
+配置如下：  
+```
+// Task shader：每组处理一批 32 个候选 meshlet。
+layout(local_size_x = 32) in;
+
+// Mesh shader：每组处理一个可见 meshlet。
+layout(local_size_x = 64) in;
+```
+Host 启动：
+```
+vkCmdDrawMeshTasksEXT(cmd, 1000, 1, 1);
+```
+本例不再坚持“每个 task 固定发射一个 mesh workgroup”，而是每组根据可见性发射 0～32 个。这正是 task shader 动态筛选工作的价值。  
+Task 阶段：32 个 invocation 同时检查 32 个 meshlet  
+组内每个 invocation 各检查一个：
+```
+Task workgroup 0
+    invocation  0 → 检查 meshlet  0
+    invocation  1 → 检查 meshlet  1
+    ...
+    invocation 31 → 检查 meshlet 31
+
+Task workgroup 1
+    invocation  0 → 检查 meshlet 32
+    ...
+    invocation 31 → 检查 meshlet 63
+```
+每次检查只读取少量元数据，例如包围球和法线锥：
+- 包围球是否完全在视锥外？
+- 对于适用的单面几何，法线锥是否能证明所有三角形都背向相机？
+
+被剔除的 meshlet 不再启动 mesh shader，也不必在 mesh 阶段读取其完整几何数据。这比先处理全部顶点，再让后续阶段丢弃三角形更早。
+
+假设第 0 组检查 32 个 meshlet，只有下面 6 个通过：
+```
+可见 meshlet ID：
+[2, 5, 9, 17, 23, 30]
+```
+
+32 个 invocation 协作把可见 ID 压紧写入 payload，然后整组发射：
+```
+EmitMeshTasksEXT(6u, 1u, 1u);
+```
+
+子 mesh workgroup 通过组内编号索引 payload，获得各自负责的 meshlet：
+```
+子 mesh workgroup 0 → meshlet  2
+子 mesh workgroup 1 → meshlet  5
+子 mesh workgroup 2 → meshlet  9
+子 mesh workgroup 3 → meshlet 17
+子 mesh workgroup 4 → meshlet 23
+子 mesh workgroup 5 → meshlet 30
+```
+“检查 → 压紧 ID → 发射可见数量 → mesh 阶段读取 payload”就是 task 与 mesh 之间的连接。  
+
+Mesh 阶段：64 个 invocation 协作处理一个 meshlet
+| Invocation 编号 | 顶点工作     | 三角形工作     |
+| ------------- | -------- | --------- |
+| 0～31          | 每个处理一个顶点 | 每个处理两个三角形 |
+| 32～63         | 每个处理一个顶点 | 每个处理一个三角形 |
+| 合计            | 64 个顶点   | 96 个三角形   |
+
+```
+uint tid = gl_LocalInvocationIndex;
+
+// 每个 invocation 处理一个顶点。
+ProcessVertex(tid);
+
+// 前 64 个三角形：每个 invocation 处理一个。
+ProcessTriangle(tid);
+
+// 剩余 32 个三角形：前 32 个 invocation 各处理一个。
+if (tid < 32u)
+{
+    ProcessTriangle(tid + 64u);
+}
+```
+这里 ProcessVertex() 可以包含顶点解压、位置变换、法线变换等；ProcessTriangle() 读取局部索引并输出图元。Mesh shader 的收益在于组内协作处理一批几何，并允许自定义数据读取和解压流程，而不是一个 invocation 串行处理整个 meshlet。  
+
+假设最终只有 25% 的 meshlet 可见  
+32,000 个候选 meshlet 中，假设有 8,000 个通过剔除。各 task workgroup 的发射数量可以不同，只要总和为 8,000。  
+与“不做 task 剔除、直接启动全部 mesh workgroup”的方案比较：  
+| 项目              | 无 task，直接处理全部 meshlet | 加入 task 剔除 |
+| --------------- | --------------------- | ---------- |
+| Task workgroup  | 0                     | 1,000      |
+| Task invocation | 0                     | 32,000     |
+| Mesh workgroup  | 32,000                | 8,000      |
+| Mesh invocation | 2,048,000             | 512,000    |
+| Mesh 阶段处理的顶点记录  | 2,048,000             | 512,000    |
+| Mesh 阶段处理的三角形   | 3,072,000             | 768,000    |
+
+这是假想工作量的对比：增加 32,000 次轻量的 meshlet 元数据检查，换取少启动 24,000 个 mesh workgroup，并跳过这些 meshlet 的完整几何处理。实际收益取决于剔除比例、元数据访问成本，以及每个 meshlet 的处理成本。  
+这里 mesh invocation 数减少了 75%，但不能因此断言帧率提高四倍：task 阶段有成本，可见物体的光栅化和 fragment shading 也仍然需要执行。  
+
+两种 invocation 分别解决什么问题？
+```
+Task 的 32 个 invocation：
+    并行检查 32 个候选 meshlet。
+    回答“哪些 meshlet 值得继续处理？”
+
+Mesh 的 64 个 invocation：
+    并行处理一个已通过筛选的 meshlet 内部数据。
+    回答“这个 meshlet 的顶点和三角形如何生成？”
+```
+因此，task 的优势是提前避免无效几何工作；mesh 的优势是并行、灵活地处理保留下来的几何。若几乎所有 meshlet 都可见、每个 meshlet 又非常便宜，task 的剔除成本就可能得不偿失；它不是无条件的加速阶段。  
+
 # Mesh Shader对比Tessellation和Nanite
 对比tessellation：tess是加了一个步骤，mesh shader是完全取代ras之前的步骤。tess效果不如mesh shader。  
 对比nanite：nanite不是独立技术，它中间的一步可以用mesh shader实现。nanite是个大架构。这个引擎技术一般绑定UE5。nanite效果很好，电影级别高模，无lod突变。  

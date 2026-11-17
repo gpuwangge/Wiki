@@ -1,3 +1,16 @@
+# Keynotes
+- Host 通过 vkCmdDrawMeshTasksEXT(cmd, T, 1, 1) 记录绘制命令。当 GPU 执行该命令时，如果当前图形管线包含 Task Shader，就启动 T 个 Task Shader Workgroup。每个 Task Shader Workgroup 通过 EmitMeshTasksEXT(M, 1, 1) 启动 M 个 Mesh Shader Workgroup，因此总共启动 T×M 个 Mesh Shader Workgroup。
+- 在 Vulkan API 和 shader 执行模型中，Meshlet 不是一个原生的执行单位，而是应用自行定义的几何数据分块。常见的组织方式是让一个 Mesh Shader Workgroup 处理一个 Meshlet。因此，在每个 Workgroup 都处理一个对应 Meshlet 的前提下，这次绘制处理 T×M 个 Meshlet；这种一对一映射是应用约定，而不是 Vulkan 的强制要求。
+- EmitMeshTasksEXT 是 workgroup 级的发射操作，而不是组内每个 invocation 各自追加一批 workgroup。它定义后续 Mesh Shader Workgroup 的网格大小，并终止当前 Task Shader Workgroup 的执行。
+
+- 在典型的实现中，1 个 Task Shader Workgroup 并不只处理 1 个 Meshlet，而是负责评估一组（例如 t 个）候选 Meshlet。 总结 t 的作用：它是 Meshlet 级别的并行过滤器，避免用一整个 Workgroup 只算 1 个包围盒而造成的硬件算力浪费。
+- 在典型的实现中，1 个 Mesh Shader 有 m 个 Invocation。m 个线程（例如 m = 32 或 m = 128）就在这里负责并行拆解并生成这个 Meshlet 的内部数据。并行处理顶点（替代传统 Vertex Shader）。
+
+- Task Shader 可以概括为对后续几何处理工作的“增、减、改”：增，是将一个任务展开为多个 Mesh Shader Workgroup；减，是通过提前剔除避免不必要的 Mesh Shader 工作；改，是通过 LOD 等策略选择不同的几何任务。其本质是决定后续工作“做多少、做什么”。
+- Mesh Shader 可以概括为对几何数据的“读、算、写”：读，是读取 Meshlet 的顶点、索引等输入数据；算，是进行顶点变换、属性计算及可选的图元剔除；写，是输出顶点属性和图元连接关系，交给后续光栅化阶段。其本质是决定几何“长什么样”。
+
+- Mesh Shader 的主要代价是：用更高的实现复杂度和调优成本换取几何处理的灵活性；分块或资源配置不当时，性能甚至可能不如传统顶点管线。
+
 # Mesh Shader介绍
 Mesh Shader是为了解决ras之前geometry管线的缺点：很多vertex被处理了之后却因为种种原因被丢弃。  
 
@@ -201,6 +214,21 @@ Mesh 的 64 个 invocation：
     回答“这个 meshlet 的顶点和三角形如何生成？”
 ```
 因此，task 的优势是提前避免无效几何工作；mesh 的优势是并行、灵活地处理保留下来的几何。若几乎所有 meshlet 都可见、每个 meshlet 又非常便宜，task 的剔除成本就可能得不偿失；它不是无条件的加速阶段。  
+
+# Task shader的具体作用
+| 分类       | 更准确的表述                                                                      | 关键区别                                                               |
+| -------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 增：工作放大   | 一个 Task Shader Workgroup 可以发射多个 Mesh Shader Workgroup，将一个上游任务展开成多个下游几何处理任务。 | 增加 M 只会增加 workgroup 数；还需要为这些 workgroup 分配有效的几何任务，才意味着处理更多 Meshlet。 |
+| 减：提前剔除   | 在启动 Mesh Shader 之前进行 Meshlet 级别的可见性测试，只为保留下来的 Meshlet 发射 workgroup。         | 避免后续 Mesh Shader 的顶点读取、变换和图元生成，但仍有 Task Shader 自身的剔除成本。            |
+| 改：选择工作内容 | 根据距离、屏幕空间误差等条件选择 LOD，并通过 payload 指定后续应处理的 Meshlet 或几何数据。                    | 通常是选择不同精度的数据，而不是 Task Shader 自己修改顶点、输出模型。                          |
+
+# Mesh shader的缺点
+开发更复杂、资源更敏感、性能不保底——Mesh Shader 将更多几何处理的控制权交给开发者，也把数据组织、并行分工和跨 GPU 调优的责任交给了开发者。  
+- 开发与资产处理更复杂：采用 Meshlet 方案时，需要生成分块、局部索引及剔除信息，并自行设计顶点读取、线程分工和输出逻辑；不只是把 Vertex Shader 换一个名字。  
+- 分块存在取舍：Meshlet 太小，会降低顶点复用率、增加跨块重复顶点处理；太大，又会让剔除粒度变粗，并提高单个 workgroup 的资源需求。
+- 输出资源可能限制并发：输出顶点数、图元数、属性大小，以及寄存器和 shared memory 的使用都会影响 occupancy；尤其输出上限设得过大，可能因预留空间过多而降低并发。
+- 不保证比传统管线快：几何处理较简单、可剔除工作较少时，收益可能不足以抵消额外成本。如果再加入 Task Shader，还会引入任务调度和 payload 开销——这部分不是 Mesh Shader 必须承担的。
+- 跨 GPU 调优困难：不同架构偏好的 workgroup 大小、Meshlet 大小和输出方式不同，一套配置不一定处处高效。
 
 # Mesh Shader对比Tessellation和Nanite
 对比tessellation：tess是加了一个步骤，mesh shader是完全取代ras之前的步骤。tess效果不如mesh shader。  

@@ -1,15 +1,28 @@
 # Keynotes
+## Meshshader的基本概念
 - Host 通过 vkCmdDrawMeshTasksEXT(cmd, T, 1, 1) 记录绘制命令。当 GPU 执行该命令时，如果当前图形管线包含 Task Shader，就启动 T 个 Task Shader Workgroup。每个 Task Shader Workgroup 通过 EmitMeshTasksEXT(M, 1, 1) 启动 M 个 Mesh Shader Workgroup，因此总共启动 T×M 个 Mesh Shader Workgroup。
 - 在 Vulkan API 和 shader 执行模型中，Meshlet 不是一个原生的执行单位，而是应用自行定义的几何数据分块。常见的组织方式是让一个 Mesh Shader Workgroup 处理一个 Meshlet。因此，在每个 Workgroup 都处理一个对应 Meshlet 的前提下，这次绘制处理 T×M 个 Meshlet；这种一对一映射是应用约定，而不是 Vulkan 的强制要求。
 - EmitMeshTasksEXT 是 workgroup 级的发射操作，而不是组内每个 invocation 各自追加一批 workgroup。它定义后续 Mesh Shader Workgroup 的网格大小，并终止当前 Task Shader Workgroup 的执行。
 
+## Meshshader的Invocation
 - 在典型的实现中，1 个 Task Shader Workgroup 并不只处理 1 个 Meshlet，而是负责评估一组（例如 t 个）候选 Meshlet。 总结 t 的作用：它是 Meshlet 级别的并行过滤器，避免用一整个 Workgroup 只算 1 个包围盒而造成的硬件算力浪费。
 - 在典型的实现中，1 个 Mesh Shader 有 m 个 Invocation。m 个线程（例如 m = 32 或 m = 128）就在这里负责并行拆解并生成这个 Meshlet 的内部数据。并行处理顶点（替代传统 Vertex Shader）。
 
+## Meshshader的功能和代价
 - Task Shader 可以概括为对后续几何处理工作的“增、减、改”：增，是将一个任务展开为多个 Mesh Shader Workgroup；减，是通过提前剔除避免不必要的 Mesh Shader 工作；改，是通过 LOD 等策略选择不同的几何任务。其本质是决定后续工作“做多少、做什么”。
 - Mesh Shader 可以概括为对几何数据的“读、算、写”：读，是读取 Meshlet 的顶点、索引等输入数据；算，是进行顶点变换、属性计算及可选的图元剔除；写，是输出顶点属性和图元连接关系，交给后续光栅化阶段。其本质是决定几何“长什么样”。
 
 - Mesh Shader 的主要代价是：用更高的实现复杂度和调优成本换取几何处理的灵活性；分块或资源配置不当时，性能甚至可能不如传统顶点管线。
+
+## Meshshader对比传统Shader
+- Vertex/Fragment Shader跟Compute Shader, Task/Mesh Shader的对比：共同点就是main()函数是对每个invocation执行一次。但是，传统VS/FS的host直接指定invocation的数量；但是在cs/ts/ms里，有一个workgroup的概念，host首先发送workgroup数量，每个workgroup内部又规定了invocation的数量，因此，每个invocation内部由builtin变量来告诉用户现在处理的是workgroup里面的第几个invocation(或称lane/thread)。
+- 引入workgroup的好处和特性是：1、定义了workgroup内部可用的shared local memory(SRAM，速度非常快)；2、因为SLM的存在，采用barrier来同步；3、通过选定某一个workgroup内部某一个invocation作为leader/coordinator，实现workgroup级别的操作。因此，一个典型的compute shader分为三部分：invocation级别的计算->barrier->coordinator进行workgoup级别的操作。
+- 对task shader来说，也可以分成类似的三部分：每个invocation对meshlet的分别计算，然后barrier，最后选择一个invocation发射EmmitMeshTaskEXT(M)。
+- task shader会创建一个名字叫payload的SLM，它用于记录M个meshlet的信息。这个SLM对于task shader是workgroup私有的，但是对于由它发射出去的mesh shader是共享的(这是mesh shader跟普通compute shader相比的重要区别，compute shader的local memory无法组间共享)；mesh shader启动后，根据workgroup id再去payload中取出需要的信息进行计算(做vertex shading并组装三角形，结果送给rasterizer)。
+
+<p float="left">
+  <img src="https://github.com/gpuwangge/Wiki/blob/main/images/mesh_shader_architecture.png" alt="alt text">  
+</p> 
 
 # Mesh Shader介绍
 Mesh Shader是为了解决ras之前geometry管线的缺点：很多vertex被处理了之后却因为种种原因被丢弃。  

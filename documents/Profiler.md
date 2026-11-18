@@ -148,4 +148,31 @@ Capture下来的.ngfx-capture文件默认存在Documents\NVIDIA Nsight Graphics\
 如图是Vulkan Ray Tracing Pipeline的Events信息。  
 <img src="https://github.com/gpuwangge/Wiki/blob/main/images/NsightGraphics1.png" alt="alt text">  
 
+### 用Nsight Graphics Capture Benchmark(Solarbay)
+在Steam上下载3DMark，Solarbay是一个免费的DLC。运行3DMark，运行之后，在Documents/3DMark/文件夹下找到  
+```
+product-info-level.log
+```
+里面有真实的启动参数：
+```
+C:\Steam\steamapps\common\3DMark Demo\dlc\solar-bay-test\windows\bin\x64\3DMarkSolarBay.exe" --in "C:\ProgramData\UL\3DMark\tmp\fm-workload-12579342708614403622.json" --out "C:\ProgramData\UL\3DMark\tmp\fm-result-15955367123155669298.json
+```
+把fm-workload-12579342708614403622.json这个文件拷贝下来(要在benchmark运行的时候拷贝，因为运行结束后它就自动删除了，重命名为input.json)  
+把这些信息记下来，退出3DMark  
+运行NSight Graphics,点击Start Activity, 根据信息填写如下三项，点击Launch Graphics Capture  
+```
+Application Executable
+C:\Steam\steamapps\common\3DMark Demo\dlc\solar-bay-test\windows\bin\x64\3DMarkSolarBay.exe
+
+Working Directory
+C:\Steam\steamapps\common\3DMark Demo\dlc\solar-bay-test
+
+Command Line Arguments
+--in "C:\Workspace2025\SolarbaySandbox\input.json" --out "C:\Workspace2025\SolarbaySandbox\output.json"
+```
+等运行到需要的frame，点击F11 Capture，会在Documents\NVIDIA Nsight Graphics\GraphicsCaptures\生成.ngfx-capture文件  
+
+(如果安装过Bandicam，需要去其目录运行UnregVulkanLayer.bat才能运行Solarbay)  
+
+
 

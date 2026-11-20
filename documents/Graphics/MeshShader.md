@@ -35,6 +35,28 @@ Fragment Shader：接受精修过的三角形。
 
 mesh shader并不是全场景通用，而是适合特定场景。比如适合开放世界海量实体渲染。不适合简单场景。  
 
+# Mesh Shader对比Compute Shader
+## 一个Compute Shader的典型问题：Parallel Reduction
+256kb buffer，4B数据  
+64k个数字要加起来。如果每个invocation算64次，分1k invocation  
+把invocation分8workgroup，每组128 invocation  
+
+## Mesh Shader（without Task Shader）
+1k triangle，每个triangle要算64次  
+每128个triangle分成一组（一个meshlet）  
+做8个ms workgroup，每个128 invocation  
+每个invocation处理一个三角形，算64次  
+（同一个 invocation 可以既处理顶点，也处理三角形；还可以通过循环分别处理多个顶点和多个三角形）  
+这个问题的本质跟PR问题是一样的。区别是PR的结果是8个部分和，之后用别的方式累加；MS的结果是8个meshlet，送给 rasterizer和fragment shader进行后续计算。  
+
+## Mesh Shader（with Task Shader）
+Mesh Shader需要配合Task Shader才能实现效率的提升。  
+1024 个三角形预先组织为 8 个 meshlet，每个包含 128 个三角形(一个 meshlet)。应用可以启动 8 个 task shader workgroup，负责1个meshlet可见性和LOD决策。  
+每个 TS workgroup 根据决策结果，通过 payload 传递所需数据，并发射零个、一个或多个 mesh shader workgroup(也就是可以增，删cull, 改lod)。  
+MS 再读取相应的几何数据操作，输出顶点和图元。  
+(TS 与 meshlet、TS 与 MS 之间都不要求固定一对一映射)  
+
+
 # Mesh Shader计算举例(Vulkan)
 对于一个mesh shader example，host端调用vkCmdDrawMeshTasksEXT(cmd, 100, 1, 1);  
 taskshader: layout(local_size_x = 32) in;  
